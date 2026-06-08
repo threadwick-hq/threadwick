@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/studio",
+      "destination": "https://eiluviann.github.io/threadwick/"
+    },
+    {
+      "source": "/studio/:path*",
+      "destination": "https://eiluviann.github.io/threadwick/:path*"
+    }
+  ]
+}
