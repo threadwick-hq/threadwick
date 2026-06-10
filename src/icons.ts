@@ -2,6 +2,9 @@
 // Default size/stroke is set once via <IconoirProvider> in main.tsx.
 export {
   Plus as PlusIcon,
+  CursorPointer as SelectModeIcon,
+  PlusCircle as InsertModeIcon,
+  DragHandGesture as PanModeIcon,
   Upload as ImportIcon,
   Download as DownloadIcon,
   Copy as CopyIcon,

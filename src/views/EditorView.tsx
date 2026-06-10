@@ -6,6 +6,7 @@ import {
   BackIcon, UndoIcon, RedoIcon, DownloadIcon, HelpIcon, MenuIcon,
   PlusIcon, ZoomInIcon, ZoomOutIcon, FitIcon, MoreIcon, DeleteIcon,
   EditIcon, RotateLeftIcon, RotateRightIcon, OriginIcon,
+  SelectModeIcon, InsertModeIcon, PanModeIcon,
 } from '../icons';
 import { useStore } from '../useStore';
 import { CanvasView } from '../editor/CanvasView';
@@ -112,9 +113,9 @@ export function EditorView() {
       <div className="toolbar">
         <Segmented value={chrome.mode === 'insert' && readOnly ? 'select' : chrome.mode} onChange={(v) => ctrl.current?.setMode(v as Mode)}
           options={[
-            { label: (<span>Select <kbd className="seg-kbd">V</kbd></span>), value: 'select' },
-            ...(readOnly ? [] : [{ label: (<span>Insert <kbd className="seg-kbd">I</kbd></span>), value: 'insert' }]),
-            { label: (<span>Pan <kbd className="seg-kbd">P</kbd></span>), value: 'pan' },
+            { label: (<Tooltip title="Select (V)"><span className="seg-icon" aria-label="Select"><SelectModeIcon /></span></Tooltip>), value: 'select' },
+            ...(readOnly ? [] : [{ label: (<Tooltip title="Insert (I)"><span className="seg-icon" aria-label="Insert"><InsertModeIcon /></span></Tooltip>), value: 'insert' }]),
+            { label: (<Tooltip title="Pan (P)"><span className="seg-icon" aria-label="Pan"><PanModeIcon /></span></Tooltip>), value: 'pan' },
           ]} />
         <div className="grow" />
         {!readOnly && <Tooltip title="Fan the current row out evenly"><Button size="small" onClick={() => s.evenRound(pat.activeRound)}>Even out row</Button></Tooltip>}
