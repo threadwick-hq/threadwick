@@ -6,7 +6,7 @@ import {
   BackIcon, UndoIcon, RedoIcon, DownloadIcon, HelpIcon, MenuIcon,
   PlusIcon, ZoomInIcon, ZoomOutIcon, FitIcon, MoreIcon, DeleteIcon,
   EditIcon, RotateLeftIcon, RotateRightIcon, OriginIcon,
-  SelectModeIcon, InsertModeIcon, PanModeIcon, MirrorIcon,
+  SelectModeIcon, InsertModeIcon, PanModeIcon, MirrorIcon, ChevronDownIcon,
 } from '../icons';
 import { useStore } from '../useStore';
 import { CanvasView } from '../editor/CanvasView';
@@ -137,16 +137,7 @@ export function EditorView() {
         {!readOnly && (
           <aside className="ed-left">
             <Palette pat={pat} chrome={chrome} ctrl={ctrl} />
-            <div className="howto-card">
-              <div className="panel-title">How it works</div>
-              <ol className="howto">
-                <li>Pick a <b>start</b>, then a <b>row</b>.</li>
-                <li>Hit <b>Insert</b> (or a stitch key).</li>
-                <li>Click a <b>base</b> — a stitch or an <span className="dot-space" /> space.</li>
-                <li>Click again to set the <b>head</b>.</li>
-                <li><kbd>Alt</kbd>/<kbd>⌘</kbd>-click a stitch to work out of it.</li>
-              </ol>
-            </div>
+            <HowItWorks />
           </aside>
         )}
 
@@ -208,6 +199,38 @@ export function EditorView() {
         <Input value={rename?.name ?? ''} autoFocus onChange={(e) => setRename((r) => r && { ...r, name: e.target.value })}
           onPressEnter={() => { if (rename) s.renameRound(rename.id, rename.name.trim() || 'Row'); setRename(null); }} />
       </Modal>
+    </div>
+  );
+}
+
+// The collapse state is a local UI preference (not project data), so it lives
+// in its own localStorage key and never enters the portable project format.
+const HOWTO_KEY = 'threadwickstudio:ui:howto-collapsed';
+
+function HowItWorks() {
+  const [open, setOpen] = useState(() => {
+    try { return localStorage.getItem(HOWTO_KEY) !== '1'; } catch { return true; }
+  });
+  const toggle = () => {
+    const next = !open;
+    setOpen(next);
+    try { localStorage.setItem(HOWTO_KEY, next ? '0' : '1'); } catch { /* ignore quota */ }
+  };
+  return (
+    <div className="howto-card">
+      <button className="howto-toggle" onClick={toggle} aria-expanded={open}>
+        <span className="panel-title">How it works</span>
+        <ChevronDownIcon className={'howto-chevron' + (open ? '' : ' closed')} />
+      </button>
+      {open && (
+        <ol className="howto">
+          <li>Pick a <b>start</b>, then a <b>row</b>.</li>
+          <li>Hit <b>Insert</b> (or a stitch key).</li>
+          <li>Click a <b>base</b> — a stitch or an <span className="dot-space" /> space.</li>
+          <li>Click again to set the <b>head</b>.</li>
+          <li><kbd>Alt</kbd>/<kbd>⌘</kbd>-click a stitch to work out of it.</li>
+        </ol>
+      )}
     </div>
   );
 }

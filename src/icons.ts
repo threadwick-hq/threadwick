@@ -11,6 +11,7 @@ export {
   Trash as DeleteIcon,
   MoreVert as MoreIcon,
   NavArrowLeft as BackIcon,
+  NavArrowDown as ChevronDownIcon,
   Printer as PdfIcon,
   Undo as UndoIcon,
   Redo as RedoIcon,

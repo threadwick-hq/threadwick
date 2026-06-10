@@ -131,7 +131,13 @@ kbd { font-size: 11px; background: var(--bg); border: 1px solid var(--line); bor
 .chip kbd { position: absolute; top: 3px; right: 3px; font-size: 9px; padding: 0 3px; }
 .glyph-wrap { display: block; line-height: 0; }
 
-.howto-card { margin-top: auto; }
+.howto-card { margin-top: auto; border-top: 1px solid var(--line); padding-top: 10px; }
+.howto-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; background: transparent; border: none; padding: 2px 0; cursor: pointer; }
+.howto-toggle .panel-title { margin: 0; }
+.howto-toggle:hover .panel-title { color: var(--ink); }
+.howto-chevron { color: var(--muted); transition: transform .15s; }
+.howto-chevron.closed { transform: rotate(-90deg); }
+.howto-card .howto { margin-top: 8px; }
 .howto { margin: 0; padding-left: 18px; font-size: 12px; color: var(--muted); line-height: 1.7; }
 .howto b { color: var(--ink); }
 .dot-space { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--space); vertical-align: -1px; }
