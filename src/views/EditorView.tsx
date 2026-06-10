@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  App, Alert, Button, Segmented, Select, InputNumber, Switch, ColorPicker, Dropdown, Modal, Input, Tooltip, Typography,
+  App, Alert, Breadcrumb, Button, Segmented, Select, InputNumber, Switch, ColorPicker, Dropdown, Modal, Input, Tooltip, Typography,
 } from 'antd';
 import {
-  BackIcon, UndoIcon, RedoIcon, DownloadIcon, HelpIcon, MenuIcon,
+  UndoIcon, RedoIcon, DownloadIcon, HelpIcon, MenuIcon,
   PlusIcon, ZoomInIcon, ZoomOutIcon, FitIcon, MoreIcon, DeleteIcon,
   EditIcon, RotateLeftIcon, RotateRightIcon, OriginIcon,
   SelectModeIcon, InsertModeIcon, PanModeIcon, MirrorIcon, ChevronDownIcon,
 } from '../icons';
 import { useStore } from '../useStore';
 import { CanvasView } from '../editor/CanvasView';
-import { TopBar } from '../components/TopBar';
+import { TopBarSlot } from '../components/TopBar';
 import { Glyph } from '../components/Glyph';
 import { statusLabel } from '../components/versionStatus';
 import type { CanvasController, Mode } from '../core/editorCanvas';
@@ -94,10 +94,19 @@ export function EditorView() {
   const started = hasStart(pat);
   return (
     <div className={'editor' + (readOnly ? ' has-banner' : '')}>
-      <TopBar>
-        <Tooltip title="Back to project"><Button type="text" icon={<BackIcon />} onClick={() => s.backToProject()}><span className="back-label">{proj?.name ?? 'Project'}</span></Button></Tooltip>
-        <Input variant="borderless" className="pat-name" value={pat.name} readOnly={readOnly} onChange={(e) => s.renamePattern(pat.id, e.target.value)} />
-        <span className="badge">Granny square</span>
+      <TopBarSlot>
+        <Breadcrumb className="crumbs" items={[
+          { title: <button className="crumb-link" onClick={() => s.goProjects()}>All projects</button> },
+          { title: <button className="crumb-link crumb-name" onClick={() => s.backToProject()}>{proj?.name ?? 'Project'}</button> },
+          { title: (
+            <span className="crumb-leaf">
+              <span className="pat-name-wrap" data-value={pat.name}>
+                <Input variant="borderless" className="pat-name" value={pat.name} readOnly={readOnly} onChange={(e) => s.renamePattern(pat.id, e.target.value)} />
+              </span>
+              <span className="badge">Granny square</span>
+            </span>
+          ) },
+        ]} />
         <div className="grow" />
         <Tooltip title="Undo (⌘Z)"><Button type="text" aria-label="Undo" icon={<UndoIcon />} disabled={!s.undoStack.length} onClick={() => s.undo()} /></Tooltip>
         <Tooltip title="Redo (⇧⌘Z)"><Button type="text" aria-label="Redo" icon={<RedoIcon />} disabled={!s.redoStack.length} onClick={() => s.redo()} /></Tooltip>
@@ -108,7 +117,7 @@ export function EditorView() {
         }}>
           <Button type="text" aria-label="Menu" icon={<MenuIcon />} />
         </Dropdown>
-      </TopBar>
+      </TopBarSlot>
 
       <div className="toolbar">
         <Segmented value={chrome.mode === 'insert' && readOnly ? 'select' : chrome.mode} onChange={(v) => ctrl.current?.setMode(v as Mode)}

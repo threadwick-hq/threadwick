@@ -4,7 +4,7 @@ import {
   PlusIcon, ImportIcon, MoreIcon, DownloadIcon, CopyIcon, DeleteIcon,
 } from '../icons';
 import { useStore } from '../useStore';
-import { TopBar } from '../components/TopBar';
+import { TopBarSlot } from '../components/TopBar';
 import { Thumb } from '../components/Thumb';
 import { Glyph } from '../components/Glyph';
 import { VersionTag } from '../components/VersionTag';
@@ -46,11 +46,11 @@ export function ProjectsView() {
 
   return (
     <div className="home">
-      <TopBar>
+      <TopBarSlot>
         <div className="grow" />
         <Button icon={<ImportIcon />} onClick={onImport}>Import…</Button>
         <Button type="primary" icon={<PlusIcon />} onClick={() => setNewOpen(true)}>New project</Button>
-      </TopBar>
+      </TopBarSlot>
 
       <div className="page">
         <p className="tagline">Your crochet workshop — one folder per project, for patterns, yarns, links and notes. Design granny squares the way you crochet them.</p>

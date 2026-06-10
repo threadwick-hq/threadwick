@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import {
-  App, Alert, Button, Card, Dropdown, Form, Input, Modal, Radio, Select, Empty, Typography,
+  App, Alert, Breadcrumb, Button, Card, Dropdown, Form, Input, Modal, Radio, Select, Empty, Typography,
 } from 'antd';
 import {
-  BackIcon, PlusIcon, DownloadIcon, PdfIcon, DeleteIcon,
+  PlusIcon, DownloadIcon, PdfIcon, DeleteIcon,
   CopyIcon, MoreIcon, EditIcon, YarnIcon, LinkIcon, NotesIcon, VariationIcon,
 } from '../icons';
 import type { ComponentType } from 'react';
 import { useStore } from '../useStore';
-import { TopBar } from '../components/TopBar';
+import { TopBarSlot } from '../components/TopBar';
 import { Thumb } from '../components/Thumb';
 import { VersionTag } from '../components/VersionTag';
 import { statusLabel } from '../components/versionStatus';
@@ -74,8 +74,11 @@ export function ProjectView() {
 
   return (
     <div className="home">
-      <TopBar>
-        <Button type="text" icon={<BackIcon />} onClick={() => s.goProjects()}>All projects</Button>
+      <TopBarSlot>
+        <Breadcrumb className="crumbs" items={[
+          { title: <button className="crumb-link" onClick={() => s.goProjects()}>All projects</button> },
+          { title: <span className="crumb-name">{prj.name || 'Untitled project'}</span> },
+        ]} />
         <div className="grow" />
         <Button icon={<DownloadIcon />} onClick={() => exportProjectFile(prj)}>Export</Button>
         <Button icon={<PdfIcon />} onClick={() => { void printProject(prj); }}>Printable PDF</Button>
@@ -83,7 +86,7 @@ export function ProjectView() {
           title: `Delete “${prj.name}”?`, content: 'Removes the project and all its patterns.',
           okText: 'Delete', okButtonProps: { danger: true }, onOk: () => s.deleteProject(prj.id),
         })}>Delete</Button>
-      </TopBar>
+      </TopBarSlot>
 
       <div className="page">
         <Input variant="borderless" className="proj-name" value={prj.name} onChange={(e) => s.renameProject(prj.id, e.target.value)} />
