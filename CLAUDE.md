@@ -34,6 +34,19 @@ When designing any feature, ask "how does a user get this data out, in a format
 they can use elsewhere?" before building it. If there isn't a clean answer, the
 design isn't done.
 
+### Document all work with GitHub issues (must-have)
+
+Every piece of work — features, fixes, refactors, and stories scheduled for
+later — **must be documented as a GitHub issue** in this repository:
+
+- Before implementing, make sure an issue exists for the story (create one if
+  it doesn't), with acceptance criteria where known.
+- Reference issues from commits (`Refs #N`) and close them via the pull
+  request (`Closes #N`); a multi-story PR keeps an issue checklist in its
+  description.
+- Stories described for later development get **placeholder issues** marked
+  "do not implement yet", so the backlog lives in the issue tracker.
+
 ## Dev commands
 
 - `npm run dev` — local dev server
