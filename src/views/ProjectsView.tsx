@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { App, Button, Card, Dropdown, Empty, Form, Input, Modal } from 'antd';
+import { App, Breadcrumb, Button, Card, Dropdown, Empty, Form, Input, Modal } from 'antd';
 import {
   PlusIcon, ImportIcon, MoreIcon, DownloadIcon, CopyIcon, DeleteIcon,
 } from '../icons';
@@ -47,6 +47,9 @@ export function ProjectsView() {
   return (
     <div className="home">
       <TopBarSlot>
+        <Breadcrumb className="crumbs" items={[
+          { title: <span className="crumb-here">All projects</span> },
+        ]} />
         <div className="grow" />
         <Button icon={<ImportIcon />} onClick={onImport}>Import…</Button>
         <Button type="primary" icon={<PlusIcon />} onClick={() => setNewOpen(true)}>New project</Button>

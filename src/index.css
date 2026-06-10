@@ -47,6 +47,7 @@ kbd { font-size: 11px; background: var(--bg); border: 1px solid var(--line); bor
 .crumbs ol { align-items: center; flex-wrap: nowrap; }
 .crumb-link { background: none; border: none; padding: 3px 6px; border-radius: 6px; font-size: 14px; color: var(--muted); cursor: pointer; white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
 .crumb-link:hover { color: var(--ink); background: rgba(40, 30, 20, .05); }
+.crumb-here { padding: 3px 6px; font-size: 14px; color: var(--ink); white-space: nowrap; } /* current location, not a link */
 .crumb-name { font-family: var(--serif); font-weight: 700; font-size: 15px; color: var(--ink); }
 span.crumb-name { padding: 3px 6px; white-space: nowrap; max-width: 260px; overflow: hidden; text-overflow: ellipsis; display: inline-block; }
 .crumb-leaf { display: inline-flex; align-items: center; gap: 8px; }
