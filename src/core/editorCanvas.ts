@@ -45,11 +45,10 @@ interface View { scale: number; panX: number; panY: number; }
 interface Drag { leadId: string; ox: number; oy: number; startU: Point; moved: boolean; shift: boolean; }
 interface Marquee { startU: Point; cur: Point; additive: boolean; base: Set<string>; moved: boolean; }
 
-function mark(pt: Point, color: string, r = 4): string {
-  return `<circle cx="${round(pt.x)}" cy="${round(pt.y)}" r="${r}" fill="${color}" fill-opacity="0.35" stroke="${color}" stroke-width="1.6"/>`;
-}
-function ring(pt: Point, color: string, r = 4.5): string {
-  return `<circle cx="${round(pt.x)}" cy="${round(pt.y)}" r="${r}" fill="none" stroke="${color}" stroke-width="1.6"/>`;
+// Point indicators (heads, bases, spaces) are points: simple filled dots, no
+// tinted halo or outline ring.
+function mark(pt: Point, color: string, r = 3.2): string {
+  return `<circle cx="${round(pt.x)}" cy="${round(pt.y)}" r="${r}" fill="${color}"/>`;
 }
 function link(a: Point, b: Point, color: string, dash = '4 3'): string {
   return `<line x1="${round(a.x)}" y1="${round(a.y)}" x2="${round(b.x)}" y2="${round(b.y)}" stroke="${color}" stroke-width="1.5" stroke-dasharray="${dash}" opacity="0.85"/>`;
@@ -170,10 +169,9 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     let out = '<g pointer-events="none">';
     for (const st of stitches()) {
       if (!sel.has(st.id)) continue;
-      out += `<circle cx="${round(st.x)}" cy="${round(st.y)}" r="10" fill="${SELECT}" fill-opacity="0.16" stroke="${SELECT}" stroke-width="1.4"/>`;
       const head = topOfStitch(st);
-      out += mark({ x: st.x, y: st.y }, SPACE, 3.2);
-      out += mark(head, SELECT, 3.2);
+      out += mark({ x: st.x, y: st.y }, SPACE, 3.4);
+      out += mark(head, SELECT, 3.4);
       const origin = st.origin ? byId.get(st.origin) : undefined;
       if (origin) out += link(topOfStitch(origin), { x: st.x, y: st.y }, ORIGIN);
     }
@@ -203,7 +201,7 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     let out = '';
     for (const sp of spacesForRound(stitches(), activeRound())) {
       const isHit = !!emphasis && emphasis.kind === 'space' && emphasis.ids[0] === sp.ids[0] && emphasis.ids[1] === sp.ids[1];
-      out += `<circle cx="${round(sp.point.x)}" cy="${round(sp.point.y)}" r="${isHit ? 5 : 3}" fill="${SPACE}" fill-opacity="${isHit ? 0.5 : 0.22}" stroke="${SPACE}" stroke-width="${isHit ? 1.6 : 1}"/>`;
+      out += `<circle cx="${round(sp.point.x)}" cy="${round(sp.point.y)}" r="${isHit ? 5 : 3}" fill="${SPACE}" fill-opacity="${isHit ? 1 : 0.5}"/>`;
     }
     return out;
   }
@@ -236,7 +234,7 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     if (phase === 'base') {
       const base = pickBase(stitches(), u.x, u.y);
       let out = og + spaceDots(base);
-      out += ring(u, SPACE, 3);
+      out += mark(u, SPACE, 2.6);
       if (base && base.kind === 'stitch') out += mark(base.point, SPACE, 5);
       cursorLayer.innerHTML = out;
       return;
