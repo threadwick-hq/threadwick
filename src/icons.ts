@@ -20,8 +20,7 @@ export {
   ZoomOut as ZoomOutIcon,
   Expand as FitIcon,
   EditPencil as EditIcon,
-  RotateCameraLeft as RotateLeftIcon,
-  RotateCameraRight as RotateRightIcon,
+  Refresh as RotateRightIcon, // counter-clockwise = same glyph mirrored via .icon-flip-h
   Flip as MirrorIcon,
   Position as OriginIcon,
   Menu as MenuIcon,

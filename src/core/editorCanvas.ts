@@ -234,7 +234,8 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     const { startU: a, cur: b } = marquee;
     const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y);
     const w = Math.abs(b.x - a.x), h = Math.abs(b.y - a.y);
-    return `<rect x="${round(x)}" y="${round(y)}" width="${round(w)}" height="${round(h)}" fill="${GHOST}" fill-opacity="0.08" stroke="${GHOST}" stroke-width="1.2" stroke-dasharray="4 3"/>`;
+    // solid border, and non-scaling-stroke keeps it 1.4px on screen at any zoom
+    return `<rect x="${round(x)}" y="${round(y)}" width="${round(w)}" height="${round(h)}" fill="${GHOST}" fill-opacity="0.08" stroke="${GHOST}" stroke-width="1.4" vector-effect="non-scaling-stroke"/>`;
   }
 
   function drawCursor(u: Point): void {

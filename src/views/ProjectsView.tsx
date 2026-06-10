@@ -9,7 +9,7 @@ import { Thumb } from '../components/Thumb';
 import { Glyph } from '../components/Glyph';
 import { VersionTag } from '../components/VersionTag';
 import { exportProjectFile, importProjectFile } from '../core/files';
-import { displayVersion } from '../core/model';
+import { displayVersion, isPlaceholderName } from '../core/model';
 import type { Project } from '../core/types';
 
 function fmtDate(iso: string): string {
@@ -76,7 +76,7 @@ export function ProjectsView() {
                 <div className="card-row">
                   <div className="card-main" role="button" tabIndex={0} onClick={() => s.openProject(p.id)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); s.openProject(p.id); } }}>
-                    <Card.Meta title={p.name} description={`${dv.label} · ${dv.patterns.length} pattern${dv.patterns.length === 1 ? '' : 's'} · ${fmtDate(p.updatedAt)}`} />
+                    <Card.Meta title={<span className={isPlaceholderName(p.name) ? 'name-placeholder' : undefined}>{p.name}</span>} description={`${dv.label} · ${dv.patterns.length} pattern${dv.patterns.length === 1 ? '' : 's'} · ${fmtDate(p.updatedAt)}`} />
                   </div>
                   <Dropdown
                     trigger={['click']}

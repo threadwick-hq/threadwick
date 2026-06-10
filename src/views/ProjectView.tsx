@@ -13,7 +13,7 @@ import { Thumb } from '../components/Thumb';
 import { VersionTag } from '../components/VersionTag';
 import { statusLabel } from '../components/versionStatus';
 import { exportProjectFile, printProject } from '../core/files';
-import { PATTERN_TYPES, activeVersion } from '../core/model';
+import { PATTERN_TYPES, activeVersion, isPlaceholderName } from '../core/model';
 import type { ProjectVersion, Pattern, ResourceKind, Yarn, LinkRes, NoteRes, VariationRes } from '../core/types';
 
 const { Title } = Typography;
@@ -77,7 +77,7 @@ export function ProjectView() {
       <TopBarSlot>
         <Breadcrumb className="crumbs" items={[
           { title: <button className="crumb-link" onClick={() => s.goProjects()}>All projects</button> },
-          { title: <span className="crumb-name">{prj.name || 'Untitled project'}</span> },
+          { title: <span className={'crumb-name' + (isPlaceholderName(prj.name) ? ' name-placeholder' : '')}>{prj.name || 'Untitled project'}</span> },
         ]} />
         <div className="grow" />
         <Button icon={<DownloadIcon />} onClick={() => exportProjectFile(prj)}>Export</Button>
@@ -89,7 +89,9 @@ export function ProjectView() {
       </TopBarSlot>
 
       <div className="page">
-        <Input variant="borderless" className="proj-name" value={prj.name} onChange={(e) => s.renameProject(prj.id, e.target.value)} />
+        <span className="proj-name-wrap" data-value={prj.name}>
+          <Input variant="borderless" className={'proj-name' + (isPlaceholderName(prj.name) ? ' name-placeholder' : '')} value={prj.name} onChange={(e) => s.renameProject(prj.id, e.target.value)} />
+        </span>
         <Input.TextArea variant="borderless" className="proj-desc" autoSize value={prj.description} placeholder="Add a description…" onChange={(e) => s.updateProject(prj.id, { description: e.target.value })} />
 
         <div className="version-bar">
@@ -130,7 +132,7 @@ export function ProjectView() {
                   <div className="card-row">
                     <div className="card-main" role="button" tabIndex={0} onClick={() => s.openPattern(prj.id, pat.id)}
                       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); s.openPattern(prj.id, pat.id); } }}>
-                      <Card.Meta title={pat.name} description={`${(PATTERN_TYPES[pat.type] || {}).name || pat.type} · ${pat.stitches.length} stitches`} />
+                      <Card.Meta title={<span className={isPlaceholderName(pat.name) ? 'name-placeholder' : undefined}>{pat.name}</span>} description={`${(PATTERN_TYPES[pat.type] || {}).name || pat.type} · ${pat.stitches.length} stitches`} />
                     </div>
                     {isDraft && <Dropdown trigger={['click']} menu={{
                       items: [
@@ -149,7 +151,6 @@ export function ProjectView() {
                   </div>
                 </Card>
               ))}
-              {isDraft && <button className="card-new" onClick={() => setNewPat(true)}><PlusIcon /><span>New pattern</span></button>}
             </div>
           )}
         </section>

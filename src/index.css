@@ -25,7 +25,7 @@ body { background: var(--bg); color: var(--ink); font-family: Inter, system-ui, 
    remounts the content and replays this — the persistent header never moves. */
 @keyframes viewIn { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
 .app-view { animation: viewIn .24s cubic-bezier(.2, .7, .3, 1) both; }
-@media (prefers-reduced-motion: reduce) { .app-view, .chip { animation: none; transition: none; } }
+@media (prefers-reduced-motion: reduce) { .app-view, .chip, .howto-body, .howto-chevron { animation: none; transition: none; } }
 .muted { color: var(--muted); }
 .small { font-size: 12px; }
 kbd { font-size: 11px; background: var(--bg); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 0 5px; color: var(--muted); }
@@ -40,17 +40,22 @@ kbd { font-size: 11px; background: var(--bg); border: 1px solid var(--line); bor
 
 /* ---- top bars ----------------------------------------------------------- */
 .topbar { display: flex; align-items: center; gap: 8px; padding: 11px 18px; border-bottom: 1px solid var(--line); background: var(--bg-2); }
-.topbar-slot { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.topbar-slot { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; margin-left: 12px; }
 
-/* breadcrumbs: location, not a back button; serif names blend at UI size */
-.crumbs { min-width: 0; }
+/* breadcrumbs: location, not a back button; serif names blend at UI size.
+   Every piece shares the same line-height + vertical padding so mixed
+   sans/serif crumbs center on one line; the trail shrinks with ellipsis
+   instead of overflowing the page sideways. */
+.crumbs { flex: 0 1 auto; min-width: 0; overflow: hidden; }
 .crumbs ol { align-items: center; flex-wrap: nowrap; }
-.crumb-link { background: none; border: none; padding: 3px 6px; border-radius: 6px; font-size: 14px; color: var(--muted); cursor: pointer; white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
+.crumbs li { display: flex; align-items: center; min-width: 0; }
+.crumb-link { background: none; border: none; padding: 2px 6px; border-radius: 6px; font-size: 14px; line-height: 22px; color: var(--muted); cursor: pointer; white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
 .crumb-link:hover { color: var(--ink); background: rgba(40, 30, 20, .05); }
-.crumb-here { padding: 3px 6px; font-size: 14px; color: var(--ink); white-space: nowrap; } /* current location, not a link */
-.crumb-name { font-family: var(--serif); font-weight: 700; font-size: 15px; color: var(--ink); }
-span.crumb-name { padding: 3px 6px; white-space: nowrap; max-width: 260px; overflow: hidden; text-overflow: ellipsis; display: inline-block; }
-.crumb-leaf { display: inline-flex; align-items: center; gap: 8px; }
+.crumb-here { padding: 2px 6px; font-size: 14px; line-height: 22px; color: var(--ink); white-space: nowrap; } /* current location, not a link */
+.crumb-name { font-family: var(--serif); font-weight: 700; font-size: 15px; line-height: 22px; color: var(--ink); }
+span.crumb-name { padding: 2px 6px; white-space: nowrap; max-width: 260px; overflow: hidden; text-overflow: ellipsis; display: inline-block; }
+.crumb-leaf { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.crumb-leaf .badge { flex: 0 0 auto; }
 .brand { display: flex; align-items: center; gap: 9px; letter-spacing: -.01em; }
 .brand-mark { color: var(--accent); display: block; }
 .brand-lockup { display: flex; flex-direction: column; }
@@ -75,14 +80,19 @@ span.crumb-name { padding: 3px 6px; white-space: nowrap; max-width: 260px; overf
 .thumb-empty { opacity: .7; }
 .card-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
 .card-main { flex: 1; min-width: 0; cursor: pointer; }
-.card-new { min-height: 232px; border: 1px dashed var(--line); border-radius: 12px; background: transparent; color: var(--muted); display: grid; place-content: center; gap: 6px; cursor: pointer; font-size: 26px; }
-.card-new span { font-size: 13px; }
-.card-new:hover { border-color: var(--accent); color: var(--accent); }
+/* untouched default names render muted to read as "rename me" placeholders */
+.name-placeholder, .ant-input.name-placeholder { color: var(--muted); }
 .empty-wrap { padding: 50px 0; }
 .empty-art { display: flex; justify-content: center; gap: 10px; }
 .empty-wrap h2 { font-size: 20px; margin: 10px 0 4px; }
 
-.proj-name { font-size: 28px !important; font-weight: 800; font-family: var(--serif); padding: 2px 0 !important; }
+/* same self-sizing + hover-reveals-input treatment as the pattern title;
+   -8px margin keeps the text flush with the description below */
+.proj-name-wrap { position: relative; display: inline-block; align-self: flex-start; margin-left: -8px; font-family: var(--serif); font-size: 28px; font-weight: 800; line-height: 1.35; min-width: 90px; max-width: 100%; }
+.proj-name-wrap::after { content: attr(data-value) ' '; visibility: hidden; white-space: pre; display: block; overflow: hidden; padding: 2px 8px; }
+.proj-name-wrap .ant-input.proj-name { position: absolute; inset: 0; width: 100%; height: 100%; font: inherit; line-height: inherit; padding: 2px 8px; border-radius: 8px; transition: background .12s, box-shadow .12s; }
+.proj-name-wrap:hover .ant-input.proj-name:not(:focus) { background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.proj-name-wrap .ant-input.proj-name:focus { background: #fff; box-shadow: inset 0 0 0 1px var(--accent); }
 .proj-desc { color: var(--muted); padding: 0 0 8px !important; }
 
 /* version controls */
@@ -121,17 +131,22 @@ span.crumb-name { padding: 3px 6px; white-space: nowrap; max-width: 260px; overf
    (same font + padding) sizes the wrapper, and the input overlays it
    absolutely — so the input's intrinsic width can't inflate the box. Hovering
    reveals the "hidden input" affordance. */
-.pat-name-wrap { position: relative; display: inline-block; font-family: var(--serif); font-size: 16px; font-weight: 700; line-height: 1.5; min-width: 56px; max-width: 340px; }
+.pat-name-wrap { position: relative; display: inline-block; flex: 0 1 auto; font-family: var(--serif); font-size: 16px; font-weight: 700; line-height: 1.5; min-width: 56px; max-width: 340px; }
 .pat-name-wrap::after { content: attr(data-value) ' '; visibility: hidden; white-space: pre; display: block; overflow: hidden; padding: 2px 7px; }
 .pat-name-wrap .ant-input.pat-name { position: absolute; inset: 0; width: 100%; height: 100%; font: inherit; line-height: inherit; padding: 2px 7px; border-radius: 6px; transition: background .12s, box-shadow .12s; }
-.pat-name-wrap:hover .ant-input.pat-name:not(:focus):not([readonly]) { background: rgba(40, 30, 20, .05); box-shadow: inset 0 0 0 1px var(--line); }
+/* the hover affordance reads "input field", distinct from the link-tint hover */
+.pat-name-wrap:hover .ant-input.pat-name:not(:focus):not([readonly]) { background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
 .pat-name-wrap .ant-input.pat-name:focus { background: #fff; box-shadow: inset 0 0 0 1px var(--accent); }
-.seg-icon { display: flex; align-items: center; padding: 3px 5px; }
+/* icon-only segments: flex-center the label so every glyph sits on the same
+   vertical axis regardless of its intrinsic bounding box */
+.toolbar .ant-segmented-item-label { display: flex; align-items: center; justify-content: center; }
+.seg-icon { display: flex; align-items: center; justify-content: center; padding: 4px 5px; }
+.seg-icon svg { width: 17px; height: 17px; }
 .toolbar { display: flex; align-items: center; gap: 12px; padding: 7px 16px; background: var(--bg-2); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
 .tool-view { display: flex; align-items: center; gap: 4px; padding-left: 12px; margin-left: 4px; border-left: 1px solid var(--line); }
 
 /* keyboard focus visibility (custom interactive elements) */
-.chip:focus-visible, .row-main:focus-visible, .card-new:focus-visible, .card-main:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+.chip:focus-visible, .row-main:focus-visible, .card-main:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
 
 /* resource column header: icon + count */
 .res-title { display: inline-flex; align-items: center; gap: 7px; font-weight: 600; }
@@ -161,13 +176,18 @@ span.crumb-name { padding: 3px 6px; white-space: nowrap; max-width: 260px; overf
 .chip kbd { position: absolute; top: 3px; right: 3px; font-size: 9px; padding: 0 3px; }
 .glyph-wrap { display: block; line-height: 0; }
 
-.howto-card { margin-top: auto; border-top: 1px solid var(--line); padding-top: 10px; }
+/* negative margins stretch the separator across the aside's 14px padding */
+.howto-card { margin: auto -14px 0; padding: 10px 14px 0; border-top: 1px solid var(--line); }
 .howto-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; background: transparent; border: none; padding: 2px 0; cursor: pointer; }
 .howto-toggle .panel-title { margin: 0; }
 .howto-toggle:hover .panel-title { color: var(--ink); }
-.howto-chevron { color: var(--muted); transition: transform .15s; }
-.howto-chevron.closed { transform: rotate(-90deg); }
-.howto-card .howto { margin-top: 8px; }
+.howto-chevron { color: var(--muted); transition: transform .2s ease; }
+.howto-chevron.closed { transform: rotate(180deg); } /* points up when closed */
+/* 1fr -> 0fr grid-row trick animates the spoiler open/closed */
+.howto-body { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .22s ease; }
+.howto-body.closed { grid-template-rows: 0fr; }
+.howto-body > .howto { overflow: hidden; min-height: 0; }
+.howto-body .howto li:first-child { margin-top: 8px; } /* spacing inside the clip so the closed state is truly 0-height */
 .howto { margin: 0; padding-left: 18px; font-size: 12px; color: var(--muted); line-height: 1.7; }
 .howto b { color: var(--ink); }
 .dot-space { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--space); vertical-align: -1px; }
@@ -201,6 +221,7 @@ span.crumb-name { padding: 3px 6px; white-space: nowrap; max-width: 260px; overf
 .export-form .field > span { font-weight: 500; color: var(--ink); }
 .export-form .field.check { flex-direction: row; align-items: center; gap: 9px; color: var(--ink); }
 .insp-acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.icon-flip-h { transform: scaleX(-1); }
 .type-opt { display: inline-flex; align-items: center; gap: 7px; }
 .legend { display: flex; flex-direction: column; gap: 6px; }
 .legend-row { display: flex; align-items: center; gap: 9px; font-size: 13px; }

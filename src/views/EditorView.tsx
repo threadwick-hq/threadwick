@@ -5,7 +5,7 @@ import {
 import {
   UndoIcon, RedoIcon, DownloadIcon, HelpIcon, MenuIcon,
   PlusIcon, ZoomInIcon, ZoomOutIcon, FitIcon, MoreIcon, DeleteIcon,
-  EditIcon, RotateLeftIcon, RotateRightIcon, OriginIcon,
+  EditIcon, RotateRightIcon, OriginIcon,
   SelectModeIcon, InsertModeIcon, PanModeIcon, MirrorIcon, ChevronDownIcon,
 } from '../icons';
 import { useStore } from '../useStore';
@@ -18,7 +18,7 @@ import { STITCH_ORDER, START_ORDER, STITCHES, STITCH_KEYS, isStart, isRealStitch
 import { chainOrder } from '../core/connectivity';
 import { usedTypes } from '../core/render';
 import { summarizeRound, exportPatternSVG, exportPatternPNG, printPattern } from '../core/files';
-import { hasStart, isStartRow } from '../core/model';
+import { hasStart, isStartRow, isPlaceholderName } from '../core/model';
 import { INK, ORIGIN, SPACE, SELECT, NEXT } from '../core/colors';
 import type { Stitch, StitchType } from '../core/types';
 
@@ -97,11 +97,11 @@ export function EditorView() {
       <TopBarSlot>
         <Breadcrumb className="crumbs" items={[
           { title: <button className="crumb-link" onClick={() => s.goProjects()}>All projects</button> },
-          { title: <button className="crumb-link crumb-name" onClick={() => s.backToProject()}>{proj?.name ?? 'Project'}</button> },
+          { title: <button className={'crumb-link crumb-name' + (proj && isPlaceholderName(proj.name) ? ' name-placeholder' : '')} onClick={() => s.backToProject()}>{proj?.name ?? 'Project'}</button> },
           { title: (
             <span className="crumb-leaf">
               <span className="pat-name-wrap" data-value={pat.name}>
-                <Input variant="borderless" className="pat-name" value={pat.name} readOnly={readOnly} onChange={(e) => s.renamePattern(pat.id, e.target.value)} />
+                <Input variant="borderless" className={'pat-name' + (isPlaceholderName(pat.name) ? ' name-placeholder' : '')} value={pat.name} readOnly={readOnly} onChange={(e) => s.renamePattern(pat.id, e.target.value)} />
               </span>
               <span className="badge">Granny square</span>
             </span>
@@ -231,7 +231,7 @@ function HowItWorks() {
         <span className="panel-title">How it works</span>
         <ChevronDownIcon className={'howto-chevron' + (open ? '' : ' closed')} />
       </button>
-      {open && (
+      <div className={'howto-body' + (open ? '' : ' closed')} aria-hidden={!open}>
         <ol className="howto">
           <li>Pick a <b>start</b>, then a <b>row</b>.</li>
           <li>Hit <b>Insert</b> (or a stitch key).</li>
@@ -239,7 +239,7 @@ function HowItWorks() {
           <li>Click again to set the <b>head</b>.</li>
           <li><kbd>Alt</kbd>/<kbd>⌘</kbd>-click a stitch to work out of it.</li>
         </ol>
-      )}
+      </div>
     </div>
   );
 }
@@ -328,7 +328,7 @@ function Inspector({ pat, ctrl, readOnly }: { pat: import('../core/types').Patte
         </label>
       )}
       {!readOnly && <div className="insp-acts">
-        <Tooltip title="Rotate −15°"><Button size="small" icon={<RotateLeftIcon />} onClick={() => s.rotateSelectionBy(-15)} /></Tooltip>
+        <Tooltip title="Rotate −15°"><Button size="small" icon={<RotateRightIcon className="icon-flip-h" />} onClick={() => s.rotateSelectionBy(-15)} /></Tooltip>
         <Tooltip title="Rotate +15°"><Button size="small" icon={<RotateRightIcon />} onClick={() => s.rotateSelectionBy(15)} /></Tooltip>
         <Tooltip title="Flip the selection horizontally"><Button size="small" icon={<MirrorIcon />} onClick={() => s.mirrorSelection()}>Mirror</Button></Tooltip>
         {items.length === 1 && <Button size="small" icon={<OriginIcon />} onClick={() => { ctrl.current?.setMode('insert'); ctrl.current?.setOrigin(first.id); }}>Set as origin</Button>}
