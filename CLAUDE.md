@@ -5,6 +5,36 @@ architecture and mental model.
 
 ## Core principles
 
+### Brand & values (must-have — see [`docs/BRAND.md`](docs/BRAND.md))
+
+The Studio and the homepage (`Eiluviann/threadwick-home`) are **one product**:
+**Threadwick** is the brand, **Threadwick Studio** is this app. The full source
+of truth is [`docs/BRAND.md`](docs/BRAND.md); the load-bearing facts:
+
+- **Spine:** "Fair tools for fiber artists & makers." Two audiences: **fiber
+  artists** (design & publish) and **makers** (follow patterns, make projects).
+  Voice: warm, plain-spoken; no jargon, hype, or urgency tricks.
+- **Free-first fairness model:** designing, charting, organizing, exporting,
+  accounts, cloud sync & backup, sharing, and license-key sales the artist
+  transacts themselves are **free, always**. The **only** paid surface is when
+  Threadwick processes a sale for an artist (marketplace / buy-via-link), with
+  small, flat, transparent, artist-majority fees. **Makers never pay
+  Threadwick anything, ever.** Never paywall core tools or account/sync/backup;
+  no dark patterns.
+- **Vocabulary:** Project → Pattern (Draft/Published/Outdated) → **Chart**
+  (say "chart", not "graph"), worked in rounds; project resources are
+  **yarns, links, notes, variations**. It's **Ravelry** (never "Raverly"), and
+  the old name "stitchgrid" must not reappear (sole exception: the legacy
+  localStorage migration key).
+- **Stitch terminology:** US **and** UK names are both supported
+  (`stitchName`/`stitchAbbr` in `src/core/symbols.ts`); data stores symbol
+  types, never convention-specific names.
+- **Identity:** this repo owns the logo/palette/type tokens — if they change,
+  flag the homepage to follow. Hold WCAG AA: primary buttons use `#a64e30`
+  (white on `#c2603f` is sub-AA), muted text uses `#6b675f` (not `#8a8275`).
+- **Roadmap honesty:** never show fake/unavailable features in-app; when a
+  planned feature ships, the homepage moves it out of "What's on the hook".
+
 ### Data ownership & portability (must-have, non-negotiable)
 
 Users own their data. The app must never become a place where data goes in but
