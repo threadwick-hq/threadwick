@@ -18,6 +18,12 @@ export const PATTERN_TYPES: Record<PatternKind, PatternTypeInfo> = {
   flat: { id: 'flat', name: 'Worked flat', worked: 'rows back and forth', available: false },
 };
 
+// Default names are placeholders the user is meant to replace; the UI renders
+// them muted to say so.
+export function isPlaceholderName(name: string): boolean {
+  return name === 'Untitled project' || name === 'Untitled pattern';
+}
+
 export function newRound(name?: string): Round {
   return { id: uid('rnd'), name: name || 'Round 1' };
 }

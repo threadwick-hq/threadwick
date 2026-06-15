@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import { App, Button, Card, Dropdown, Empty, Form, Input, Modal } from 'antd';
+import { App, Breadcrumb, Button, Card, Dropdown, Empty, Form, Input, Modal } from 'antd';
 import {
   PlusIcon, ImportIcon, MoreIcon, DownloadIcon, CopyIcon, DeleteIcon,
 } from '../icons';
 import { useStore } from '../useStore';
-import { TopBar } from '../components/TopBar';
+import { TopBarSlot } from '../components/TopBar';
 import { Thumb } from '../components/Thumb';
 import { Glyph } from '../components/Glyph';
 import { VersionTag } from '../components/VersionTag';
 import { exportProjectFile, importProjectFile } from '../core/files';
-import { displayVersion } from '../core/model';
+import { displayVersion, isPlaceholderName } from '../core/model';
 import type { Project } from '../core/types';
 
 function fmtDate(iso: string): string {
@@ -46,11 +46,14 @@ export function ProjectsView() {
 
   return (
     <div className="home">
-      <TopBar>
+      <TopBarSlot>
+        <Breadcrumb className="crumbs" items={[
+          { title: <span className="crumb-here">All projects</span> },
+        ]} />
         <div className="grow" />
         <Button icon={<ImportIcon />} onClick={onImport}>Import…</Button>
         <Button type="primary" icon={<PlusIcon />} onClick={() => setNewOpen(true)}>New project</Button>
-      </TopBar>
+      </TopBarSlot>
 
       <div className="page">
         <p className="tagline">Your crochet workshop — one folder per project, for patterns, yarns, links and notes. Design granny squares the way you crochet them.</p>
@@ -73,7 +76,7 @@ export function ProjectsView() {
                 <div className="card-row">
                   <div className="card-main" role="button" tabIndex={0} onClick={() => s.openProject(p.id)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); s.openProject(p.id); } }}>
-                    <Card.Meta title={p.name} description={`${dv.label} · ${dv.patterns.length} pattern${dv.patterns.length === 1 ? '' : 's'} · ${fmtDate(p.updatedAt)}`} />
+                    <Card.Meta title={<span className={isPlaceholderName(p.name) ? 'name-placeholder' : undefined}>{p.name}</span>} description={`${dv.label} · ${dv.patterns.length} pattern${dv.patterns.length === 1 ? '' : 's'} · ${fmtDate(p.updatedAt)}`} />
                   </div>
                   <Dropdown
                     trigger={['click']}

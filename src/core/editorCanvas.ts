@@ -4,11 +4,12 @@
 // one-click chains that flow off the origin). React mounts it via a ref.
 
 import { clamp, round } from './util';
+import { rotatePoint } from './geometry';
 import { buildStitchShapes, shapesMarkup, stitchToSVG, topOfStitch, contentBounds } from './render';
 import { INK, GHOST, ORIGIN, SPACE, NEXT, SELECT } from './colors';
 import {
   pickBase, basePoint, nearestStitch, spacesForRound, successorInRound,
-  chainFrom, defaultOriginId,
+  chainFrom, defaultOriginId, stitchWithinRect,
 } from './connectivity';
 import { isStart } from './symbols';
 import { hasStart, isStartRow } from './model';
@@ -36,23 +37,27 @@ export interface CanvasController {
   getNextStitchId(): string | null;
   resetInsert(): void;
   escape(): boolean;
-  setSpace(v: boolean): void;
+  setTransientMode(m: Mode | null): void;
+  getTransientMode(): Mode | null;
   syncView(): void;
   destroy(): void;
 }
 
 interface View { scale: number; panX: number; panY: number; }
 interface Drag { leadId: string; ox: number; oy: number; startU: Point; moved: boolean; shift: boolean; }
-interface Marquee { startU: Point; additive: boolean; base: Set<string>; moved: boolean; }
+interface Marquee { startU: Point; cur: Point; additive: boolean; base: Set<string>; moved: boolean; }
+// Dragging a selected stitch's head/base dot moves that endpoint only; the
+// head captured at gesture start stays the pin for base drags (no drift).
+interface EndpointDrag { id: string; which: 'head' | 'base'; startU: Point; headAtStart: Point; moved: boolean; }
 
-function mark(pt: Point, color: string, r = 4): string {
-  return `<circle cx="${round(pt.x)}" cy="${round(pt.y)}" r="${r}" fill="${color}" fill-opacity="0.35" stroke="${color}" stroke-width="1.6"/>`;
-}
-function ring(pt: Point, color: string, r = 4.5): string {
-  return `<circle cx="${round(pt.x)}" cy="${round(pt.y)}" r="${r}" fill="none" stroke="${color}" stroke-width="1.6"/>`;
+// Point indicators (heads, bases, spaces) are points: simple filled dots, no
+// tinted halo or outline ring. Callers pass a radius already converted to
+// user units (via `pr`) so the dot keeps a fixed on-screen size at any zoom.
+function mark(pt: Point, color: string, r = 3.2): string {
+  return `<circle cx="${round(pt.x)}" cy="${round(pt.y)}" r="${round(r)}" fill="${color}"/>`;
 }
 function link(a: Point, b: Point, color: string, dash = '4 3'): string {
-  return `<line x1="${round(a.x)}" y1="${round(a.y)}" x2="${round(b.x)}" y2="${round(b.y)}" stroke="${color}" stroke-width="1.5" stroke-dasharray="${dash}" opacity="0.85"/>`;
+  return `<line x1="${round(a.x)}" y1="${round(a.y)}" x2="${round(b.x)}" y2="${round(b.y)}" stroke="${color}" stroke-width="1.5" stroke-dasharray="${dash}" opacity="0.85" vector-effect="non-scaling-stroke"/>`;
 }
 
 export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: () => void } = {}): CanvasController {
@@ -69,13 +74,24 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
   let phase: Phase = 'base';
   let pendingBase: BaseHit | null = null;
 
-  let drag: Drag | null = null, panning: { x: number; y: number } | null = null, marquee: Marquee | null = null, spaceDown = false;
+  let drag: Drag | null = null, panning: { x: number; y: number } | null = null, marquee: Marquee | null = null;
+  let endpointDrag: EndpointDrag | null = null;
+  // A momentarily HELD mode (e.g. hold Space for pan) that overrides the chosen
+  // base mode until released. Generic on purpose: any key could hold any mode.
+  let transientMode: Mode | null = null;
+  const effMode = (): Mode => transientMode ?? mode;
   let lastU: Point = { x: 0, y: 0 };
   let saveTimer: ReturnType<typeof setTimeout> | undefined;
+
+  // Convert a desired on-screen pixel radius into user-space units for the
+  // current zoom, so overlay dots (heads, bases, spaces, handles) stay the same
+  // size on screen no matter how far you've zoomed in or out.
+  const pr = (px: number): number => px / view.scale;
 
   const pat = () => store.currentPattern();
   const stitches = (): Stitch[] => { const p = pat(); return p ? p.stitches : []; };
   const activeRound = (): string => { const p = pat(); return p ? p.activeRound : ''; };
+  const editable = (): boolean => store.currentVersion()?.status === 'draft';
 
   const rect = () => svg.getBoundingClientRect();
   function toUser(cx: number, cy: number): Point {
@@ -107,7 +123,7 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     const active = activeRound();
     const sel = store.selection;
     for (const s of stitches()) if (s.round !== active && !sel.has(s.id)) m.set(s.id, { opacity: 0.28 });
-    if (mode !== 'insert') return m;
+    if (effMode() !== 'insert') return m; // a held pan over insert hides the insert helpers
     if (originId && store.byIdMap().has(originId)) m.set(originId, { color: ORIGIN });
     const nx = nextStitch();
     if (nx) {
@@ -127,9 +143,18 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     const pp = pat();
     if (pp && !hasStart(pp)) out += emptyHintMarkup();
     out += '<g class="stitches">';
+    // Bucket stitches by opacity tier and apply the opacity ONCE per bucket:
+    // group opacity composites the tier as a whole, so overlapping dimmed
+    // stitches don't stack alpha (and darken) at their intersections. Dimmer
+    // tiers paint first, so full-opacity stitches stay on top.
+    const tiers = new Map<number, string>();
     for (const st of stitches()) {
       const sty = sm.get(st.id) || {};
-      out += stitchToSVG(st, { interactive: true, color: sty.color, opacity: sty.opacity });
+      const op = sty.opacity ?? 1;
+      tiers.set(op, (tiers.get(op) || '') + stitchToSVG(st, { interactive: true, color: sty.color }));
+    }
+    for (const op of [...tiers.keys()].sort((a, b) => a - b)) {
+      out += op < 1 ? `<g opacity="${op}">${tiers.get(op)!}</g>` : tiers.get(op)!;
     }
     out += '</g>';
     out += selectionMarkup();
@@ -158,24 +183,39 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     const sel = store.selection;
     if (!sel.size) return '';
     const byId = store.byIdMap();
+    const canEdit = editable();
     let out = '<g pointer-events="none">';
+    let handles = '';
     for (const st of stitches()) {
       if (!sel.has(st.id)) continue;
-      out += `<circle cx="${round(st.x)}" cy="${round(st.y)}" r="10" fill="${SELECT}" fill-opacity="0.16" stroke="${SELECT}" stroke-width="1.4"/>`;
       const head = topOfStitch(st);
-      out += mark({ x: st.x, y: st.y }, SPACE, 3.2);
-      out += mark(head, SELECT, 3.2);
       const origin = st.origin ? byId.get(st.origin) : undefined;
       if (origin) out += link(topOfStitch(origin), { x: st.x, y: st.y }, ORIGIN);
+      if (canEdit && !isStart(st.type) && st.type !== 'slst') {
+        // the base/head dots double as drag handles (a slip stitch is a single
+        // point — head, base and body coincide — so it only moves as a whole)
+        handles += handle(st.id, 'base', { x: st.x, y: st.y }, SPACE);
+        handles += handle(st.id, 'head', head, SELECT);
+      } else {
+        out += mark({ x: st.x, y: st.y }, SPACE, pr(3.4));
+        out += mark(head, SELECT, pr(3.4));
+      }
     }
-    return out + '</g>';
+    out += '</g>';
+    return out + (handles ? `<g class="handles">${handles}</g>` : '');
+  }
+  function handle(id: string, which: 'head' | 'base', pt: Point, color: string): string {
+    return `<g class="handle" data-id="${id}" data-handle="${which}">`
+      + `<circle cx="${round(pt.x)}" cy="${round(pt.y)}" r="${round(pr(9))}" fill="transparent" pointer-events="all"/>`
+      + mark(pt, color, pr(3.4)) + '</g>';
   }
 
   function clearCursor(): void { cursorLayer.innerHTML = ''; }
   function applyCursor(): void {
+    const m = effMode();
     svg.style.cursor = panning ? 'grabbing'
-      : (spaceDown || mode === 'pan') ? 'grab'
-      : mode === 'insert' ? 'crosshair'
+      : m === 'pan' ? 'grab'
+      : m === 'insert' ? 'crosshair'
       : 'default';
   }
   function originGlyph(): string {
@@ -194,14 +234,26 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     let out = '';
     for (const sp of spacesForRound(stitches(), activeRound())) {
       const isHit = !!emphasis && emphasis.kind === 'space' && emphasis.ids[0] === sp.ids[0] && emphasis.ids[1] === sp.ids[1];
-      out += `<circle cx="${round(sp.point.x)}" cy="${round(sp.point.y)}" r="${isHit ? 5 : 3}" fill="${SPACE}" fill-opacity="${isHit ? 0.5 : 0.22}" stroke="${SPACE}" stroke-width="${isHit ? 1.6 : 1}"/>`;
+      out += `<circle cx="${round(sp.point.x)}" cy="${round(sp.point.y)}" r="${round(pr(isHit ? 5 : 3))}" fill="${SPACE}" fill-opacity="${isHit ? 1 : 0.5}"/>`;
     }
     return out;
   }
 
+  // The marquee window pane. Drawn from drawCursor too, so the re-renders that
+  // selection changes trigger mid-gesture can't wipe it off the cursor layer.
+  function marqueeMarkup(): string {
+    if (!marquee) return '';
+    const { startU: a, cur: b } = marquee;
+    const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y);
+    const w = Math.abs(b.x - a.x), h = Math.abs(b.y - a.y);
+    // solid border, and non-scaling-stroke keeps it 1.4px on screen at any zoom
+    return `<rect x="${round(x)}" y="${round(y)}" width="${round(w)}" height="${round(h)}" fill="${GHOST}" fill-opacity="0.08" stroke="${GHOST}" stroke-width="1.4" vector-effect="non-scaling-stroke"/>`;
+  }
+
   function drawCursor(u: Point): void {
     lastU = u;
-    if (mode !== 'insert' || drag || marquee || panning) { clearCursor(); return; }
+    if (marquee) { cursorLayer.innerHTML = marqueeMarkup(); return; }
+    if (effMode() !== 'insert' || drag || panning) { clearCursor(); return; }
     const p = pat();
     if (!p || isStartRow(p, p.activeRound) || !hasStart(p)) { clearCursor(); return; }
     const og = originGlyph();
@@ -216,8 +268,8 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     if (phase === 'base') {
       const base = pickBase(stitches(), u.x, u.y);
       let out = og + spaceDots(base);
-      out += ring(u, SPACE, 3);
-      if (base && base.kind === 'stitch') out += mark(base.point, SPACE, 5);
+      out += mark(u, SPACE, pr(2.6));
+      if (base && base.kind === 'stitch') out += mark(base.point, SPACE, pr(5));
       cursorLayer.innerHTML = out;
       return;
     }
@@ -228,7 +280,7 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     const rot = (Math.atan2(dx, -dy) * 180) / Math.PI;
     const o = originId ? store.byIdMap().get(originId) : undefined;
     const linkLine = o ? link(topOfStitch(o), bp, ORIGIN) : '';
-    cursorLayer.innerHTML = linkLine + og + ghostStitch(bp, len, rot) + mark(bp, SPACE, 4.5);
+    cursorLayer.innerHTML = linkLine + og + ghostStitch(bp, len, rot) + mark(bp, SPACE, pr(4.5));
   }
 
   function toBaseDesc(hit: BaseHit): Base {
@@ -237,9 +289,10 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
 
   // ---- pointer interaction -------------------------------------------------
   function onDown(e: PointerEvent): void {
-    if (e.button === 1 || mode === 'pan' || spaceDown) { startPan(e); return; }
+    const m = effMode();
+    if (e.button === 1 || m === 'pan') { startPan(e); return; }
     const u = toUser(e.clientX, e.clientY);
-    if (mode === 'insert') { insertDown(e, u); return; }
+    if (m === 'insert') { insertDown(e, u); return; }
     selectDown(e, u);
   }
 
@@ -277,7 +330,35 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     onChange(); drawCursor(u);
   }
 
+  // Geometry for dragging a head/base handle. A head drag pins the base (length
+  // and rotation follow the cursor); a base drag pins the head. Chains are
+  // fixed-size, so EITHER handle rotates them — around the pinned base (head
+  // handle) or the pinned head (base handle); only a body drag translates one.
+  function endpointPatch(st: Stitch, which: 'head' | 'base', head0: Point, u: Point): { x?: number; y?: number; rot?: number; len?: number } {
+    const aim = (x0: number, y0: number, x1: number, y1: number) => (Math.atan2(x1 - x0, -(y1 - y0)) * 180) / Math.PI;
+    if (st.type === 'ch') {
+      if (which === 'head') return { rot: aim(st.x, st.y, u.x, u.y) };
+      const rot = aim(u.x, u.y, head0.x, head0.y);
+      const built = buildStitchShapes('ch');
+      const lh = built.head ?? { x: 0, y: -built.height };
+      const off = rotatePoint(lh.x, lh.y, rot);
+      return { rot, x: head0.x - off.x, y: head0.y - off.y };
+    }
+    if (which === 'head') return { len: Math.max(2, Math.hypot(u.x - st.x, u.y - st.y)), rot: aim(st.x, st.y, u.x, u.y) };
+    return { x: u.x, y: u.y, len: Math.max(2, Math.hypot(head0.x - u.x, head0.y - u.y)), rot: aim(u.x, u.y, head0.x, head0.y) };
+  }
+
   function selectDown(e: PointerEvent, u: Point): void {
+    const hb = (e.target as Element).closest('[data-handle]');
+    if (hb) {
+      const id = hb.getAttribute('data-id')!;
+      const st = store.byIdMap().get(id);
+      if (st) {
+        endpointDrag = { id, which: hb.getAttribute('data-handle') as 'head' | 'base', startU: u, headAtStart: topOfStitch(st), moved: false };
+        svg.setPointerCapture(e.pointerId);
+        return;
+      }
+    }
     const hit = (e.target as Element).closest('[data-id]');
     if (hit) {
       const id = hit.getAttribute('data-id')!;
@@ -289,7 +370,7 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
       drag = { leadId: id, ox: u.x - lead.x, oy: u.y - lead.y, startU: u, moved: false, shift: e.shiftKey };
       svg.setPointerCapture(e.pointerId);
     } else {
-      marquee = { startU: u, additive: e.shiftKey, base: e.shiftKey ? new Set(store.selection) : new Set(), moved: false };
+      marquee = { startU: u, cur: u, additive: e.shiftKey, base: e.shiftKey ? new Set(store.selection) : new Set(), moved: false };
       svg.setPointerCapture(e.pointerId);
     }
   }
@@ -297,7 +378,7 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
   function startPan(e: PointerEvent): void { panning = { x: e.clientX, y: e.clientY }; svg.setPointerCapture(e.pointerId); applyCursor(); }
 
   function onMove(e: PointerEvent): void {
-    if ((drag || panning || marquee) && e.buttons === 0) { endGesture(e); return; }
+    if ((drag || panning || marquee || endpointDrag) && e.buttons === 0) { endGesture(e); return; }
     const u = toUser(e.clientX, e.clientY);
     if (panning) {
       view.panX -= (e.clientX - panning.x) / view.scale;
@@ -307,12 +388,25 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     }
     if (marquee) {
       marquee.moved = true;
+      marquee.cur = u;
+      cursorLayer.innerHTML = marqueeMarkup();
       const x0 = Math.min(marquee.startU.x, u.x), y0 = Math.min(marquee.startU.y, u.y);
-      const w = Math.abs(u.x - marquee.startU.x), h = Math.abs(u.y - marquee.startU.y);
-      cursorLayer.innerHTML = `<rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="${GHOST}" fill-opacity="0.08" stroke="${GHOST}" stroke-width="1.2" stroke-dasharray="4 3"/>`;
+      const x1 = Math.max(marquee.startU.x, u.x), y1 = Math.max(marquee.startU.y, u.y);
       const ids = new Set(marquee.base);
-      for (const st of stitches()) if (!isStart(st.type) && st.x >= x0 && st.x <= x0 + w && st.y >= y0 && st.y <= y0 + h) ids.add(st.id);
+      // window-pane selection: only stitches FULLY inside (head + base) make it
+      for (const st of stitches()) if (!isStart(st.type) && stitchWithinRect(st, x0, y0, x1, y1)) ids.add(st.id);
       store.setSelection([...ids]); return;
+    }
+    if (endpointDrag) {
+      const st = store.byIdMap().get(endpointDrag.id);
+      if (!st) { endpointDrag = null; return; }
+      if (!endpointDrag.moved) {
+        if (Math.hypot(u.x - endpointDrag.startU.x, u.y - endpointDrag.startU.y) * view.scale < 3) return;
+        endpointDrag.moved = true; store.dragBegin();
+      }
+      store.adjustStitch(st.id, endpointPatch(st, endpointDrag.which, endpointDrag.headAtStart, u));
+      scheduleRender();
+      return;
     }
     if (drag) {
       if (!drag.moved) {
@@ -328,11 +422,11 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
   }
 
   function endGesture(e: PointerEvent): void {
-    const wasDrag = !!(drag && drag.moved);
+    const wasDrag = !!(drag && drag.moved) || !!(endpointDrag && endpointDrag.moved);
     if (drag && !drag.moved && !drag.shift) store.setSelection([drag.leadId]);
     if (marquee && !marquee.moved && !marquee.additive) store.clearSelection();
     if (marquee || drag) clearCursor();
-    panning = null; drag = null; marquee = null;
+    panning = null; drag = null; marquee = null; endpointDrag = null;
     try { svg.releasePointerCapture(e.pointerId); } catch { /* not captured */ }
     if (wasDrag) store.commitGesture(); // one React/autosave flush after a move-drag
     drawCursor(toUser(e.clientX, e.clientY));
@@ -348,6 +442,13 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     view.panX = u0x - cxPix / view.scale;
     view.panY = u0y - cyPix / view.scale;
     applyViewBox();
+    redrawOverlayForZoom();
+  }
+
+  // Overlay dots are sized in user units via `pr`, so after a zoom they must be
+  // re-emitted at the new scale. Only worth it when something is overlaid.
+  function redrawOverlayForZoom(): void {
+    if (store.selection.size || effMode() === 'insert') scheduleRender();
   }
 
   const onLeave = () => { if (!marquee && !drag && !panning) clearCursor(); };
@@ -382,8 +483,8 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     render,
     invalidate: scheduleRender,
     fit,
-    zoomIn: () => { view.scale = clamp(view.scale * 1.2, 0.15, 9); applyViewBox(); },
-    zoomOut: () => { view.scale = clamp(view.scale / 1.2, 0.15, 9); applyViewBox(); },
+    zoomIn: () => { view.scale = clamp(view.scale * 1.2, 0.15, 9); applyViewBox(); redrawOverlayForZoom(); },
+    zoomOut: () => { view.scale = clamp(view.scale / 1.2, 0.15, 9); applyViewBox(); redrawOverlayForZoom(); },
     getMode: () => mode,
     setMode(m: Mode) {
       if (m === mode) return;
@@ -400,12 +501,21 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     getNextStitchId: () => { const n = nextStitch(); return n ? n.id : null; },
     resetInsert() { resetInsert(); scheduleRender(); },
     escape() {
+      // Select is the resting mode: Esc steps any other mode back toward it.
+      if (mode === 'pan') { this.setMode('select'); return true; }
       if (mode !== 'insert') return false;
       if (phase === 'head') { phase = 'base'; pendingBase = null; onChange(); drawCursor(lastU); return true; }
       this.setMode('select');
       return true;
     },
-    setSpace(v: boolean) { spaceDown = v; applyCursor(); },
+    setTransientMode(m: Mode | null) {
+      if (transientMode === m) return;
+      transientMode = m;
+      applyCursor();
+      onChange();       // toolbar reflects the held mode
+      scheduleRender(); // cursor + insert helpers depend on the effective mode
+    },
+    getTransientMode: () => transientMode,
     syncView() { const p = pat(); if (p) view = { ...p.view }; applyViewBox(); },
     destroy() {
       try { ro.disconnect(); } catch { /* gone */ }

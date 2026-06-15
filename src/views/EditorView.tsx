@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  App, Alert, Button, Segmented, Select, Slider, Switch, ColorPicker, Dropdown, Modal, Input, Tooltip, Typography,
+  App, Alert, Breadcrumb, Button, Segmented, Select, InputNumber, Switch, ColorPicker, Dropdown, Modal, Input, Tooltip, Typography,
 } from 'antd';
 import {
-  BackIcon, UndoIcon, RedoIcon, DownloadIcon, HelpIcon, MenuIcon,
+  UndoIcon, RedoIcon, DownloadIcon, HelpIcon, MenuIcon,
   PlusIcon, ZoomInIcon, ZoomOutIcon, FitIcon, MoreIcon, DeleteIcon,
-  EditIcon, RotateLeftIcon, RotateRightIcon, OriginIcon,
+  EditIcon, RotateRightIcon, OriginIcon,
+  SelectModeIcon, InsertModeIcon, PanModeIcon, MirrorIcon, ChevronDownIcon,
 } from '../icons';
 import { useStore } from '../useStore';
 import { CanvasView } from '../editor/CanvasView';
-import { TopBar } from '../components/TopBar';
+import { TopBarSlot } from '../components/TopBar';
 import { Glyph } from '../components/Glyph';
 import { statusLabel } from '../components/versionStatus';
 import type { CanvasController, Mode } from '../core/editorCanvas';
@@ -17,7 +18,7 @@ import { STITCH_ORDER, START_ORDER, STITCHES, STITCH_KEYS, isStart, isRealStitch
 import { chainOrder } from '../core/connectivity';
 import { usedTypes } from '../core/render';
 import { summarizeRound, exportPatternSVG, exportPatternPNG, printPattern } from '../core/files';
-import { hasStart, isStartRow } from '../core/model';
+import { hasStart, isStartRow, isPlaceholderName } from '../core/model';
 import { INK, ORIGIN, SPACE, SELECT, NEXT } from '../core/colors';
 import type { Stitch, StitchType } from '../core/types';
 
@@ -26,7 +27,7 @@ const KEY_TO_TYPE: Record<string, StitchType> = Object.fromEntries(
   Object.entries(STITCH_KEYS).map(([t, k]) => [k as string, t as StitchType]),
 );
 
-interface Chrome { mode: Mode; armed: StitchType; phase: 'base' | 'head'; nextId: string | null; }
+interface Chrome { mode: Mode; armed: StitchType; phase: 'base' | 'head'; nextId: string | null; transientMode: Mode | null; }
 
 export function EditorView() {
   const s = useStore();
@@ -35,7 +36,7 @@ export function EditorView() {
   const ver = s.currentVersion();
   const readOnly = !ver || ver.status !== 'draft'; // only draft versions are editable
   const ctrl = useRef<CanvasController | null>(null);
-  const [chrome, setChrome] = useState<Chrome>({ mode: 'select', armed: 'dc', phase: 'base', nextId: null });
+  const [chrome, setChrome] = useState<Chrome>({ mode: 'select', armed: 'dc', phase: 'base', nextId: null, transientMode: null });
   const [help, setHelp] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [rename, setRename] = useState<{ id: string; name: string } | null>(null);
@@ -43,7 +44,7 @@ export function EditorView() {
 
   const sync = () => {
     const c = ctrl.current; if (!c) return;
-    setChrome({ mode: c.getMode(), armed: c.getArmed(), phase: c.getPhase(), nextId: c.getNextStitchId() });
+    setChrome({ mode: c.getMode(), armed: c.getArmed(), phase: c.getPhase(), nextId: c.getNextStitchId(), transientMode: c.getTransientMode() });
   };
 
   // keyboard, scoped to the editor
@@ -63,7 +64,7 @@ export function EditorView() {
       if (meta) return;
       if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); s.deleteSelection(); return; }
       if (e.key === 'Escape') { if (!c.escape()) s.clearSelection(); return; }
-      if (e.key === ' ') { e.preventDefault(); c.setSpace(true); return; }
+      if (e.key === ' ') { e.preventDefault(); c.setTransientMode('pan'); return; } // hold Space = momentary pan
       if (k === 'v') { c.setMode('select'); return; }
       if (k === 'i') { c.setMode('insert'); return; }
       if (k === 'p') { c.setMode('pan'); return; }
@@ -80,10 +81,13 @@ export function EditorView() {
       else if (e.key === 'ArrowUp') { e.preventDefault(); s.moveSelectionBy(0, -n); }
       else if (e.key === 'ArrowDown') { e.preventDefault(); s.moveSelectionBy(0, n); }
     };
-    const onUp = (e: KeyboardEvent) => { if (e.key === ' ') ctrl.current?.setSpace(false); };
+    const onUp = (e: KeyboardEvent) => { if (e.key === ' ') ctrl.current?.setTransientMode(null); };
+    // releasing focus (alt-tab) while holding can swallow keyup — clear the hold
+    const onBlur = () => ctrl.current?.setTransientMode(null);
     window.addEventListener('keydown', onKey);
     window.addEventListener('keyup', onUp);
-    return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('keyup', onUp); };
+    window.addEventListener('blur', onBlur);
+    return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('keyup', onUp); window.removeEventListener('blur', onBlur); };
   }, [s]);
 
   if (!pat) return null;
@@ -91,12 +95,24 @@ export function EditorView() {
   const working = pat.rounds.slice(1);
   const onStart = isStartRow(pat, pat.activeRound);
   const started = hasStart(pat);
+  // a momentarily-held mode (hold Space = pan) lights its button, only when it
+  // differs from the mode you're actually in
+  const heldMode = chrome.transientMode && chrome.transientMode !== chrome.mode ? chrome.transientMode : null;
   return (
     <div className={'editor' + (readOnly ? ' has-banner' : '')}>
-      <TopBar>
-        <Tooltip title="Back to project"><Button type="text" icon={<BackIcon />} onClick={() => s.backToProject()}><span className="back-label">{proj?.name ?? 'Project'}</span></Button></Tooltip>
-        <Input variant="borderless" className="pat-name" value={pat.name} readOnly={readOnly} onChange={(e) => s.renamePattern(pat.id, e.target.value)} />
-        <span className="badge">Granny square</span>
+      <TopBarSlot>
+        <Breadcrumb className="crumbs" items={[
+          { title: <button className="crumb-link" onClick={() => s.goProjects()}>All projects</button> },
+          { title: <button className={'crumb-link crumb-name' + (proj && isPlaceholderName(proj.name) ? ' name-placeholder' : '')} onClick={() => s.backToProject()}>{proj?.name ?? 'Project'}</button> },
+          { title: (
+            <span className="crumb-leaf">
+              <span className="pat-name-wrap" data-value={pat.name}>
+                <Input variant="borderless" className={'pat-name' + (isPlaceholderName(pat.name) ? ' name-placeholder' : '')} value={pat.name} readOnly={readOnly} onChange={(e) => s.renamePattern(pat.id, e.target.value)} onPressEnter={(e) => e.currentTarget.blur()} />
+              </span>
+              <span className="badge">Granny square</span>
+            </span>
+          ) },
+        ]} />
         <div className="grow" />
         <Tooltip title="Undo (⌘Z)"><Button type="text" aria-label="Undo" icon={<UndoIcon />} disabled={!s.undoStack.length} onClick={() => s.undo()} /></Tooltip>
         <Tooltip title="Redo (⇧⌘Z)"><Button type="text" aria-label="Redo" icon={<RedoIcon />} disabled={!s.redoStack.length} onClick={() => s.redo()} /></Tooltip>
@@ -107,14 +123,21 @@ export function EditorView() {
         }}>
           <Button type="text" aria-label="Menu" icon={<MenuIcon />} />
         </Dropdown>
-      </TopBar>
+      </TopBarSlot>
 
       <div className="toolbar">
-        <Segmented value={chrome.mode === 'insert' && readOnly ? 'select' : chrome.mode} onChange={(v) => ctrl.current?.setMode(v as Mode)}
+        {/* A held mode (e.g. hold Space for pan) lights that button as "held"
+            in place — dashed + tinted — while the real selection stays put, so
+            it's clearly different from a mode you clicked to keep, and changes
+            directly between current and held (no sliding across the others).
+            `held-<mode>` is generic: any future hold-to-use mode reuses it. */}
+        <Segmented className={'mode-seg' + (heldMode ? ' holding held-' + heldMode : '')}
+          value={chrome.mode === 'insert' && readOnly ? 'select' : chrome.mode}
+          onChange={(v) => ctrl.current?.setMode(v as Mode)}
           options={[
-            { label: (<span>Select <kbd className="seg-kbd">V</kbd></span>), value: 'select' },
-            ...(readOnly ? [] : [{ label: (<span>Insert <kbd className="seg-kbd">I</kbd></span>), value: 'insert' }]),
-            { label: (<span>Pan <kbd className="seg-kbd">P</kbd></span>), value: 'pan' },
+            { label: (<Tooltip title="Select (V)"><span className="seg-icon" aria-label="Select"><SelectModeIcon /></span></Tooltip>), value: 'select' },
+            ...(readOnly ? [] : [{ label: (<Tooltip title="Insert (I)"><span className="seg-icon" aria-label="Insert"><InsertModeIcon /></span></Tooltip>), value: 'insert' }]),
+            { label: (<Tooltip title="Pan (P) · or hold Space"><span className="seg-icon" aria-label="Pan"><PanModeIcon /></span></Tooltip>), value: 'pan' },
           ]} />
         <div className="grow" />
         {!readOnly && <Tooltip title="Fan the current row out evenly"><Button size="small" onClick={() => s.evenRound(pat.activeRound)}>Even out row</Button></Tooltip>}
@@ -136,16 +159,7 @@ export function EditorView() {
         {!readOnly && (
           <aside className="ed-left">
             <Palette pat={pat} chrome={chrome} ctrl={ctrl} />
-            <div className="howto-card">
-              <div className="panel-title">How it works</div>
-              <ol className="howto">
-                <li>Pick a <b>start</b>, then a <b>row</b>.</li>
-                <li>Hit <b>Insert</b> (or a stitch key).</li>
-                <li>Click a <b>base</b> — a stitch or an <span className="dot-space" /> space.</li>
-                <li>Click again to set the <b>head</b>.</li>
-                <li><kbd>Alt</kbd>/<kbd>⌘</kbd>-click a stitch to work out of it.</li>
-              </ol>
-            </div>
+            <HowItWorks />
           </aside>
         )}
 
@@ -207,6 +221,38 @@ export function EditorView() {
         <Input value={rename?.name ?? ''} autoFocus onChange={(e) => setRename((r) => r && { ...r, name: e.target.value })}
           onPressEnter={() => { if (rename) s.renameRound(rename.id, rename.name.trim() || 'Row'); setRename(null); }} />
       </Modal>
+    </div>
+  );
+}
+
+// The collapse state is a local UI preference (not project data), so it lives
+// in its own localStorage key and never enters the portable project format.
+const HOWTO_KEY = 'threadwickstudio:ui:howto-collapsed';
+
+function HowItWorks() {
+  const [open, setOpen] = useState(() => {
+    try { return localStorage.getItem(HOWTO_KEY) !== '1'; } catch { return true; }
+  });
+  const toggle = () => {
+    const next = !open;
+    setOpen(next);
+    try { localStorage.setItem(HOWTO_KEY, next ? '0' : '1'); } catch { /* ignore quota */ }
+  };
+  return (
+    <div className="howto-card">
+      <button className="howto-toggle" onClick={toggle} aria-expanded={open}>
+        <span className="panel-title">How it works</span>
+        <ChevronDownIcon className={'howto-chevron' + (open ? '' : ' closed')} />
+      </button>
+      <div className={'howto-body' + (open ? '' : ' closed')} aria-hidden={!open}>
+        <ol className="howto">
+          <li>Pick a <b>start</b>, then a <b>row</b>.</li>
+          <li>Hit <b>Insert</b> (or a stitch key).</li>
+          <li>Click a <b>base</b> — a stitch or an <span className="dot-space" /> space.</li>
+          <li>Click again to set the <b>head</b>.</li>
+          <li><kbd>Alt</kbd>/<kbd>⌘</kbd>-click a stitch to work out of it.</li>
+        </ol>
+      </div>
     </div>
   );
 }
@@ -273,7 +319,10 @@ function Inspector({ pat, ctrl, readOnly }: { pat: import('../core/types').Patte
       <label className="field"><span>Type</span>
         <Select size="small" disabled={readOnly} value={sameType ? first.type : undefined} placeholder="(mixed)" style={{ width: '100%' }}
           onChange={(v) => s.updateSelection({ type: v })}
-          options={STITCH_ORDER.map((t) => ({ value: t, label: STITCHES[t].name }))} />
+          options={STITCH_ORDER.map((t) => ({
+            value: t,
+            label: <span className="type-opt"><Glyph type={t} size={16} /> {STITCHES[t].name}</span>,
+          }))} />
       </label>
       <label className="field"><span>Colour</span>
         <ColorPicker value={first.color || INK} disabled={readOnly} onChangeComplete={(c) => s.updateSelection({ color: c.toHexString() })}
@@ -281,8 +330,9 @@ function Inspector({ pat, ctrl, readOnly }: { pat: import('../core/types').Patte
       </label>
       {post && (
         <label className="field"><span>Length</span>
-          <Slider min={10} max={70} disabled={readOnly} value={Math.round(first.len ?? defaultLen(first.type))}
-            onChange={(v) => s.liveUpdateSelection({ len: v })} onChangeComplete={() => s.endLive()} />
+          <InputNumber size="small" min={10} max={70} disabled={readOnly} style={{ width: '100%' }}
+            value={Math.round(first.len ?? defaultLen(first.type))}
+            onChange={(v) => { if (typeof v === 'number') s.updateSelection({ len: v }); }} />
         </label>
       )}
       {chains.length > 0 && (
@@ -290,12 +340,10 @@ function Inspector({ pat, ctrl, readOnly }: { pat: import('../core/types').Patte
           <Switch size="small" disabled={readOnly} checked={allAuto} onChange={(v) => s.setChainAuto(v)} />
         </label>
       )}
-      <label className="field row"><span>Mirror</span>
-        <Switch size="small" disabled={readOnly} checked={first.mirror} onChange={(v) => s.updateSelection({ mirror: v })} />
-      </label>
       {!readOnly && <div className="insp-acts">
-        <Tooltip title="Rotate −15°"><Button size="small" icon={<RotateLeftIcon />} onClick={() => s.rotateSelectionBy(-15)} /></Tooltip>
+        <Tooltip title="Rotate −15°"><Button size="small" icon={<RotateRightIcon className="icon-flip-h" />} onClick={() => s.rotateSelectionBy(-15)} /></Tooltip>
         <Tooltip title="Rotate +15°"><Button size="small" icon={<RotateRightIcon />} onClick={() => s.rotateSelectionBy(15)} /></Tooltip>
+        <Tooltip title="Flip the selection horizontally"><Button size="small" icon={<MirrorIcon />} onClick={() => s.mirrorSelection()}>Mirror</Button></Tooltip>
         {items.length === 1 && <Button size="small" icon={<OriginIcon />} onClick={() => { ctrl.current?.setMode('insert'); ctrl.current?.setOrigin(first.id); }}>Set as origin</Button>}
         <Button size="small" danger icon={<DeleteIcon />} onClick={() => s.deleteSelection()}>Delete</Button>
       </div>}

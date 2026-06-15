@@ -7,7 +7,7 @@ import { STITCHES, isRealStitch, isStart, defaultLen } from '../src/core/symbols
 import { topOfStitch, contentBounds, chartToSVG, buildStitchShapes } from '../src/core/render';
 import {
   chainOrder, spacesForRound, pickBase, successorInRound, chainFrom,
-  defaultOriginId, basePoint,
+  defaultOriginId, basePoint, stitchWithinRect,
 } from '../src/core/connectivity';
 import { newProject, newPattern, normalizeProject, projectToFile, projectFromFile, startRowId, activeVersion, publishedVersion, draftVersion } from '../src/core/model';
 import { store } from '../src/core/store';
@@ -95,6 +95,13 @@ test('defaultOriginId = tail of round, else previous round tail', () => {
   assert.equal(defaultOriginId(s, rounds, 'R1'), 'b');
   assert.equal(defaultOriginId(s, rounds, 'R2'), 'b');
 });
+test('stitchWithinRect needs head AND base inside', () => {
+  const st = dc('a', 'R', null, 0, 0); // base (0,0), head (0,-30)
+  assert.equal(stitchWithinRect(st, -10, -40, 10, 10), true);
+  assert.equal(stitchWithinRect(st, -10, -10, 10, 10), false, 'head outside');
+  assert.equal(stitchWithinRect(st, -10, -40, 10, -5), false, 'base outside');
+});
+
 test('basePoint resolves stitch + space', () => {
   const s = [dc('a', 'R', null, 0, -30), dc('b', 'R', 'a', 40, -30)];
   const byId = new Map(s.map((x) => [x.id, x]));
@@ -233,6 +240,36 @@ test('store: live drag + slider coalesce into one undo entry', () => {
   store.undo();
   assert.equal(aOf().len, 30, 'undo restores the pre-slider length');
 });
+test('store: endpoint adjustments coalesce into one undo entry; chains de-automate', () => {
+  const pid = store.createProject('HD');
+  const patId = store.createPattern(pid, 'Sq')!;
+  store.openPattern(pid, patId);
+  const pat = () => store.currentPattern()!;
+  const ringId = store.setStart('mr')!;
+  const a = store.placeStitch({ type: 'dc', base: { kind: 'stitch', id: ringId }, x: 0, y: 0, rot: 0, len: 30, originId: ringId })!;
+  const ch = store.placeStitch({ type: 'ch', base: { kind: 'stitch', id: a }, x: 0, y: -30, rot: 0, len: null, originId: a })!;
+  const aOf = () => pat().stitches.find((s) => s.id === a)!;
+  const chOf = () => pat().stitches.find((s) => s.id === ch)!;
+
+  const before = store.undoStack.length;
+  store.dragBegin();
+  store.adjustStitch(a, { len: 40, rot: 15 });
+  store.adjustStitch(a, { len: 45, rot: 30 });
+  store.commitGesture();
+  assert.equal(store.undoStack.length, before + 1, 'one undo entry per handle gesture');
+  assert.equal(aOf().len, 45);
+  assert.equal(aOf().rot, 30);
+  store.undo();
+  assert.equal(aOf().len, 30, 'undo restores the pre-gesture length');
+
+  assert.notEqual(chOf().auto, false);
+  store.dragBegin();
+  store.adjustStitch(ch, { rot: 45 });
+  store.commitGesture();
+  assert.equal(chOf().auto, false, 'manual endpoint adjustment turns chain auto off');
+  assert.equal(chOf().rot, 45);
+});
+
 test('store: pattern type guard + resources', () => {
   const pid = store.createProject('R');
   assert.equal(store.createPattern(pid, 'Flat thing', 'flat'), null);
@@ -243,6 +280,32 @@ test('store: pattern type guard + resources', () => {
   store.removeResource(pid, 'yarns', yid);
   assert.equal(activeVersion(store.getProject(pid)!).resources.yarns.length, 0);
 });
+test('store: mirrorSelection flips each stitch individually, one undo entry', () => {
+  const pid = store.createProject('MI');
+  const patId = store.createPattern(pid, 'Sq')!;
+  store.openPattern(pid, patId);
+  const pat = () => store.currentPattern()!;
+  const ringId = store.setStart('mr')!;
+  const a = store.placeStitch({ type: 'dc', base: { kind: 'stitch', id: ringId }, x: 0, y: 0, rot: 0, len: 30, originId: ringId })!;
+  const b = store.placeStitch({ type: 'dc', base: { kind: 'stitch', id: ringId }, x: 10, y: 0, rot: 0, len: 30, originId: a })!;
+  const of = (id: string) => pat().stitches.find((s) => s.id === id)!;
+  store.updateSelection({}); // no-op on empty selection
+  store.setSelection([a]);
+  store.mirrorSelection();
+  assert.equal(of(a).mirror, true);
+
+  // mixed selection: each flips its own state
+  store.setSelection([a, b]);
+  const before = store.undoStack.length;
+  store.mirrorSelection();
+  assert.equal(store.undoStack.length, before + 1);
+  assert.equal(of(a).mirror, false);
+  assert.equal(of(b).mirror, true);
+  store.undo();
+  assert.equal(of(a).mirror, true);
+  assert.equal(of(b).mirror, false);
+});
+
 test('store: evenRound fans stitches to equal radius', () => {
   const pid = store.createProject('E');
   const patId = store.createPattern(pid, 'Sq')!;

@@ -2,12 +2,16 @@
 // Default size/stroke is set once via <IconoirProvider> in main.tsx.
 export {
   Plus as PlusIcon,
+  CursorPointer as SelectModeIcon,
+  PlusCircle as InsertModeIcon,
+  DragHandGesture as PanModeIcon,
   Upload as ImportIcon,
   Download as DownloadIcon,
   Copy as CopyIcon,
   Trash as DeleteIcon,
   MoreVert as MoreIcon,
   NavArrowLeft as BackIcon,
+  NavArrowDown as ChevronDownIcon,
   Printer as PdfIcon,
   Undo as UndoIcon,
   Redo as RedoIcon,
@@ -16,8 +20,8 @@ export {
   ZoomOut as ZoomOutIcon,
   Expand as FitIcon,
   EditPencil as EditIcon,
-  RotateCameraLeft as RotateLeftIcon,
-  RotateCameraRight as RotateRightIcon,
+  Refresh as RotateRightIcon, // counter-clockwise = same glyph mirrored via .icon-flip-h
+  Flip as MirrorIcon,
   Position as OriginIcon,
   Menu as MenuIcon,
   DropletHalf as YarnIcon,
