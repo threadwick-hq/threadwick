@@ -159,14 +159,16 @@ span.crumb-name { padding: 2px 6px; white-space: nowrap; max-width: 260px; overf
    never travels. So the held state reads as a direct current <-> held change
    (no sliding across the other buttons), and it's reusable for any mode: add
    `held-<mode>` and it lights the button with that aria-label. */
+/* transition lives on the base item (not only the held state) so the "held"
+   look fades both IN on press and OUT on release */
+.mode-seg .ant-segmented-item { border-radius: 7px; transition: background .16s ease, box-shadow .16s ease, color .16s ease; }
 .mode-seg.held-select .ant-segmented-item:has([aria-label="Select"]),
 .mode-seg.held-insert .ant-segmented-item:has([aria-label="Insert"]),
 .mode-seg.held-pan .ant-segmented-item:has([aria-label="Pan"]) {
   background: var(--accent-soft);
   box-shadow: inset 0 0 0 1.5px var(--accent-d);
-  border-radius: 7px;
-  transition: background .14s ease, box-shadow .14s ease;
 }
+.mode-seg .seg-icon svg { transition: color .16s ease; }
 .mode-seg.held-select .ant-segmented-item:has([aria-label="Select"]) .seg-icon svg,
 .mode-seg.held-insert .ant-segmented-item:has([aria-label="Insert"]) .seg-icon svg,
 .mode-seg.held-pan .ant-segmented-item:has([aria-label="Pan"]) .seg-icon svg {
