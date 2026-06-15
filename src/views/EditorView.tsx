@@ -27,7 +27,7 @@ const KEY_TO_TYPE: Record<string, StitchType> = Object.fromEntries(
   Object.entries(STITCH_KEYS).map(([t, k]) => [k as string, t as StitchType]),
 );
 
-interface Chrome { mode: Mode; armed: StitchType; phase: 'base' | 'head'; nextId: string | null; spacePan: boolean; }
+interface Chrome { mode: Mode; armed: StitchType; phase: 'base' | 'head'; nextId: string | null; transientMode: Mode | null; }
 
 export function EditorView() {
   const s = useStore();
@@ -36,7 +36,7 @@ export function EditorView() {
   const ver = s.currentVersion();
   const readOnly = !ver || ver.status !== 'draft'; // only draft versions are editable
   const ctrl = useRef<CanvasController | null>(null);
-  const [chrome, setChrome] = useState<Chrome>({ mode: 'select', armed: 'dc', phase: 'base', nextId: null, spacePan: false });
+  const [chrome, setChrome] = useState<Chrome>({ mode: 'select', armed: 'dc', phase: 'base', nextId: null, transientMode: null });
   const [help, setHelp] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [rename, setRename] = useState<{ id: string; name: string } | null>(null);
@@ -44,7 +44,7 @@ export function EditorView() {
 
   const sync = () => {
     const c = ctrl.current; if (!c) return;
-    setChrome({ mode: c.getMode(), armed: c.getArmed(), phase: c.getPhase(), nextId: c.getNextStitchId(), spacePan: c.isSpacePan() });
+    setChrome({ mode: c.getMode(), armed: c.getArmed(), phase: c.getPhase(), nextId: c.getNextStitchId(), transientMode: c.getTransientMode() });
   };
 
   // keyboard, scoped to the editor
@@ -64,7 +64,7 @@ export function EditorView() {
       if (meta) return;
       if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); s.deleteSelection(); return; }
       if (e.key === 'Escape') { if (!c.escape()) s.clearSelection(); return; }
-      if (e.key === ' ') { e.preventDefault(); c.setSpace(true); return; }
+      if (e.key === ' ') { e.preventDefault(); c.setTransientMode('pan'); return; } // hold Space = momentary pan
       if (k === 'v') { c.setMode('select'); return; }
       if (k === 'i') { c.setMode('insert'); return; }
       if (k === 'p') { c.setMode('pan'); return; }
@@ -81,10 +81,13 @@ export function EditorView() {
       else if (e.key === 'ArrowUp') { e.preventDefault(); s.moveSelectionBy(0, -n); }
       else if (e.key === 'ArrowDown') { e.preventDefault(); s.moveSelectionBy(0, n); }
     };
-    const onUp = (e: KeyboardEvent) => { if (e.key === ' ') ctrl.current?.setSpace(false); };
+    const onUp = (e: KeyboardEvent) => { if (e.key === ' ') ctrl.current?.setTransientMode(null); };
+    // releasing focus (alt-tab) while holding can swallow keyup — clear the hold
+    const onBlur = () => ctrl.current?.setTransientMode(null);
     window.addEventListener('keydown', onKey);
     window.addEventListener('keyup', onUp);
-    return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('keyup', onUp); };
+    window.addEventListener('blur', onBlur);
+    return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('keyup', onUp); window.removeEventListener('blur', onBlur); };
   }, [s]);
 
   if (!pat) return null;
@@ -92,6 +95,9 @@ export function EditorView() {
   const working = pat.rounds.slice(1);
   const onStart = isStartRow(pat, pat.activeRound);
   const started = hasStart(pat);
+  // a momentarily-held mode (hold Space = pan) lights its button, only when it
+  // differs from the mode you're actually in
+  const heldMode = chrome.transientMode && chrome.transientMode !== chrome.mode ? chrome.transientMode : null;
   return (
     <div className={'editor' + (readOnly ? ' has-banner' : '')}>
       <TopBarSlot>
@@ -120,11 +126,13 @@ export function EditorView() {
       </TopBarSlot>
 
       <div className="toolbar">
-        {/* while Space is held the canvas pans transiently; show Pan as active
-            but dashed (.transient) so it's clearly different from a Pan you
-            clicked to stay in */}
-        <Segmented className={'mode-seg' + (chrome.spacePan ? ' transient' : '')}
-          value={chrome.spacePan ? 'pan' : (chrome.mode === 'insert' && readOnly ? 'select' : chrome.mode)}
+        {/* A held mode (e.g. hold Space for pan) lights that button as "held"
+            in place — dashed + tinted — while the real selection stays put, so
+            it's clearly different from a mode you clicked to keep, and changes
+            directly between current and held (no sliding across the others).
+            `held-<mode>` is generic: any future hold-to-use mode reuses it. */}
+        <Segmented className={'mode-seg' + (heldMode ? ' holding held-' + heldMode : '')}
+          value={chrome.mode === 'insert' && readOnly ? 'select' : chrome.mode}
           onChange={(v) => ctrl.current?.setMode(v as Mode)}
           options={[
             { label: (<Tooltip title="Select (V)"><span className="seg-icon" aria-label="Select"><SelectModeIcon /></span></Tooltip>), value: 'select' },

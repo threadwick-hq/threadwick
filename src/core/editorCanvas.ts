@@ -37,8 +37,8 @@ export interface CanvasController {
   getNextStitchId(): string | null;
   resetInsert(): void;
   escape(): boolean;
-  setSpace(v: boolean): void;
-  isSpacePan(): boolean;
+  setTransientMode(m: Mode | null): void;
+  getTransientMode(): Mode | null;
   syncView(): void;
   destroy(): void;
 }
@@ -74,8 +74,12 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
   let phase: Phase = 'base';
   let pendingBase: BaseHit | null = null;
 
-  let drag: Drag | null = null, panning: { x: number; y: number } | null = null, marquee: Marquee | null = null, spaceDown = false;
+  let drag: Drag | null = null, panning: { x: number; y: number } | null = null, marquee: Marquee | null = null;
   let endpointDrag: EndpointDrag | null = null;
+  // A momentarily HELD mode (e.g. hold Space for pan) that overrides the chosen
+  // base mode until released. Generic on purpose: any key could hold any mode.
+  let transientMode: Mode | null = null;
+  const effMode = (): Mode => transientMode ?? mode;
   let lastU: Point = { x: 0, y: 0 };
   let saveTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -119,7 +123,7 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
     const active = activeRound();
     const sel = store.selection;
     for (const s of stitches()) if (s.round !== active && !sel.has(s.id)) m.set(s.id, { opacity: 0.28 });
-    if (mode !== 'insert') return m;
+    if (effMode() !== 'insert') return m; // a held pan over insert hides the insert helpers
     if (originId && store.byIdMap().has(originId)) m.set(originId, { color: ORIGIN });
     const nx = nextStitch();
     if (nx) {
@@ -208,9 +212,10 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
 
   function clearCursor(): void { cursorLayer.innerHTML = ''; }
   function applyCursor(): void {
+    const m = effMode();
     svg.style.cursor = panning ? 'grabbing'
-      : (spaceDown || mode === 'pan') ? 'grab'
-      : mode === 'insert' ? 'crosshair'
+      : m === 'pan' ? 'grab'
+      : m === 'insert' ? 'crosshair'
       : 'default';
   }
   function originGlyph(): string {
@@ -248,7 +253,7 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
   function drawCursor(u: Point): void {
     lastU = u;
     if (marquee) { cursorLayer.innerHTML = marqueeMarkup(); return; }
-    if (mode !== 'insert' || drag || panning) { clearCursor(); return; }
+    if (effMode() !== 'insert' || drag || panning) { clearCursor(); return; }
     const p = pat();
     if (!p || isStartRow(p, p.activeRound) || !hasStart(p)) { clearCursor(); return; }
     const og = originGlyph();
@@ -284,9 +289,10 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
 
   // ---- pointer interaction -------------------------------------------------
   function onDown(e: PointerEvent): void {
-    if (e.button === 1 || mode === 'pan' || spaceDown) { startPan(e); return; }
+    const m = effMode();
+    if (e.button === 1 || m === 'pan') { startPan(e); return; }
     const u = toUser(e.clientX, e.clientY);
-    if (mode === 'insert') { insertDown(e, u); return; }
+    if (m === 'insert') { insertDown(e, u); return; }
     selectDown(e, u);
   }
 
@@ -442,7 +448,7 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
   // Overlay dots are sized in user units via `pr`, so after a zoom they must be
   // re-emitted at the new scale. Only worth it when something is overlaid.
   function redrawOverlayForZoom(): void {
-    if (store.selection.size || mode === 'insert') scheduleRender();
+    if (store.selection.size || effMode() === 'insert') scheduleRender();
   }
 
   const onLeave = () => { if (!marquee && !drag && !panning) clearCursor(); };
@@ -502,12 +508,14 @@ export function initCanvas(store: Store, svg: SVGSVGElement, opts: { onChange?: 
       this.setMode('select');
       return true;
     },
-    setSpace(v: boolean) {
-      if (spaceDown === v) return;
-      spaceDown = v; applyCursor();
-      onChange(); // let the toolbar reflect transient (hold-space) pan
+    setTransientMode(m: Mode | null) {
+      if (transientMode === m) return;
+      transientMode = m;
+      applyCursor();
+      onChange();       // toolbar reflects the held mode
+      scheduleRender(); // cursor + insert helpers depend on the effective mode
     },
-    isSpacePan: () => spaceDown,
+    getTransientMode: () => transientMode,
     syncView() { const p = pat(); if (p) view = { ...p.view }; applyViewBox(); },
     destroy() {
       try { ro.disconnect(); } catch { /* gone */ }

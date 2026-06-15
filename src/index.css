@@ -23,9 +23,16 @@ body { background: var(--bg); color: var(--ink); font-family: Inter, system-ui, 
 .grow { flex: 1; }
 /* View enter transition: .app-view is keyed by route in App, so navigating
    remounts the content and replays this — the persistent header never moves.
-   A clear (but quick) rise + fade so the change of view is noticeable. */
-@keyframes viewIn { from { opacity: 0; transform: translateY(14px) scale(.992); } to { opacity: 1; transform: none; } }
-.app-view { animation: viewIn .34s cubic-bezier(.2, .7, .3, 1) both; }
+   Direction mirrors the hierarchy: going deeper (projects > project > pattern)
+   "digs down" (content rises up from below); going back "digs out" (content
+   settles down from above); a sideways move is a neutral fade. overflow:hidden
+   keeps the translate from flashing a scrollbar (children scroll themselves). */
+@keyframes viewDigDown { from { opacity: 0; transform: translateY(26px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes viewDigOut  { from { opacity: 0; transform: translateY(-22px) scale(1.014); } to { opacity: 1; transform: none; } }
+@keyframes viewFlat    { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.app-view.down { animation: viewDigDown .36s cubic-bezier(.2, .7, .3, 1) both; }
+.app-view.out  { animation: viewDigOut .34s cubic-bezier(.2, .7, .3, 1) both; }
+.app-view.flat { animation: viewFlat .28s cubic-bezier(.2, .7, .3, 1) both; }
 @media (prefers-reduced-motion: reduce) { .app-view, .chip, .howto-body, .howto-chevron { animation: none; transition: none; } }
 .muted { color: var(--muted); }
 .small { font-size: 12px; }
@@ -36,7 +43,7 @@ kbd { font-size: 11px; background: var(--bg); border: 1px solid var(--line); bor
    their controls into .topbar-slot. Only .app-view content changes on
    navigation. */
 .app { height: 100%; display: flex; flex-direction: column; }
-.app-view { flex: 1; min-height: 0; }
+.app-view { flex: 1; min-height: 0; overflow: hidden; } /* children scroll themselves; clip keeps the enter-translate from flashing a scrollbar */
 .app-view > * { height: 100%; }
 
 /* ---- top bars ----------------------------------------------------------- */
@@ -146,10 +153,25 @@ span.crumb-name { padding: 2px 6px; white-space: nowrap; max-width: 260px; overf
 .toolbar .ant-segmented-item-label { display: flex; align-items: center; justify-content: center; }
 .seg-icon { display: flex; align-items: center; justify-content: center; padding: 4px 5px; }
 .seg-icon svg { width: 17px; height: 17px; }
-/* transient (hold-Space) pan: Pan reads active but dashed + tinted, so it's
-   visibly distinct from a Pan mode you clicked to stay in */
-.mode-seg.transient .ant-segmented-item-selected { background: var(--accent-soft); box-shadow: inset 0 0 0 1.5px var(--accent-d); }
-.mode-seg.transient .ant-segmented-item-selected .seg-icon svg { color: var(--accent-d); }
+/* A generic HELD button state (hold a key to use a mode momentarily, e.g. hold
+   Space to pan). The held button shows "pressed" IN PLACE — accent dashed-ring
+   + tint — while the persistent selection thumb stays on your real mode and
+   never travels. So the held state reads as a direct current <-> held change
+   (no sliding across the other buttons), and it's reusable for any mode: add
+   `held-<mode>` and it lights the button with that aria-label. */
+.mode-seg.held-select .ant-segmented-item:has([aria-label="Select"]),
+.mode-seg.held-insert .ant-segmented-item:has([aria-label="Insert"]),
+.mode-seg.held-pan .ant-segmented-item:has([aria-label="Pan"]) {
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1.5px var(--accent-d);
+  border-radius: 7px;
+  transition: background .14s ease, box-shadow .14s ease;
+}
+.mode-seg.held-select .ant-segmented-item:has([aria-label="Select"]) .seg-icon svg,
+.mode-seg.held-insert .ant-segmented-item:has([aria-label="Insert"]) .seg-icon svg,
+.mode-seg.held-pan .ant-segmented-item:has([aria-label="Pan"]) .seg-icon svg {
+  color: var(--accent-d);
+}
 .toolbar { display: flex; align-items: center; gap: 12px; padding: 7px 16px; background: var(--bg-2); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
 .tool-view { display: flex; align-items: center; gap: 4px; padding-left: 12px; margin-left: 4px; border-left: 1px solid var(--line); }
 
