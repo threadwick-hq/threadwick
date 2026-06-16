@@ -1,4 +1,62 @@
+# Threadwick — https://threadwick.com
+#
+# Stance: everyone is welcome to crawl and index this marketing site, including
+# AI crawlers. This page is marketing copy (makers' patterns live in the Studio,
+# not here), so we optimize for discovery — being found and cited.
+#
+# To OPT OUT of AI *training* (without hurting search or AI citations), change
+# the "AI model training" group below from "Allow: /" to "Disallow: /". That
+# blocks training crawlers while still letting answer engines find and cite you.
+
 User-agent: *
+Allow: /
+
+# --- Search engines ---
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# --- AI answer engines (live retrieval & citation) ---
+# These fetch pages to answer user questions and cite the source. Keep allowed
+# so Threadwick can show up in ChatGPT, Perplexity, Claude, etc.
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+# --- AI model training ---
+# Set these to "Disallow: /" if you don't want this site used to train models.
+User-agent: GPTBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://threadwick.com/sitemap.xml

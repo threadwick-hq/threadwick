@@ -6,7 +6,10 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && eslint . && vite build",
+    "build": "tsc --noEmit && eslint . && vite build && npm run prerender",
+    "build:client": "vite build",
+    "build:ssr": "vite build --ssr src/entry-server.tsx --outDir dist-ssr",
+    "prerender": "npm run build:ssr && node scripts/prerender.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",

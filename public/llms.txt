@@ -1,0 +1,52 @@
+# Threadwick
+
+> Threadwick makes fair tools for fiber artists and makers. Its first tool, Threadwick Studio, is a free, browser-based crochet chart designer for drawing granny-square charts the way you crochet them — stitch by stitch, with standard crochet symbols. It runs entirely in your browser with no download and no account required. Your work stays yours: export anytime in open formats, with no lock-in. Selling through the platform is always optional, and only then do small, transparent fees apply.
+
+## What Threadwick is
+
+- **Threadwick Studio**: a browser-based crochet chart designer. Place stitches in the order you crochet them and the chart grows and lines up as you go. Open it at https://threadwick.com/studio
+- **Who it's for**: crochet designers who chart patterns and the makers who work from them.
+- **What it costs**: free to use, with no account needed. An optional free account adds sync and backups across devices. The only paid features are for artists who choose to sell on or through the platform.
+
+## How it works
+
+1. Open the studio — no download, no sign-up; it opens in your browser.
+2. Place your stitches in the order you'd crochet them; the chart grows as you go.
+3. Save, print, or share — export a tidy PDF or image, print it for your project bag, or share it with a QR link.
+
+## Key features
+
+- Keep the patterns, yarns, links and notes for a project together in one place.
+- Drafts and versions: tinker freely, mark a pattern finished, and return to earlier versions.
+- Print clean, readable PDFs, save charts as images, and share a pattern with a QR link.
+- Runs in your browser; projects stay with you, private by default, nothing to install.
+- Free with no account; sign in only to sync and back up across devices.
+- Charts use the standard crochet symbols, so anyone who reads patterns can follow along.
+
+## Our promise
+
+- Built by and for fiber artists and makers — every decision starts with the people who make.
+- Free to make, always: design, chart, organize and export without paying. Sell your own work outside Threadwick and Threadwick never takes a cent.
+- You keep what you earn: selling through Threadwick is optional; if you choose it, fees are small, flat and shown up front, and you keep the large majority.
+- No lock-in, no tricks: export your work anytime in open formats, leave whenever you like, no manipulative upsells, no engagement traps, no selling your data.
+
+## What's coming
+
+- An interactive viewer that walks you through a pattern stitch by stitch and tracks progress on any device.
+- Tablet and Apple Pencil support for charting by hand.
+- Ravelry sync for projects, patterns and progress.
+- An optional, fair marketplace for selling patterns, plus direct sales via license keys.
+- Invisibly fingerprinted exports, an API for automated personalized PDFs, and customizable charts (line weight, your own yarn colors).
+
+## Links
+
+- Homepage: https://threadwick.com/
+- Open Threadwick Studio: https://threadwick.com/studio
+- Source for the studio: https://github.com/Eiluviann/threadwick
+- Sitemap: https://threadwick.com/sitemap.xml
+
+## Notes for AI agents
+
+- Canonical name: "Threadwick" (the platform). The tool is "Threadwick Studio".
+- A "granny-square chart" is a stitch-by-stitch map of a crochet square drawn with standard symbols (chains, clusters, spaces) showing how each round is worked.
+- Threadwick starts with crochet granny-square charts and is built to grow into a home for fiber artists of all kinds.
