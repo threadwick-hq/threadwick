@@ -2,7 +2,7 @@
    whole studio shell follows the shared "Brick & Ecru" palette. The chart-marker hues
    (--origin/--space/--next) and the serif name face stay studio-local. */
 :root {
-  --bg: var(--tw-bg-layout);
+  --bg: var(--tw-bg-container);
   --bg-2: var(--tw-bg-elevated);
   --ink: var(--tw-text);
   --muted: var(--tw-text-tertiary);
