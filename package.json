@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Threadwick's single source of truth: design tokens (OKLCH, light + dark), Ant Design theme, crochet domain primitives, shared types, brand, and org knowledge.",
   "type": "module",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
   "sideEffects": ["**/*.css"],
   "files": ["dist"],
   "repository": { "type": "git", "url": "https://github.com/threadwick-hq/core.git" },

@@ -13,21 +13,18 @@ e.g. the marketing site's meta description and hero pull from `org.mission` / `o
 
 `[CONFIRMED]` = established in the project. `[DRAFT]` = proposed by an agent; **owner must confirm or replace.**
 
-## Mission `[DRAFT]`
-> A warm, free, browser-based home where **fiber artists design their patterns the way they actually
-> crochet them** — and where **makers can pick up any pattern and follow it with ease**.
+## Mission `[CONFIRMED]`
+> A free home for **fiber artists** to design, keep, and share their patterns — and for **makers**
+> to follow them.
 
-Alt phrasing (shorter): *"A free home for fiber artists to design, keep, and share their crochet
-patterns — and for makers to follow them."*
-
-## Vision `[DRAFT]`
+## Vision `[CONFIRMED]`
 > Every fiber artist's patterns, charts, yarns, and notes in one place they truly own — no account,
 > no lock-in — and any maker able to open a pattern and make it, on any device.
 
 ## Tagline `[CONFIRMED]`
 "A home for fiber artists." (Used in the wordmark + marketing.)
 
-## Values `[DRAFT]`
+## Values `[CONFIRMED]`
 1. **Craft-first** — we speak the craft (stitches, symbols, US/UK terms) and build tools the way people
    actually crochet (e.g. charts worked center-out).
 2. **Warm & calm** — cozy and paper-like, never corporate, loud, or gamified.
@@ -35,9 +32,8 @@ patterns — and for makers to follow them."*
    lock-in.
 4. **Accessible to everyone** — WCAG AA, every device, every age and ability; never colour-only.
 5. **One coherent home** — every surface feels like one app.
-6. **Built transparently by AI** — Threadwick is built by AI agents against a single source of truth.
 
-## Voice & tone `[DRAFT]`
+## Voice & tone `[CONFIRMED]`
 Warm, encouraging, plain. Talk like a knowledgeable friend at a craft circle, not a SaaS landing page.
 Short sentences, sentence case, craft-native vocabulary (with US/UK). Encourage beginners; respect
 experts. No hype, no dark patterns, no jargon. When speaking to makers, prefer "pattern / square /
@@ -121,13 +117,15 @@ package scope are unaffected — only the GitHub org *slug* differs:
 - Palette **Brick & Ecru** (OKLCH), warm terracotta on ecru, light + dark. Type **Space Grotesk**
   (display) + **Inter** (body). Logo mark + favicon in `src/brand` / `assets`.
 
-## Legal `[DRAFT — owner to finalise]`
-- **Code license:** MIT (per existing `package.json`).
-- **Brand/IP:** "Threadwick" name + marks © Threadwick. (Trademark status TBD.)
-- **Privacy stance:** local-first — work is stored in the user's browser, no account required by
-  default, export is user-owned → minimal/no personal data collected. A formal privacy policy + terms
-  of service are **TBD** and must be authored by the owner before launch.
-- **Legal entity / governing law:** TBD.
+## Legal `[PARTIAL — per-line flags]`
+- **Code license:** `[CONFIRMED]` **AGPL-3.0-or-later** (org-wide; the SPDX id is in every
+  `package.json`, and the full text is in each repo's `LICENSE`). Importing `@threadwick/core` carries
+  its copyleft.
+- **Privacy stance:** `[CONFIRMED]` local-first — work is stored in the user's browser, no account
+  required by default, export is user-owned → minimal/no personal data collected.
+- **Brand/IP:** `[DRAFT]` "Threadwick" name + marks © Threadwick. Trademark status TBD.
+- **Privacy policy / Terms:** `[DRAFT]` formal documents TBD — owner to author before launch.
+- **Legal entity / governing law:** `[DRAFT]` TBD.
 
 ---
 

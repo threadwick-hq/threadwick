@@ -74,4 +74,6 @@ CSS variables use the `--tw-*` prefix, e.g. `var(--tw-primary)`, `var(--tw-bg-la
 
 ## License
 
-MIT © Threadwick. Brand name + marks © Threadwick (see [docs/org.md](docs/org.md) → Legal — DRAFT).
+AGPL-3.0-or-later © Threadwick — see [LICENSE](LICENSE). Importing `@threadwick/core` carries its
+copyleft. Brand name + marks © Threadwick; trademark, legal entity, and a formal privacy policy/ToS
+are still TBD (see [docs/org.md](docs/org.md) → Legal).

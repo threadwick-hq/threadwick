@@ -18,11 +18,11 @@ const confirmed = <T>(value: T): Canon<T> => ({ status: 'confirmed', value });
 const draft = <T>(value: T): Canon<T> => ({ status: 'draft', value });
 
 // ── Mission / vision / tagline ───────────────────────────────────────────────
-export const mission = draft(
-  'A warm, free, browser-based home where fiber artists design their patterns the way they actually crochet them — and where makers can pick up any pattern and follow it with ease.',
+export const mission = confirmed(
+  'A free home for fiber artists to design, keep, and share their patterns — and for makers to follow them.',
 );
 
-export const vision = draft(
+export const vision = confirmed(
   "Every fiber artist's patterns, charts, yarns, and notes in one place they truly own — no account, no lock-in — and any maker able to open a pattern and make it, on any device.",
 );
 
@@ -33,7 +33,7 @@ export interface Value {
   name: string;
   description: string;
 }
-export const values = draft<Value[]>([
+export const values = confirmed<Value[]>([
   {
     name: 'Craft-first',
     description:
@@ -50,14 +50,10 @@ export const values = draft<Value[]>([
     description: 'WCAG AA, every device, every age and ability; never colour-only.',
   },
   { name: 'One coherent home', description: 'Every surface feels like one app.' },
-  {
-    name: 'Built transparently by AI',
-    description: 'Threadwick is built by AI agents against a single source of truth.',
-  },
 ]);
 
 // ── Voice & tone ─────────────────────────────────────────────────────────────
-export const voice = draft({
+export const voice = confirmed({
   summary:
     'Warm, encouraging, plain. Talk like a knowledgeable friend at a craft circle, not a SaaS landing page. Short sentences, sentence case, craft-native vocabulary (with US/UK). Encourage beginners; respect experts.',
   dos: [
@@ -154,13 +150,17 @@ export const brand = confirmed({
 });
 
 // ── Legal ────────────────────────────────────────────────────────────────────
-export const legal = draft({
-  codeLicense: 'MIT',
-  brandIp: '"Threadwick" name + marks © Threadwick. (Trademark status TBD.)',
-  privacyStance:
-    'Local-first — work is stored in the browser, no account required by default, export is user-owned → minimal/no personal data collected. Formal privacy policy + terms are TBD (owner to author before launch).',
-  entity: 'TBD',
-});
+// Per-fact status: the licence + privacy stance are CONFIRMED; trademark, a formal privacy
+// policy / ToS, and the legal entity remain DRAFT pending owner action.
+export const legal = {
+  codeLicense: confirmed('AGPL-3.0-or-later'),
+  privacyStance: confirmed(
+    "Local-first — work is stored in the user's browser, no account required by default, export is user-owned → minimal/no personal data collected.",
+  ),
+  brandIp: draft('"Threadwick" name + marks © Threadwick. Trademark status TBD.'),
+  privacyPolicy: draft('Formal privacy policy + terms of service TBD — owner to author before launch.'),
+  entity: draft('TBD — legal entity + governing law.'),
+} as const;
 
 /** The full org canon as one object. */
 export const org = {
