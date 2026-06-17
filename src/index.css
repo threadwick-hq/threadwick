@@ -1,18 +1,21 @@
+/* Brand tokens are aliased onto @threadwick/core (--tw-*, imported in main.tsx) so the
+   whole studio shell follows the shared "Brick & Ecru" palette. The chart-marker hues
+   (--origin/--space/--next) and the serif name face stay studio-local. */
 :root {
-  --bg: #f6f4ef;
-  --bg-2: #fbf9f4;
-  --ink: #21201c;
-  --muted: #8a8275;
-  --line: #e7e2d8;
-  --line-2: #efe9dd;
-  --accent: #c2603f;
-  --accent-d: #a64e30;
-  --accent-soft: #f4e2d8;
+  --bg: var(--tw-bg-layout);
+  --bg-2: var(--tw-bg-elevated);
+  --ink: var(--tw-text);
+  --muted: var(--tw-text-tertiary);
+  --line: var(--tw-border);
+  --line-2: var(--tw-border-secondary);
+  --accent: var(--tw-primary);
+  --accent-d: var(--tw-primary-active);
+  --accent-soft: var(--tw-primary-soft);
   --origin: #5cb3ff;
   --space: #e8830c;
   --next: #a259ff;
   --serif: "Iowan Old Style", Georgia, "Times New Roman", serif;
-  --logo: "Space Grotesk", Inter, system-ui, sans-serif;
+  --logo: var(--tw-font-display);
 }
 
 * { box-sizing: border-box; }

@@ -1,36 +1,20 @@
 import type { ThemeConfig } from 'antd';
+import { lightTheme } from '@threadwick/core/theme';
+import { tokens } from '@threadwick/core/tokens';
 
-// A shadcn-like theme for Ant Design v5: neutral surfaces, soft 8px radii,
-// subtle borders and shadows, Inter type — with a warm terracotta primary that
-// keeps the studio's craft identity.
+/**
+ * Ant Design theme — core's `lightTheme` ("Brick & Ecru" tokens) extended with the
+ * studio's app-specific component tweaks. Design tokens come from @threadwick/core;
+ * only the studio-level component overrides live here.
+ */
 export const theme: ThemeConfig = {
-  cssVar: true,
-  token: {
-    colorPrimary: '#c2603f',
-    colorInfo: '#c2603f',
-    colorLink: '#a64e30',
-    borderRadius: 8,
-    borderRadiusSM: 6,
-    borderRadiusLG: 10,
-    controlHeight: 36,
-    fontSize: 14,
-    fontFamily: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif',
-    colorText: '#21201c',
-    colorTextSecondary: '#6b675f',
-    colorTextTertiary: '#8a8275',
-    colorBgLayout: '#f6f4ef',
-    colorBgContainer: '#ffffff',
-    colorBorder: '#e7e2d8',
-    colorBorderSecondary: '#efe9dd',
-    boxShadow: '0 1px 2px rgba(40,30,20,.06), 0 6px 20px rgba(40,30,20,.06)',
-    boxShadowSecondary: '0 1px 2px rgba(40,30,20,.08)',
-    wireframe: false,
-  },
+  ...lightTheme,
   components: {
-    Button: { primaryShadow: 'none', defaultShadow: 'none', fontWeight: 500 },
+    ...lightTheme.components,
+    Button: { ...lightTheme.components?.Button, fontWeight: 500 },
     Card: { paddingLG: 0 },
-    Segmented: { itemSelectedBg: '#ffffff' },
+    Segmented: { itemSelectedBg: tokens.light.bgContainer },
     Modal: { borderRadiusLG: 12 },
-    Tooltip: { colorBgSpotlight: '#21201c' },
+    Tooltip: { colorBgSpotlight: tokens.light.text },
   },
 };

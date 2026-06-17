@@ -11,6 +11,7 @@ import '@fontsource/space-grotesk/latin-400.css';
 import '@fontsource/space-grotesk/latin-700.css';
 import '@fontsource/inter/latin-400.css';
 import '@fontsource/inter/latin-600.css';
+import '@threadwick/core/tokens.css';
 import './index.css';
 
 // First run: seed a worked sample so the app opens on something real.
