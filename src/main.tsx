@@ -10,6 +10,7 @@ import '@fontsource/inter/latin-600.css';
 
 import App from './App';
 import { AppProviders } from './providers/AppProviders';
+import '@threadwick/core/tokens.css';
 import './styles/global.css';
 
 const container = document.getElementById('root');

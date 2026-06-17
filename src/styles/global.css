@@ -1,4 +1,9 @@
-@import './tokens.css';
+/* Design tokens come from @threadwick/core/tokens.css (imported first in main.tsx).
+   Only app-level layout vars that core doesn't own live here. */
+:root {
+  --tw-container: 1120px;
+  --tw-gutter: clamp(16px, 5vw, 40px);
+}
 
 *,
 *::before,
