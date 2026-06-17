@@ -1,0 +1,37 @@
+# Threadwick Core
+
+> `@threadwick/core` — Threadwick's single source of truth: design tokens (OKLCH, light + dark),
+> the Ant Design theme, crochet domain primitives, shared types, brand, and org knowledge.
+> Built by AI agents; optimised for machine consumption and machine-enforced correctness.
+
+Key facts:
+- Colour authored in OKLCH ("Brick & Ecru"), light + dark first-class; sRGB hex is a fallback.
+- Layout on an 8-px grid. Accessibility is WCAG 2.1 AA, baked into tokens + components.
+- One machine-readable source (`src/tokens/tokens.json`) generates tokens.ts/.css/foundations.
+- Guardrails fail closed: scale-key types, JSON Schema for the pattern model, a contrast gate,
+  and a conformance validator.
+
+## Read first
+- [AGENTS.md](AGENTS.md): orientation — what/where/how-to-extend/invariants.
+- [docs/principles.md](docs/principles.md): the design principles tokens can't encode.
+- [docs/org.md](docs/org.md): canonical org knowledge (mission, audience, voice, glossary, legal).
+
+## Token source & references
+- [src/tokens/tokens.json](src/tokens/tokens.json): SOURCE OF TRUTH (DTCG; edit here only).
+- [docs/foundations.md](docs/foundations.md): generated token ↔ hex ↔ OKLCH reference.
+- [figma/FOUNDATIONS.md](figma/FOUNDATIONS.md): generated token ↔ hex tables for the Figma library.
+
+## Package exports (subpaths)
+- `@threadwick/core` — tokens + theme + types.
+- `@threadwick/core/tokens` — `tokens` (light/dark OKLCH), `space`, `size`, `radii`, `fonts`, `shadows`, palette helpers (`oklch`, `L`).
+- `@threadwick/core/theme` — `lightTheme`, `darkTheme` (AntD ThemeConfig).
+- `@threadwick/core/tokens.css` — `:root` (light) + `[data-theme="dark"]` + focus ring + reduced-motion guard.
+- `@threadwick/core/types` — Pattern content model (`Pattern`, `Component`, artifacts, `Material`, `Note`, …).
+- `@threadwick/core/domain` — `STITCHES`, `StitchSymbol`, `StitchLegend`, `YarnSwatch`.
+- `@threadwick/core/brand` — `Wordmark`.
+- `@threadwick/core/org` — `mission`, `vision`, `tagline`, `values`, `voice`, `audience`, `products`, `glossary`, `standards`, `brand`, `legal` (DRAFT items flagged `status: 'draft'`).
+
+## Guardrails / commands
+- `npm run check` — build:tokens + typecheck + lint + check:contrast.
+- `npm run validate [paths]` — off-grid / non-token-colour / missing-aria scan.
+- [src/types/pattern.schema.json](src/types/pattern.schema.json): JSON Schema for the pattern model.
