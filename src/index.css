@@ -82,7 +82,7 @@ span.crumb-name { padding: 2px 6px; white-space: nowrap; max-width: 260px; overf
 
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
 .proj-card .ant-card-cover, .card-cover { cursor: pointer; }
-.card-cover { height: 150px; background: radial-gradient(circle at 50% 42%, #fffdf9, #f3ede2); display: grid; place-items: center; border-bottom: 1px solid var(--line-2); border-radius: 10px 10px 0 0; overflow: hidden; }
+.card-cover { height: 150px; background: radial-gradient(circle at 50% 42%, #ffffff, var(--tw-bg-elevated)); display: grid; place-items: center; border-bottom: 1px solid var(--line-2); border-radius: 10px 10px 0 0; overflow: hidden; }
 .card-cover { position: relative; }
 .card-status { position: absolute; top: 8px; left: 8px; }
 .card-status .ant-tag { margin: 0; }
@@ -227,7 +227,7 @@ span.crumb-name { padding: 2px 6px; white-space: nowrap; max-width: 260px; overf
 .howto b { color: var(--ink); }
 .dot-space { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--space); vertical-align: -1px; }
 
-.canvas-wrap { position: relative; overflow: hidden; background: radial-gradient(circle at 50% 45%, #fffdf9 0%, #f3ece0 100%); }
+.canvas-wrap { position: relative; overflow: hidden; background: radial-gradient(circle at 50% 45%, #ffffff 0%, var(--tw-bg-elevated) 100%); }
 .ed-canvas { width: 100%; height: 100%; display: block; cursor: default; touch-action: none; } /* the controller sets crosshair/grab contextually */
 .ed-canvas .handle { cursor: move; } /* head/base endpoint handles on selected stitches */
 .toast { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); background: rgba(33,32,28,.9); color: #fff; font-size: 13px; padding: 7px 16px; border-radius: 20px; pointer-events: none; box-shadow: 0 6px 20px rgba(0,0,0,.15); }
