@@ -1,0 +1,43 @@
+name: Prune merged branches
+
+# Deletes branches that are fully merged into the default branch (0 commits ahead),
+# after a 7-day grace window. Branches with any unmerged work are always kept.
+# Runs daily, or on demand from the Actions tab.
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Delete merged branches
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          MIN_AGE_DAYS: '7'
+        run: |
+          git fetch --quiet origin '+refs/heads/*:refs/remotes/origin/*'
+          now=$(date +%s)
+          git for-each-ref --format='%(refname:short) %(committerdate:unix)' refs/remotes/origin \
+            | while read -r ref ts; do
+                b="${ref#origin/}"
+                case "$b" in HEAD | "$DEFAULT_BRANCH") continue ;; esac
+                if [ "$(git rev-list --count "origin/$DEFAULT_BRANCH..$ref")" != "0" ]; then
+                  echo "keep    $b — has unmerged commits"
+                  continue
+                fi
+                age=$(( (now - ts) / 86400 ))
+                if [ "$age" -lt "$MIN_AGE_DAYS" ]; then
+                  echo "keep    $b — merged but only ${age}d old"
+                  continue
+                fi
+                echo "delete  $b — merged, ${age}d old"
+                git push origin --delete "$b"
+              done
