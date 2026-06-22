@@ -49,7 +49,19 @@ export type IconName =
 	| 'community'
 	| 'gift'
 	| 'earnings'
-	| 'no-lock-in';
+	| 'no-lock-in'
+	// roadmap / capabilities
+	| 'refresh'
+	| 'devices'
+	| 'marketplace'
+	| 'license-key'
+	| 'fingerprint'
+	| 'api'
+	| 'preview'
+	| 'pdf'
+	| 'link'
+	| 'view'
+	| 'customize';
 
 /** Per-action metadata, independent of any icon set. `label` is the default accessible name. */
 export type IconMeta = {
@@ -104,4 +116,15 @@ export const iconMeta: Record<IconName, IconMeta> = {
 	gift: { label: 'Free' },
 	earnings: { label: 'Earnings' },
 	'no-lock-in': { label: 'No lock-in' },
+	refresh: { label: 'Sync' },
+	devices: { label: 'All devices' },
+	marketplace: { label: 'Marketplace' },
+	'license-key': { label: 'License key' },
+	fingerprint: { label: 'Fingerprint' },
+	api: { label: 'API' },
+	preview: { label: 'Preview' },
+	pdf: { label: 'PDF export' },
+	link: { label: 'Share link' },
+	view: { label: 'Viewer' },
+	customize: { label: 'Customize' },
 };
