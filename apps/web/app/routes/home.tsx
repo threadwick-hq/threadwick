@@ -13,7 +13,7 @@ export default function Home() {
 	return (
 		<main className="mx-auto min-h-dvh max-w-3xl p-8">
 			<header className="flex items-baseline gap-3">
-				<h1 className="font-display text-3xl font-medium text-primary">threadwick</h1>
+				<h1 className="font-display text-3xl font-medium text-brand">threadwick</h1>
 				<span className="rounded-md border border-border px-2 py-0.5 text-xs text-muted-foreground">
 					design system
 				</span>

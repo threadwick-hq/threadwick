@@ -20,7 +20,9 @@
 	--card-foreground: var(--tw-text);
 	--popover: var(--tw-bg-elevated);
 	--popover-foreground: var(--tw-text);
-	--primary: var(--tw-primary);
+	/* Solid primary for white text uses the darker brick so it meets WCAG AA
+	   (white on the 54.9% brand brick is sub-AA — see studio CLAUDE.md). */
+	--primary: var(--tw-primary-active);
 	--primary-foreground: var(--tw-on-primary);
 	--secondary: var(--tw-bg-sunken);
 	--secondary-foreground: var(--tw-text);
@@ -45,6 +47,9 @@
 	--color-popover-foreground: var(--popover-foreground);
 	--color-primary: var(--primary);
 	--color-primary-foreground: var(--primary-foreground);
+
+	/* The bright brand brick — for brand marks/wordmark (text on ecru, not solid fills). */
+	--color-brand: var(--tw-primary);
 	--color-secondary: var(--secondary);
 	--color-secondary-foreground: var(--secondary-foreground);
 	--color-muted: var(--muted);
