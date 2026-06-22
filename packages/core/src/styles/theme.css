@@ -1,0 +1,77 @@
+/*
+ * Threadwick design-system theme for Tailwind v4 + shadcn/ui.
+ *
+ * Maps the OKLCH "Brick & Ecru" role tokens (defined in tokens.css) onto the CSS-variable
+ * names shadcn components expect. Light/dark switch automatically: every alias points at a
+ * `--tw-*` token that flips under [data-theme='dark'], so no separate dark block is needed.
+ *
+ * App usage (the app owns the Tailwind entry):
+ *   @import 'tailwindcss';
+ *   @import '@threadwick/core/tokens.css';
+ *   @import '@threadwick/core/theme.css';
+ */
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+:root {
+	--background: var(--tw-bg-layout);
+	--foreground: var(--tw-text);
+	--card: var(--tw-bg-container);
+	--card-foreground: var(--tw-text);
+	--popover: var(--tw-bg-elevated);
+	--popover-foreground: var(--tw-text);
+	--primary: var(--tw-primary);
+	--primary-foreground: var(--tw-on-primary);
+	--secondary: var(--tw-bg-sunken);
+	--secondary-foreground: var(--tw-text);
+	--muted: var(--tw-bg-sunken);
+	--muted-foreground: var(--tw-text-secondary);
+	--accent: var(--tw-primary-soft);
+	--accent-foreground: var(--tw-primary-active);
+	--destructive: var(--tw-danger);
+	--destructive-foreground: var(--tw-bg-container);
+	--border: var(--tw-border);
+	--input: var(--tw-border);
+	--ring: var(--tw-focus);
+	--radius: var(--tw-radius-lg);
+}
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+
+	/* yarn craft palette (wide-gamut OKLCH) */
+	--color-yarn-brick: var(--tw-yarn-brick);
+	--color-yarn-teal: var(--tw-yarn-teal);
+	--color-yarn-ochre: var(--tw-yarn-ochre);
+	--color-yarn-fern: var(--tw-yarn-fern);
+	--color-yarn-clay: var(--tw-yarn-clay);
+	--color-yarn-plum: var(--tw-yarn-plum);
+
+	/* radii — shadcn derives sm/md/lg/xl from --radius */
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 6px);
+
+	/* type */
+	--font-sans: var(--tw-font-body);
+	--font-display: var(--tw-font-display);
+}
