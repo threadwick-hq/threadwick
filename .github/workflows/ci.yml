@@ -10,15 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history so the work/ derivation gate can see closing commits.
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Work tracking (validate + gates)
+        run: pnpm run work check
       - name: Build + typecheck (packages)
         run: pnpm turbo run build typecheck --filter=./packages/*
       - name: Biome (packages)
         # Report-only during the staged style migration; promote to a hard gate once the
-        # format pass + safe autofixes have landed (see MIGRATION.md Phase 3).
+        # format pass + safe autofixes have landed (tracked as work/ TW-007).
         run: pnpm biome check packages || true

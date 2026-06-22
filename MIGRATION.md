@@ -7,6 +7,9 @@ app, an offline PWA, all-AGPL licensing, and a shadcn/Tailwind UI on the existin
 must pass before the next phase starts. Phases 0–1 are destructive; nothing runs without an explicit
 go. History is preserved via `git subtree` (no `--squash`).
 
+**Tracking:** this document is the narrative plan. The actionable tasks inside each phase live in
+[`work/`](work/README.md) as `TW-NNN` files; a task's `phase:` field maps it back here.
+
 ---
 
 ## Locked decisions (the target)

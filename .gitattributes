@@ -1,0 +1,4 @@
+# work/INDEX.md is generated from work/*.md frontmatter (`pnpm run work index`).
+# Prefer our side on merge, then regenerate to reconcile. Enable the driver once per clone with:
+#   git config merge.ours.driver true
+work/INDEX.md merge=ours
