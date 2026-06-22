@@ -39,7 +39,7 @@ const FEATURES: Feature[] = [
 
 export function Features() {
 	return (
-		<section aria-labelledby="features-title" className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
+		<section id="features" aria-labelledby="features-title" className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
 			<SectionHeading
 				id="features-title"
 				eyebrow="What you get"

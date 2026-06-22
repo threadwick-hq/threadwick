@@ -1,8 +1,11 @@
 import { AccountBand } from '../components/account-band';
+import { DesignApproach } from '../components/design-approach';
+import { Faq } from '../components/faq';
 import { Features } from '../components/features';
 import { Hero } from '../components/hero';
 import { HowItWorks } from '../components/how-it-works';
 import { OurPromise } from '../components/promise';
+import { Roadmap } from '../components/roadmap';
 
 export function meta() {
 	return [
@@ -20,9 +23,12 @@ export default function Home() {
 		<>
 			<Hero />
 			<OurPromise />
-			<HowItWorks />
+			<DesignApproach />
+			<Roadmap />
 			<Features />
+			<HowItWorks />
 			<AccountBand />
+			<Faq />
 		</>
 	);
 }

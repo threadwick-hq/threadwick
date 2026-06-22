@@ -28,7 +28,7 @@ const PLEDGES: Pledge[] = [
 /** "Our promise" — the fairness manifesto, set as a full-bleed ink band (statement piece). */
 export function OurPromise() {
 	return (
-		<section aria-labelledby="promise-title" className="bg-foreground text-background">
+		<section id="promise" aria-labelledby="promise-title" className="bg-foreground text-background">
 			<div className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
 				<div className="mx-auto mb-10 max-w-2xl text-center">
 					<p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-brand">Our promise</p>

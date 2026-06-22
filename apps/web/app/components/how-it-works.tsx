@@ -19,7 +19,7 @@ const STEPS: Step[] = [
 
 export function HowItWorks() {
 	return (
-		<section aria-labelledby="how-it-works-title" className="border-y border-border bg-card">
+		<section id="how-it-works" aria-labelledby="how-it-works-title" className="border-y border-border bg-card">
 			<div className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
 				<SectionHeading
 					id="how-it-works-title"
