@@ -17,6 +17,7 @@
   },
   "scripts": {
     "build:tokens": "tsx scripts/build-tokens.ts",
+    "gen:brand-glyphs": "tsx scripts/gen-brand-glyphs.ts",
     "prebuild": "tsx scripts/build-tokens.ts",
     "build": "tsup",
     "typecheck": "tsc --noEmit",
@@ -28,6 +29,9 @@
   "peerDependencies": {
     "react": "^18",
     "antd": "^5"
+  },
+  "optionalDependencies": {
+    "@fortawesome/pro-regular-svg-icons": "^7.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
