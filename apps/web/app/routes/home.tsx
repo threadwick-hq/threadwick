@@ -1,3 +1,5 @@
+import { Button, Card, CardContent, CardHeader, CardTitle, Input } from '@threadwick/core/components';
+
 const YARNS = ['brick', 'ochre', 'fern', 'teal', 'plum'] as const;
 
 export function meta() {
@@ -18,37 +20,34 @@ export default function Home() {
 			</header>
 
 			<p className="mt-2 text-muted-foreground">
-				Brick &amp; Ecru on Tailwind — verifying the theme renders straight from the OKLCH tokens.
+				shadcn components on Brick &amp; Ecru — themed straight from the OKLCH tokens.
 			</p>
 
 			<div className="mt-6 flex flex-wrap gap-3">
-				<button
-					type="button"
-					className="inline-flex h-11 items-center rounded-lg bg-primary px-4 text-primary-foreground"
-				>
-					Publish pattern
-				</button>
-				<button
-					type="button"
-					className="inline-flex h-11 items-center rounded-lg border border-border bg-card px-4 text-card-foreground"
-				>
-					Open in Studio
-				</button>
+				<Button>Publish pattern</Button>
+				<Button variant="outline">Open in Studio</Button>
+				<Button variant="secondary">Save</Button>
+				<Button variant="ghost">Cancel</Button>
 			</div>
 
-			<section className="mt-8 rounded-xl border border-border bg-card p-5">
-				<p className="text-sm font-medium">Granny square sampler</p>
-				<p className="mt-1 text-sm text-muted-foreground">4 components · merino &amp; cotton · 4 mm hook</p>
-				<div className="mt-4 flex gap-2">
-					{YARNS.map((yarn) => (
-						<span
-							key={yarn}
-							className="size-6 rounded-full border border-border"
-							style={{ background: `var(--tw-yarn-${yarn})` }}
-						/>
-					))}
-				</div>
-			</section>
+			<Card className="mt-8 max-w-md">
+				<CardHeader>
+					<CardTitle>Granny square sampler</CardTitle>
+				</CardHeader>
+				<CardContent className="space-y-4">
+					<p className="text-sm text-muted-foreground">4 components · merino &amp; cotton · 4 mm hook</p>
+					<Input placeholder="Project name" defaultValue="Granny square sampler" />
+					<div className="flex gap-2">
+						{YARNS.map((yarn) => (
+							<span
+								key={yarn}
+								className="size-6 rounded-full border border-border"
+								style={{ background: `var(--tw-yarn-${yarn})` }}
+							/>
+						))}
+					</div>
+				</CardContent>
+			</Card>
 		</main>
 	);
 }

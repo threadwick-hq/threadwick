@@ -3,3 +3,6 @@
 // Every shared component must pass the a11y gate: keyboard-operable · visibly focusable · labelled ·
 // AA-contrast · never colour-only · reduced-motion-safe · screen-reader-checked.
 export * from './Stack';
+export * from './ui/button';
+export * from './ui/card';
+export * from './ui/input';
