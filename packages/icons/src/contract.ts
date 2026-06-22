@@ -39,7 +39,17 @@ export type IconName =
 	| 'undo'
 	| 'redo'
 	| 'zoom-in'
-	| 'zoom-out';
+	| 'zoom-out'
+	// content & feature illustration (marketing)
+	| 'organize'
+	| 'draft'
+	| 'share-qr'
+	| 'sync'
+	| 'symbols'
+	| 'community'
+	| 'gift'
+	| 'earnings'
+	| 'no-lock-in';
 
 /** Per-action metadata, independent of any icon set. `label` is the default accessible name. */
 export type IconMeta = {
@@ -85,4 +95,13 @@ export const iconMeta: Record<IconName, IconMeta> = {
 	redo: { label: 'Redo' },
 	'zoom-in': { label: 'Zoom in' },
 	'zoom-out': { label: 'Zoom out' },
+	organize: { label: 'Organize' },
+	draft: { label: 'Drafts and versions' },
+	'share-qr': { label: 'Share via QR' },
+	sync: { label: 'Sync' },
+	symbols: { label: 'Stitch symbols' },
+	community: { label: 'Community' },
+	gift: { label: 'Free' },
+	earnings: { label: 'Earnings' },
+	'no-lock-in': { label: 'No lock-in' },
 };

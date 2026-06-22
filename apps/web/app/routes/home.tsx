@@ -1,4 +1,6 @@
+import { Features } from '../components/features';
 import { Hero } from '../components/hero';
+import { OurPromise } from '../components/promise';
 
 export function meta() {
 	return [
@@ -12,5 +14,11 @@ export function meta() {
 }
 
 export default function Home() {
-	return <Hero />;
+	return (
+		<>
+			<Hero />
+			<OurPromise />
+			<Features />
+		</>
+	);
 }
