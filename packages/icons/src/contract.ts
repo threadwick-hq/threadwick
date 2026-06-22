@@ -22,6 +22,7 @@ export type IconName =
 	| 'edit'
 	| 'next'
 	| 'previous'
+	| 'private'
 	// pattern lifecycle — the "invisible handoff" verbs
 	| 'publish-pattern'
 	| 'open-in-studio'
@@ -68,6 +69,7 @@ export const iconMeta: Record<IconName, IconMeta> = {
 	edit: { label: 'Edit' },
 	next: { label: 'Next' },
 	previous: { label: 'Previous' },
+	private: { label: 'Private' },
 	'publish-pattern': { label: 'Publish pattern' },
 	'open-in-studio': { label: 'Open in Studio' },
 	'make-it': { label: 'Make it' },
