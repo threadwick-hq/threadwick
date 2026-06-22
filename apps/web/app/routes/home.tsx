@@ -1,4 +1,5 @@
-import { Button, Card, CardContent, CardHeader, CardTitle, Input } from '@threadwick/core/components';
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Input } from '@threadwick/core/components';
+import { Icon } from '@threadwick/icons';
 
 const YARNS = ['brick', 'ochre', 'fern', 'teal', 'plum'] as const;
 
@@ -24,7 +25,10 @@ export default function Home() {
 			</p>
 
 			<div className="mt-6 flex flex-wrap gap-3">
-				<Button>Publish pattern</Button>
+				<Button>
+					<Icon name="publish-pattern" label="" />
+					Publish pattern
+				</Button>
 				<Button variant="outline">Open in Studio</Button>
 				<Button variant="secondary">Save</Button>
 				<Button variant="ghost">Cancel</Button>
@@ -32,7 +36,10 @@ export default function Home() {
 
 			<Card className="mt-8 max-w-md">
 				<CardHeader>
-					<CardTitle>Granny square sampler</CardTitle>
+					<div className="flex items-center justify-between gap-2">
+						<CardTitle>Granny square sampler</CardTitle>
+						<Badge variant="secondary">Draft</Badge>
+					</div>
 				</CardHeader>
 				<CardContent className="space-y-4">
 					<p className="text-sm text-muted-foreground">4 components · merino &amp; cotton · 4 mm hook</p>
