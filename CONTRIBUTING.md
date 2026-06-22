@@ -22,6 +22,12 @@ it automatically (via CLA Assistant) on their first pull request.
 
 ## How we work
 
-- Every piece of work — feature, fix, refactor — is tracked as a **GitHub issue**; reference it from
-  commits (`Refs #N`) and close it via the pull request (`Closes #N`).
-- Run **typecheck, lint, tests, and build** before pushing.
+- Every piece of work — feature, fix, refactor — is one file in [`work/`](work/README.md), tracked in
+  git as `work/TW-NNN-*.md`. It is the spec, the documentation, and the audit trail; there is no
+  external issue tracker to keep in sync.
+- Claim a task by setting its `status: active`; reference it from every commit (`Refs TW-NNN`) and
+  close it from the pull request (`Closes TW-NNN`). CI enforces that a `done` task is backed by a real
+  commit and that anything a commit closes is actually `done`.
+- Work-bearing PRs are **squash-merged**. Put `Closes TW-NNN` in the squash commit message so the
+  derivation gate sees the closing reference on `main`.
+- Run `pnpm check` (typecheck, lint, test) and `pnpm run work check` before pushing.
