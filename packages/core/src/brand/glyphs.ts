@@ -4,11 +4,16 @@ import type { IconGlyph } from './Logo';
  * Brand-mark glyphs as static SVG path data, baked once so `@threadwick/core` builds
  * with no Font Awesome Pro token. Unlike `@threadwick/icons` (the swappable, action-named
  * runtime icon system), brand marks are fixed identity assets, so their geometry is
- * committed here. Source: Font Awesome Regular — reel / compass-drafting / store.
+ * committed here.
+ *
+ * `REEL` (the primary Threadwick mark) is ORIGINAL artwork — freely committable. The
+ * Studio and Marketplace marks are still Font Awesome Regular geometry pending custom
+ * replacements.
  */
+/** Threadwick — an original thread-spool mark: two slim flanges over three wound coils. */
 export const REEL: IconGlyph = {
-	viewBox: '0 0 448 512',
-	path: 'M32 24C32 10.7 42.7 0 56 0L392 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-8 0 0 48-48 0 0-48-224 0 0 48-48 0 0-48-8 0C42.7 48 32 37.3 32 24zm0 464c0-13.3 10.7-24 24-24l8 0 0-48 48 0 0 48 224 0 0-48 48 0 0 48 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L56 512c-13.3 0-24-10.7-24-24zM88 136l272 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L88 184c-13.3 0-24-10.7-24-24s10.7-24 24-24zm0 96l336 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L88 280c-13.3 0-24-10.7-24-24s10.7-24 24-24zM64 352c0-13.3 10.7-24 24-24l272 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L88 376c-13.3 0-24-10.7-24-24z',
+	viewBox: '0 0 46 60',
+	path: 'M3.5,0 H42.5 A3.5,3.5 0 0 1 42.5,7 H3.5 A3.5,3.5 0 0 1 3.5,0 Z M3.5,53 H42.5 A3.5,3.5 0 0 1 42.5,60 H3.5 A3.5,3.5 0 0 1 3.5,53 Z M8.5,14 H37.5 A3.5,3.5 0 0 1 37.5,21 H8.5 A3.5,3.5 0 0 1 8.5,14 Z M8.5,26 H37.5 A3.5,3.5 0 0 1 37.5,33 H8.5 A3.5,3.5 0 0 1 8.5,26 Z M8.5,38 H37.5 A3.5,3.5 0 0 1 37.5,45 H8.5 A3.5,3.5 0 0 1 8.5,38 Z',
 };
 
 export const COMPASS_DRAFTING: IconGlyph = {

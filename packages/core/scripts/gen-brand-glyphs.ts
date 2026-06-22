@@ -1,10 +1,10 @@
 /**
  * Brand-glyph generator — a UTILITY. It must never run during a build.
  *
- * Brand marks are fixed identity assets, so their geometry is baked into
- * `src/brand/glyphs.ts` as static `{ path, viewBox }` and committed — the product build
- * then needs no Font Awesome Pro token. Run this only to change a logo glyph, then commit
- * the regenerated `glyphs.ts`.
+ * Brand-mark geometry is committed in `src/brand/glyphs.ts` as static `{ path, viewBox }`,
+ * so the product build needs no Font Awesome Pro token. This utility writes the FA Pro
+ * geometry to a gitignored reference file (`glyphs.generated.ts`) — copy the marks you want
+ * into `glyphs.ts`. It never overwrites `glyphs.ts`, so original / hand-authored marks stay safe.
  *
  * Font Awesome Pro is an OPTIONAL dependency. To enable it locally:
  *   1. In a local `.npmrc` (never commit your token):
@@ -36,7 +36,7 @@ const GLYPH_SPECS: GlyphSpec[] = [
 	{ constName: 'STORE', doc: 'Threadwick Marketplace — a storefront.', faName: 'faStore' },
 ];
 
-const OUTPUT = fileURLToPath(new URL('../src/brand/glyphs.ts', import.meta.url));
+const OUTPUT = fileURLToPath(new URL('../src/brand/glyphs.generated.ts', import.meta.url));
 
 async function generate(): Promise<void> {
 	const pro = await loadFontAwesomePro();

@@ -6,6 +6,7 @@ build
 .react-router
 coverage
 *.tsbuildinfo
+*.generated.ts
 *.local
 .env
 .env.*
