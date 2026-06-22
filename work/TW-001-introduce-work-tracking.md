@@ -5,11 +5,13 @@ type: chore
 area:
   - repo
 phase: 6
-status: active
+status: done
 priority: p1
 created: 2026-06-22
 assignee: agent
 started: 2026-06-22
+completed: 2026-06-22
+pr: 1
 acceptance:
   - work/ lifecycle documented in work/README.md and CONTRIBUTING.md
   - scripts/work.ts validates frontmatter and runs via `pnpm run work check`
@@ -40,4 +42,5 @@ Out: the one-way GitHub Projects mirror Action and the daily stale-sweep (follow
 
 ## Log
 
-- 2026-06-22 created; system scaffolded and seeded. Flip to done on merge.
+- 2026-06-22 created; system scaffolded and seeded.
+- 2026-06-22 completed; closing via PR #1 (squash-merge).
