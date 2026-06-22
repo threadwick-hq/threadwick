@@ -1,0 +1,275 @@
+/* Brand tokens are aliased onto @threadwick/core (--tw-*, imported in main.tsx) so the
+   whole studio shell follows the shared "Brick & Ecru" palette. The chart-marker hues
+   (--origin/--space/--next) and the serif name face stay studio-local. */
+:root {
+  --bg: var(--tw-bg-container);
+  --bg-2: var(--tw-bg-elevated);
+  --ink: var(--tw-text);
+  --muted: var(--tw-text-tertiary);
+  --line: var(--tw-border);
+  --line-2: var(--tw-border-secondary);
+  --accent: var(--tw-primary);
+  --accent-d: var(--tw-primary-active);
+  --accent-soft: var(--tw-primary-soft);
+  --origin: #5cb3ff;
+  --space: #e8830c;
+  --next: #a259ff;
+  --serif: "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --logo: var(--tw-font-display);
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+/* antd's <App> wrapper sits between #root and our layout — let height pass through */
+#root > .ant-app { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+.grow { flex: 1; }
+/* View enter transition: .app-view is keyed by route in App, so navigating
+   remounts the content and replays this — the persistent header never moves.
+   Direction mirrors the hierarchy: going deeper (projects > project > pattern)
+   "digs down" (content rises up from below); going back "digs out" (content
+   settles down from above); a sideways move is a neutral fade. overflow:hidden
+   keeps the translate from flashing a scrollbar (children scroll themselves). */
+@keyframes viewDigDown { from { opacity: 0; transform: translateY(26px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes viewDigOut  { from { opacity: 0; transform: translateY(-22px) scale(1.014); } to { opacity: 1; transform: none; } }
+@keyframes viewFlat    { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.app-view.down { animation: viewDigDown .36s cubic-bezier(.2, .7, .3, 1) both; }
+.app-view.out  { animation: viewDigOut .34s cubic-bezier(.2, .7, .3, 1) both; }
+.app-view.flat { animation: viewFlat .28s cubic-bezier(.2, .7, .3, 1) both; }
+@media (prefers-reduced-motion: reduce) { .app-view, .chip, .howto-body, .howto-chevron { animation: none; transition: none; } }
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+kbd { font-size: 11px; background: var(--bg); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 0 5px; color: var(--muted); }
+
+/* ---- app shell ----------------------------------------------------------- */
+/* The TopBar is mounted once at app level and never remounts; views portal
+   their controls into .topbar-slot. Only .app-view content changes on
+   navigation. */
+.app { height: 100%; display: flex; flex-direction: column; }
+.app-view { flex: 1; min-height: 0; overflow: hidden; } /* children scroll themselves; clip keeps the enter-translate from flashing a scrollbar */
+.app-view > * { height: 100%; }
+
+/* ---- top bars ----------------------------------------------------------- */
+.topbar { display: flex; align-items: center; gap: 8px; padding: 11px 18px; border-bottom: 1px solid var(--line); background: var(--bg-2); }
+.topbar-slot { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; margin-left: 12px; }
+
+/* breadcrumbs: location, not a back button; serif names blend at UI size.
+   Every piece shares the same line-height + vertical padding so mixed
+   sans/serif crumbs center on one line; the trail shrinks with ellipsis
+   instead of overflowing the page sideways. */
+.crumbs { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+.crumbs ol { align-items: center; flex-wrap: nowrap; }
+.crumbs li { display: flex; align-items: center; min-width: 0; }
+.crumb-link { background: none; border: none; padding: 2px 6px; border-radius: 6px; font-size: 14px; line-height: 22px; color: var(--muted); cursor: pointer; white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
+.crumb-link:hover { color: var(--ink); background: rgba(40, 30, 20, .05); }
+.crumb-here { padding: 2px 6px; font-size: 14px; line-height: 22px; color: var(--ink); white-space: nowrap; } /* current location, not a link */
+.crumb-name { font-family: var(--serif); font-weight: 700; font-size: 15px; line-height: 22px; color: var(--ink); }
+span.crumb-name { padding: 2px 6px; white-space: nowrap; max-width: 260px; overflow: hidden; text-overflow: ellipsis; display: inline-block; }
+.crumb-leaf { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.crumb-leaf .badge { flex: 0 0 auto; }
+.brand { display: flex; align-items: center; gap: 9px; letter-spacing: -.01em; }
+.brand-mark { color: var(--accent); display: block; }
+.brand-lockup { display: flex; flex-direction: column; }
+.brand-name { font-family: var(--logo); font-size: 20px; font-weight: 700; line-height: 1.05; color: var(--ink); }
+.brand-sub { font-family: Inter, system-ui, sans-serif; font-size: 12px; font-weight: 400; line-height: 1.1; color: var(--muted); }
+.badge { font-size: 11px; color: var(--accent); background: var(--accent-soft); border-radius: 20px; padding: 3px 10px; font-weight: 600; }
+
+/* ---- home / project pages ---------------------------------------------- */
+.home { height: 100%; overflow-y: auto; display: flex; flex-direction: column; }
+.page { max-width: 1100px; width: 100%; margin: 0 auto; padding: 24px 22px 60px; flex: 1; }
+.tagline { color: var(--muted); font-size: 15px; max-width: 660px; margin: 2px 0 24px; line-height: 1.55; }
+.home-foot { text-align: center; color: var(--muted); font-size: 12px; padding: 16px; border-top: 1px solid var(--line); }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+.proj-card .ant-card-cover, .card-cover { cursor: pointer; }
+.card-cover { height: 150px; background: radial-gradient(circle at 50% 42%, #ffffff, var(--tw-bg-elevated)); display: grid; place-items: center; border-bottom: 1px solid var(--line-2); border-radius: 10px 10px 0 0; overflow: hidden; }
+.card-cover { position: relative; }
+.card-status { position: absolute; top: 8px; left: 8px; }
+.card-status .ant-tag { margin: 0; }
+.thumb, .thumb-empty { display: grid; place-items: center; width: 100%; height: 100%; }
+.thumb svg { max-width: 86%; max-height: 86%; height: auto; }
+.thumb-empty { opacity: .7; }
+.card-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
+.card-main { flex: 1; min-width: 0; cursor: pointer; }
+/* untouched default names render muted to read as "rename me" placeholders */
+.name-placeholder, .ant-input.name-placeholder { color: var(--muted); }
+.empty-wrap { padding: 50px 0; }
+.empty-art { display: flex; justify-content: center; gap: 10px; }
+.empty-wrap h2 { font-size: 20px; margin: 10px 0 4px; }
+
+/* same self-sizing + hover-reveals-input treatment as the pattern title;
+   -8px margin keeps the text flush with the description below */
+/* block + fit-content (not inline-block) so the title is its own box with no
+   baseline descender gap below it — the title stays put and aligned with the
+   description/content column rather than floating up on its line. */
+.proj-name-wrap { position: relative; display: block; width: fit-content; margin-left: -8px; font-family: var(--serif); font-size: 28px; font-weight: 800; line-height: 1.35; min-width: 90px; max-width: 100%; }
+.proj-name-wrap::after { content: attr(data-value) ' '; visibility: hidden; white-space: pre; display: block; overflow: hidden; padding: 2px 8px; }
+.proj-name-wrap .ant-input.proj-name { position: absolute; inset: 0; width: 100%; height: 100%; font: inherit; line-height: inherit; padding: 2px 8px; border-radius: 8px; transition: background .12s, box-shadow .12s; text-overflow: ellipsis; }
+.proj-name-wrap:hover .ant-input.proj-name:not(:focus) { background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.proj-name-wrap .ant-input.proj-name:focus { background: #fff; box-shadow: inset 0 0 0 1px var(--accent); }
+.proj-desc { color: var(--muted); padding: 0 0 8px !important; }
+
+/* version controls */
+.version-bar { display: flex; align-items: center; gap: 10px; margin: 6px 0 4px; padding: 8px 0; border-top: 1px solid var(--line-2); }
+.version-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.version-select { min-width: 168px; }
+.version-bar .ant-tag { margin: 0; }
+.version-readonly { margin: 10px 0 2px; }
+.ed-readonly .ant-alert-action { margin-left: 12px; }
+
+.section { margin-top: 28px; }
+.section-head { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 16px; }
+.section-head .ant-typography { margin: 0; }
+
+.res-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.res-list { display: flex; flex-direction: column; gap: 8px; }
+.res-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 8px 10px; background: var(--bg-2); border: 1px solid var(--line-2); border-radius: 8px; }
+.res-text { display: flex; flex-direction: column; gap: 2px; font-size: 13px; min-width: 0; }
+.res-text small { color: var(--muted); }
+.res-acts { display: flex; gap: 0; flex: 0 0 auto; }
+.res-url { font-size: 12px; color: var(--muted); word-break: break-all; }
+.swatch { display: inline-block; width: 12px; height: 12px; border-radius: 4px; border: 1px solid rgba(0,0,0,.15); vertical-align: -1px; margin-right: 5px; }
+.form-row { display: flex; gap: 12px; }
+.form-row .ant-form-item { flex: 1; }
+.color-input { padding: 2px; height: 34px; }
+.type-radios { display: flex; flex-direction: column; gap: 8px; }
+.type-radio { padding: 8px 4px; }
+
+/* ---- editor ------------------------------------------------------------- */
+/* rows: toolbar, body (the app TopBar lives outside the editor now) */
+.editor { display: grid; grid-template-rows: auto 1fr; height: 100%; }
+/* read-only adds a banner row between the toolbar and the body */
+.editor.has-banner { grid-template-rows: auto auto 1fr; }
+
+/* The editable pattern title sizes itself to its text: a hidden ::after twin
+   (same font + padding) sizes the wrapper, and the input overlays it
+   absolutely — so the input's intrinsic width can't inflate the box. Hovering
+   reveals the "hidden input" affordance. */
+.pat-name-wrap { position: relative; display: inline-block; flex: 0 1 auto; font-family: var(--serif); font-size: 16px; font-weight: 700; line-height: 1.5; min-width: 56px; max-width: 340px; }
+.pat-name-wrap::after { content: attr(data-value) ' '; visibility: hidden; white-space: pre; display: block; overflow: hidden; padding: 2px 7px; }
+.pat-name-wrap .ant-input.pat-name { position: absolute; inset: 0; width: 100%; height: 100%; font: inherit; line-height: inherit; padding: 2px 7px; border-radius: 6px; transition: background .12s, box-shadow .12s; text-overflow: ellipsis; }
+/* the hover affordance reads "input field", distinct from the link-tint hover */
+.pat-name-wrap:hover .ant-input.pat-name:not(:focus):not([readonly]) { background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.pat-name-wrap .ant-input.pat-name:focus { background: #fff; box-shadow: inset 0 0 0 1px var(--accent); }
+/* icon-only segments: flex-center the label so every glyph sits on the same
+   vertical axis regardless of its intrinsic bounding box */
+.toolbar .ant-segmented-item-label { display: flex; align-items: center; justify-content: center; }
+.seg-icon { display: flex; align-items: center; justify-content: center; padding: 4px 5px; }
+.seg-icon svg { width: 17px; height: 17px; }
+/* A generic HELD button state (hold a key to use a mode momentarily, e.g. hold
+   Space to pan). The held button shows "pressed" IN PLACE — accent dashed-ring
+   + tint — while the persistent selection thumb stays on your real mode and
+   never travels. So the held state reads as a direct current <-> held change
+   (no sliding across the other buttons), and it's reusable for any mode: add
+   `held-<mode>` and it lights the button with that aria-label. */
+/* transition lives on the base item (not only the held state) so the "held"
+   look fades both IN on press and OUT on release */
+.mode-seg .ant-segmented-item { border-radius: 7px; transition: background .16s ease, box-shadow .16s ease, color .16s ease; }
+.mode-seg.held-select .ant-segmented-item:has([aria-label="Select"]),
+.mode-seg.held-insert .ant-segmented-item:has([aria-label="Insert"]),
+.mode-seg.held-pan .ant-segmented-item:has([aria-label="Pan"]) {
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1.5px var(--accent-d);
+}
+.mode-seg .seg-icon svg { transition: color .16s ease; }
+.mode-seg.held-select .ant-segmented-item:has([aria-label="Select"]) .seg-icon svg,
+.mode-seg.held-insert .ant-segmented-item:has([aria-label="Insert"]) .seg-icon svg,
+.mode-seg.held-pan .ant-segmented-item:has([aria-label="Pan"]) .seg-icon svg {
+  color: var(--accent-d);
+}
+.toolbar { display: flex; align-items: center; gap: 12px; padding: 7px 16px; background: var(--bg-2); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.tool-view { display: flex; align-items: center; gap: 4px; padding-left: 12px; margin-left: 4px; border-left: 1px solid var(--line); }
+
+/* keyboard focus visibility (custom interactive elements) */
+.chip:focus-visible, .row-main:focus-visible, .card-main:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+
+/* resource column header: icon + count */
+.res-title { display: inline-flex; align-items: center; gap: 7px; font-weight: 600; }
+.res-title svg { color: var(--muted); flex: 0 0 auto; }
+.res-count { display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--accent-soft); color: var(--accent-d); font-size: 11px; font-weight: 700; }
+
+/* empty states */
+.section-empty { padding: 30px 0 24px; }
+.empty-head { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+
+.ed-body { display: grid; grid-template-columns: 220px 1fr 286px; min-height: 0; }
+/* read-only hides the left palette — drop to two columns so the canvas fills */
+.ed-body.readonly { grid-template-columns: 1fr 286px; }
+.ed-left { background: var(--bg-2); border-right: 1px solid var(--line); overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 16px; }
+.ed-right { background: var(--bg-2); border-left: 1px solid var(--line); display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; }
+.rows-panel { padding: 14px; border-bottom: 1px solid var(--line); }
+.ed-right-scroll { overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+.panel-title { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 9px; font-weight: 600; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+.panel-head .panel-title { margin: 0; }
+
+.chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.chip { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 7px 4px 5px; background: #fff; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; position: relative; transition: border-color .12s, background .12s, box-shadow .12s, transform .06s; }
+.chip:hover { border-color: var(--accent); transform: translateY(-1px); }
+.chip.on { border-color: var(--accent); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+.chip span { font-size: 10px; color: var(--muted); }
+.chip kbd { position: absolute; top: 3px; right: 3px; font-size: 9px; padding: 0 3px; }
+.glyph-wrap { display: block; line-height: 0; }
+
+/* negative margins stretch the separator across the aside's 14px padding */
+.howto-card { margin: auto -14px 0; padding: 10px 14px 0; border-top: 1px solid var(--line); }
+.howto-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; background: transparent; border: none; padding: 2px 0; cursor: pointer; }
+.howto-toggle .panel-title { margin: 0; }
+.howto-toggle:hover .panel-title { color: var(--ink); }
+.howto-chevron { color: var(--muted); transition: transform .2s ease; }
+.howto-chevron.closed { transform: rotate(180deg); } /* points up when closed */
+/* 1fr -> 0fr grid-row trick animates the spoiler open/closed */
+.howto-body { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .22s ease; }
+.howto-body.closed { grid-template-rows: 0fr; }
+.howto-body > .howto { overflow: hidden; min-height: 0; }
+.howto-body .howto li:first-child { margin-top: 8px; } /* spacing inside the clip so the closed state is truly 0-height */
+.howto { margin: 0; padding-left: 18px; font-size: 12px; color: var(--muted); line-height: 1.7; }
+.howto b { color: var(--ink); }
+.dot-space { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--space); vertical-align: -1px; }
+
+.canvas-wrap { position: relative; overflow: hidden; background: radial-gradient(circle at 50% 45%, #ffffff 0%, var(--tw-bg-elevated) 100%); }
+.ed-canvas { width: 100%; height: 100%; display: block; cursor: default; touch-action: none; } /* the controller sets crosshair/grab contextually */
+.ed-canvas .handle { cursor: move; } /* head/base endpoint handles on selected stitches */
+.toast { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); background: rgba(33,32,28,.9); color: #fff; font-size: 13px; padding: 7px 16px; border-radius: 20px; pointer-events: none; box-shadow: 0 6px 20px rgba(0,0,0,.15); }
+.hint { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,.85); color: var(--muted); font-size: 12px; padding: 5px 13px; border-radius: 20px; pointer-events: none; max-width: 92%; text-align: center; border: 1px solid var(--line); }
+
+.rows-list { display: flex; flex-direction: column; gap: 4px; max-height: 38vh; overflow-y: auto; }
+.row-item { display: flex; align-items: center; gap: 2px; border-radius: 8px; }
+.row-item.on { background: var(--accent-soft); box-shadow: inset 2px 0 0 var(--accent); }
+.row-main { flex: 1; display: flex; flex-direction: column; align-items: flex-start; text-align: left; background: transparent; border: none; border-radius: 7px; padding: 6px 8px; cursor: pointer; min-width: 0; }
+.row-main:hover { background: rgba(40,30,20,.04); }
+.row-main.static { cursor: default; }
+.row-main.static:hover { background: transparent; }
+.row-item.start-row { opacity: .8; }
+.row-main b { font-size: 13px; }
+.row-main small { color: var(--muted); font-size: 11px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.insp-empty p { margin: 0 0 8px; }
+.insp-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.insp-legend li { display: flex; align-items: center; gap: 8px; }
+.inspector .field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); margin-bottom: 11px; }
+.inspector .field.row { flex-direction: row; align-items: center; justify-content: space-between; }
+
+/* export modal */
+.export-form { display: flex; flex-direction: column; gap: 14px; margin-top: 4px; }
+.export-form .field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+.export-form .field > span { font-weight: 500; color: var(--ink); }
+.export-form .field.check { flex-direction: row; align-items: center; gap: 9px; color: var(--ink); }
+.insp-acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.icon-flip-h { transform: scaleX(-1); }
+.type-opt { display: inline-flex; align-items: center; gap: 7px; }
+.legend { display: flex; flex-direction: column; gap: 6px; }
+.legend-row { display: flex; align-items: center; gap: 9px; font-size: 13px; }
+.legend-row .glyph-wrap { flex: 0 0 auto; }
+
+.help-steps { padding-left: 20px; line-height: 1.7; }
+.sw { display: inline-block; width: 11px; height: 11px; border-radius: 3px; vertical-align: -1px; }
+.keys { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 4px; }
+.keys td { padding: 4px 8px 4px 0; border-bottom: 1px solid var(--line-2); }
+.keys td:first-child { white-space: nowrap; width: 150px; }
+
+@media (max-width: 900px) {
+  .ed-body, .ed-body.readonly { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+  .ed-left { display: none; }
+  .ed-right { border-left: none; border-top: 1px solid var(--line); max-height: 42vh; }
+}
