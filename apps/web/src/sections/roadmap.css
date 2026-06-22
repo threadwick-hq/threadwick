@@ -1,0 +1,77 @@
+/* Bento grid for the "What's on the hook" roadmap section.
+   Desktop tile spans are planned in src/data/planned.ts to fill 4-column
+   rows exactly (24 cells = 6 rows). */
+
+.tw-bento {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.tw-bento__tile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px;
+  background: var(--tw-bg-container);
+  border: 1px solid var(--tw-border);
+  border-radius: var(--tw-radius-xl);
+  box-shadow: var(--tw-shadow-soft);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+@media (hover: hover) {
+  .tw-bento__tile:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--tw-shadow-lifted);
+  }
+}
+
+.tw-bento__tile--wide {
+  grid-column: span 2;
+}
+
+.tw-bento__tile--hero {
+  grid-column: span 2;
+  grid-row: span 2;
+  padding: 28px;
+}
+
+/* Accent tiles */
+.tw-bento__tile--ink {
+  background: var(--tw-text);
+  border-color: var(--tw-text);
+}
+.tw-bento__tile--wash {
+  background: linear-gradient(160deg, var(--tw-primary-wash), var(--tw-primary-soft));
+}
+
+/* Tablet: 2 columns; hero loses its double row */
+@media (max-width: 996px) {
+  .tw-bento {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .tw-bento__tile--hero {
+    grid-row: span 1;
+  }
+}
+
+/* Mobile: single column */
+@media (max-width: 620px) {
+  .tw-bento {
+    grid-template-columns: 1fr;
+  }
+  .tw-bento__tile--hero,
+  .tw-bento__tile--wide {
+    grid-column: span 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tw-bento__tile {
+    transition: none;
+  }
+}

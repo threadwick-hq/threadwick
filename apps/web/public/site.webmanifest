@@ -1,0 +1,27 @@
+{
+  "name": "Threadwick — fair tools for fiber artists & makers",
+  "short_name": "Threadwick",
+  "description": "Free, browser-based crochet chart designer. Chart granny-square designs stitch by stitch, keep your projects together, and export clean PDFs, images and shareable links.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f4ef",
+  "theme_color": "#c2603f",
+  "lang": "en",
+  "categories": ["productivity", "lifestyle", "graphics", "utilities"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

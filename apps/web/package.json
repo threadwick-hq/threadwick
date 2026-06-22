@@ -1,0 +1,58 @@
+{
+  "name": "threadwick-home",
+  "version": "1.0.0",
+  "description": "Threadwick — a home for fiber artists and hobbyists. Marketing homepage for threadwick.com.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "predev": "node scripts/gen-favicon.mjs",
+    "gen:favicon": "node scripts/gen-favicon.mjs",
+    "build": "npm run gen:favicon && tsc --noEmit && eslint . && vite build && npm run prerender",
+    "build:client": "vite build",
+    "build:ssr": "vite build --ssr src/entry-server.tsx --outDir dist-ssr",
+    "prerender": "npm run build:ssr && node scripts/prerender.mjs",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "og": "node scripts/build-og.mjs"
+  },
+  "keywords": [
+    "fiber-arts",
+    "crochet",
+    "granny-square",
+    "chart",
+    "designer",
+    "threadwick"
+  ],
+  "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "@fontsource/inter": "^5.1.0",
+    "@fontsource/space-grotesk": "^5.2.10",
+    "@threadwick/core": "file:../../core/main",
+    "@vercel/microfrontends": "^2.3.6",
+    "antd": "^5.22.0",
+    "iconoir-react": "^7.11.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "jsdom": "^25.0.1",
+    "typescript": "~5.6.3",
+    "typescript-eslint": "^8.18.2",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.8"
+  }
+}
