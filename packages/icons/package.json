@@ -1,0 +1,27 @@
+{
+	"name": "@threadwick/icons",
+	"version": "0.1.0",
+	"description": "Threadwick's action-named icon interface — one <Icon name> against a closed set of intent names, resolved by a swappable icon set (Font Awesome Free baseline, Pro when licensed).",
+	"type": "module",
+	"license": "AGPL-3.0-or-later",
+	"sideEffects": false,
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@fortawesome/fontawesome-svg-core": "^6.7.2",
+		"@fortawesome/free-solid-svg-icons": "^6.7.2",
+		"@fortawesome/react-fontawesome": "^0.2.2"
+	},
+	"peerDependencies": {
+		"react": "^18"
+	},
+	"devDependencies": {
+		"@types/react": "^18.3.12",
+		"react": "^18.3.1",
+		"typescript": "~5.6.3"
+	}
+}

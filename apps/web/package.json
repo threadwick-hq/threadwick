@@ -30,7 +30,7 @@
   "dependencies": {
     "@fontsource/inter": "^5.1.0",
     "@fontsource/space-grotesk": "^5.2.10",
-    "@threadwick/core": "file:../../core/main",
+    "@threadwick/core": "workspace:*",
     "@vercel/microfrontends": "^2.3.6",
     "antd": "^5.22.0",
     "iconoir-react": "^7.11.0",
