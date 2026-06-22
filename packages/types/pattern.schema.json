@@ -1,0 +1,195 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://threadwick.com/schema/pattern.json",
+  "title": "Threadwick Pattern",
+  "description": "Fail-closed guardrail mirroring src/types/pattern.ts (Plane A — authoring artifacts). Keep in sync with the TypeScript model.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "craft", "overview", "components", "materials", "tutorials", "stitches", "notes", "variations", "workingCopy"],
+  "properties": {
+    "id": { "type": "string" },
+    "craft": { "enum": ["crochet", "knit", "amigurumi", "tunisian", "other"] },
+    "overview": { "$ref": "#/definitions/Overview" },
+    "components": { "type": "array", "items": { "$ref": "#/definitions/Component" } },
+    "materials": { "type": "array", "items": { "$ref": "#/definitions/Material" } },
+    "tutorials": { "type": "array", "items": { "$ref": "#/definitions/Tutorial" } },
+    "stitches": { "type": "array", "items": { "$ref": "#/definitions/Stitch" } },
+    "notes": { "type": "array", "items": { "$ref": "#/definitions/Note" } },
+    "variations": { "type": "array", "items": { "$ref": "#/definitions/Variation" } },
+    "workingCopy": { "$ref": "#/definitions/WorkingCopyRef" }
+  },
+  "definitions": {
+    "ImageRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["src"],
+      "properties": {
+        "src": { "type": "string" },
+        "alt": { "type": "string" },
+        "caption": { "type": "string" }
+      }
+    },
+    "Overview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string" },
+        "summary": { "type": "string" },
+        "cover": { "$ref": "#/definitions/ImageRef" },
+        "gallery": { "type": "array", "items": { "$ref": "#/definitions/ImageRef" } },
+        "designer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name"],
+          "properties": {
+            "name": { "type": "string" },
+            "bio": { "type": "string" },
+            "url": { "type": "string" }
+          }
+        },
+        "skillLevel": { "enum": ["beginner", "easy", "intermediate", "advanced"] },
+        "sizes": { "type": "array", "items": { "$ref": "#/definitions/SizeSpec" } },
+        "estimate": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "time": { "type": "string" }, "yardage": { "type": "string" } }
+        },
+        "license": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "SizeSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "measurements"],
+      "properties": {
+        "label": { "type": "string" },
+        "measurements": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "Component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "artifacts"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "kind": { "enum": ["motif", "panel", "part", "assembly"] },
+        "artifacts": { "type": "array", "items": { "$ref": "#/definitions/ComponentArtifact" } }
+      }
+    },
+    "ComponentArtifact": {
+      "oneOf": [
+        { "$ref": "#/definitions/ChartArtifact" },
+        { "$ref": "#/definitions/WrittenArtifact" },
+        { "$ref": "#/definitions/SchematicArtifact" }
+      ]
+    },
+    "ChartArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "id", "data"],
+      "properties": {
+        "type": { "const": "chart" },
+        "id": { "type": "string" },
+        "kind": { "enum": ["stitch", "colorwork"] },
+        "data": { "type": "object", "required": ["id"], "properties": { "id": { "type": "string" } } }
+      }
+    },
+    "WrittenArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "id", "body"],
+      "properties": {
+        "type": { "const": "written" },
+        "id": { "type": "string" },
+        "body": { "type": "string" },
+        "media": { "type": "array", "items": { "$ref": "#/definitions/ImageRef" } }
+      }
+    },
+    "SchematicArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "id", "data"],
+      "properties": {
+        "type": { "const": "schematic" },
+        "id": { "type": "string" },
+        "data": { "type": "object", "required": ["id"], "properties": { "id": { "type": "string" } } }
+      }
+    },
+    "Material": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "label"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["yarn", "hook", "needle", "notion"] },
+        "label": { "type": "string" },
+        "brand": { "type": "string" },
+        "weight": { "type": "string" },
+        "colorway": { "type": "string" },
+        "quantity": { "type": "string" },
+        "substitution": { "type": "string" }
+      }
+    },
+    "Tutorial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "label", "url"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["project", "technique"] },
+        "label": { "type": "string" },
+        "url": { "type": "string" },
+        "provider": { "enum": ["youtube", "vimeo", "file"] },
+        "stitchId": { "type": "string" }
+      }
+    },
+    "Stitch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "abbr", "name", "definition"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["special", "abbreviation"] },
+        "abbr": { "type": "string" },
+        "name": { "type": "string" },
+        "definition": { "type": "string" },
+        "chartId": { "type": "string" },
+        "tutorialId": { "type": "string" }
+      }
+    },
+    "Note": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "title", "body"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["general", "gauge", "care", "safety", "colorchange", "stuffing"] },
+        "title": { "type": "string" },
+        "body": { "type": "string" }
+      }
+    },
+    "Variation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "label", "description"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["size", "colorway", "yarn-weight", "technique", "difficulty"] },
+        "label": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "WorkingCopyRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["branch", "dirty"],
+      "properties": {
+        "branch": { "type": "string" },
+        "dirty": { "type": "boolean" }
+      }
+    }
+  }
+}
