@@ -1,0 +1,19 @@
+Threadwick
+Copyright (C) Threadwick
+
+This program is free software licensed under the GNU Affero General Public License,
+version 3 or later (AGPL-3.0-or-later). See LICENSE for the full text.
+
+================================================================================
+Third-party notices
+================================================================================
+
+Font Awesome Free
+-----------------
+Icons: CC BY 4.0 License (https://fontawesome.com/license/free)
+Fonts: SIL OFL 1.1 License
+Code:  MIT License
+Attribution: "Font Awesome Free by @fontawesome — https://fontawesome.com".
+
+Font Awesome Pro, when present in production builds, is licensed separately under a
+commercial Font Awesome license and is NOT redistributed in this repository.
