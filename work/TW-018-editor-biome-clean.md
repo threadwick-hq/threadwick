@@ -7,11 +7,13 @@ area:
   - packages/config
   - repo
 phase: 6
-status: active
+status: done
 priority: p2
 created: 2026-06-23
 assignee: agent
 started: 2026-06-23
+completed: 2026-06-23
+pr: 10
 acceptance:
   - packages/editor passes `biome check` with no errors
   - packages/editor is added to the Biome-clean set, unblocking TW-007's gate flip
