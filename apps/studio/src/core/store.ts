@@ -2,18 +2,18 @@
 // Subscribers re-render on emit(). Editor edits (rounds + stitches) are
 // transactional with undo/redo; project/resource edits autosave but aren't undoable.
 
-import { uid, deepClone, nowISO } from './util';
+import { uid, deepClone, nowISO } from '@threadwick/editor';
 import {
   newProject, newPattern, newRound, newVersion, normalizeProject,
   activeVersion, publishedVersion, draftVersion, nextVersionLabel,
   startRowId, isStartRow, PATTERN_TYPES, FILE_FORMAT, FILE_VERSION,
-} from './model';
-import { isStart, isRealStitch } from './symbols';
-import { topOfStitch, buildStitchShapes } from './render';
-import { chainOrder } from './connectivity';
+} from '@threadwick/editor';
+import { isStart, isRealStitch } from '@threadwick/editor';
+import { topOfStitch, buildStitchShapes } from '@threadwick/editor';
+import { chainOrder } from '@threadwick/editor';
 import type {
   Project, ProjectVersion, Pattern, Round, Stitch, Base, StitchType, ResourceKind, Resources, UIState,
-} from './types';
+} from '@threadwick/editor';
 
 const SAVE_KEY = 'threadwickstudio:v2';
 const LEGACY_SAVE_KEY = 'stitchgridstudio:v2'; // pre-rename key; read once and migrated forward

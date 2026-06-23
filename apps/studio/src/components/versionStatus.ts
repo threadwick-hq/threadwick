@@ -1,5 +1,5 @@
 // Display metadata for version statuses, shared by VersionTag and the views.
-import type { VersionStatus } from '../core/types';
+import type { VersionStatus } from '@threadwick/editor';
 
 export const STATUS_META: Record<VersionStatus, { label: string; color?: string }> = {
   draft: { label: 'Draft', color: 'gold' },

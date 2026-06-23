@@ -1,12 +1,18 @@
 // Saving & loading: project files, image export, and the print/PDF composer.
 
 import QRCode from 'qrcode';
-import { chartToSVG } from './render';
-import { chainOrder } from './connectivity';
-import { isStart, STITCHES } from './symbols';
-import { projectToFile, projectFromFile, activeVersion } from './model';
-import { slug, escapeXML } from './util';
-import type { Project, Pattern } from './types';
+import {
+  activeVersion,
+  chartToSVG,
+  escapeXML,
+  isStart,
+  projectFromFile,
+  projectToFile,
+  slug,
+  STITCHES,
+  summarizeRound,
+} from '@threadwick/editor';
+import type { Pattern, Project } from '@threadwick/editor';
 
 function download(filename: string, blob: Blob): void {
   const url = URL.createObjectURL(blob);
@@ -83,22 +89,6 @@ export function exportPatternPNG(pattern: Pattern, opts: ImageExportOptions = {}
   };
   img.onerror = () => URL.revokeObjectURL(url);
   img.src = url;
-}
-
-// ---- written instructions --------------------------------------------------
-export function summarizeRound(pattern: Pattern, roundId: string): string {
-  const order = chainOrder(pattern.stitches, roundId).filter((s) => !isStart(s.type));
-  if (!order.length) return '';
-  const parts: string[] = [];
-  let i = 0;
-  while (i < order.length) {
-    const t = order[i]!.type; let n = 1;
-    while (i + n < order.length && order[i + n]!.type === t) n++;
-    const abbr = (STITCHES[t] && STITCHES[t].abbr) || t;
-    parts.push(t === 'ch' && n > 1 ? `ch ${n}` : (n > 1 ? `${n} ${abbr}` : abbr));
-    i += n;
-  }
-  return parts.join(', ');
 }
 
 export function patternStartLabel(pattern: Pattern): string | null {

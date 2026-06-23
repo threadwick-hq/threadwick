@@ -3,18 +3,18 @@
 // workflow (origin -> base -> head; alt/cmd-click to work out of a stitch;
 // one-click chains that flow off the origin). React mounts it via a ref.
 
-import { clamp, round } from './util';
-import { rotatePoint } from './geometry';
-import { buildStitchShapes, shapesMarkup, stitchToSVG, topOfStitch, contentBounds } from './render';
-import { INK, GHOST, ORIGIN, SPACE, NEXT, SELECT } from './colors';
+import { clamp, round } from '@threadwick/editor';
+import { rotatePoint } from '@threadwick/editor';
+import { buildStitchShapes, shapesMarkup, stitchToSVG, topOfStitch, contentBounds } from '@threadwick/editor';
+import { INK, GHOST, ORIGIN, SPACE, NEXT, SELECT } from '@threadwick/editor';
 import {
   pickBase, basePoint, nearestStitch, spacesForRound, successorInRound,
   chainFrom, defaultOriginId, stitchWithinRect,
-} from './connectivity';
-import { isStart } from './symbols';
-import { hasStart, isStartRow } from './model';
+} from '@threadwick/editor';
+import { isStart } from '@threadwick/editor';
+import { hasStart, isStartRow } from '@threadwick/editor';
 import type { Store } from './store';
-import type { Stitch, StitchType, Base, BaseHit, Point } from './types';
+import type { Stitch, StitchType, Base, BaseHit, Point } from '@threadwick/editor';
 
 const NS = 'http://www.w3.org/2000/svg';
 

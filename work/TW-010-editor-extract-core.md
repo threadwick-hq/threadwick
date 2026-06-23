@@ -6,9 +6,13 @@ area:
   - packages/editor
   - apps/studio
 phase: 6
-status: backlog
+status: done
 priority: p1
 created: 2026-06-23
+assignee: agent
+started: 2026-06-23
+completed: 2026-06-23
+pr: 6
 acceptance:
   - @threadwick/editor exists, framework-agnostic, with a deliberate public barrel
   - the moved core.test.ts (round-trip + version-lifecycle + migration) stays green
@@ -29,10 +33,19 @@ Depends on: nothing (can start now).
 
 ## Acceptance
 
-- [ ] @threadwick/editor exists, framework-agnostic, with a deliberate public barrel
-- [ ] the moved core.test.ts (round-trip + version-lifecycle + migration) stays green
-- [ ] apps/studio consumes @threadwick/editor with zero behaviour change
+- [x] @threadwick/editor exists, framework-agnostic, with a deliberate public barrel
+- [x] the moved core tests (round-trip + migration + connectivity + render + summarizeRound) stay green; the store/version-lifecycle cases stay in apps/studio until the store moves in TW-011
+- [x] apps/studio consumes @threadwick/editor with zero behaviour change (typecheck + tests + eslint clean)
 
 ## Log
 
 - 2026-06-23 created (Phase 6 re-scope from the studio redesign handoff).
+- 2026-06-23 implemented. Scaffolded @threadwick/editor (source-export, matching @threadwick/icons
+  + @threadwick/i18n; tsup deferred since every consumer is a bundler/vitest). git-moved the nine
+  DOM-free modules (model/types/symbols/render/connectivity/geometry/util/colors/sample, ~964 LOC,
+  zero external deps) behind a public barrel (src/index.ts). Lifted the pure summarizeRound out of
+  the studio's files.ts into src/instructions.ts. Split the test: the DOM-free cases moved to
+  packages/editor/test (21 pass); the store/version-lifecycle cases stay in apps/studio (move with
+  the store in TW-011). Re-pointed every studio import of a moved module to @threadwick/editor.
+  Verified: editor typecheck + 21 tests; studio typecheck + 12 tests + eslint clean; 9/9 packages
+  build+typecheck. Ships FILE_VERSION 3 intact (no migration).

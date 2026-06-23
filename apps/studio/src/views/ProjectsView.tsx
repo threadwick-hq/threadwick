@@ -9,8 +9,8 @@ import { Thumb } from '../components/Thumb';
 import { Glyph } from '../components/Glyph';
 import { VersionTag } from '../components/VersionTag';
 import { exportProjectFile, importProjectFile } from '../core/files';
-import { displayVersion, isPlaceholderName } from '../core/model';
-import type { Project } from '../core/types';
+import { displayVersion, isPlaceholderName } from '@threadwick/editor';
+import type { Project } from '@threadwick/editor';
 
 function fmtDate(iso: string): string {
   try { return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); }

@@ -13,8 +13,8 @@ import { Thumb } from '../components/Thumb';
 import { VersionTag } from '../components/VersionTag';
 import { statusLabel } from '../components/versionStatus';
 import { exportProjectFile, printProject } from '../core/files';
-import { PATTERN_TYPES, activeVersion, isPlaceholderName } from '../core/model';
-import type { ProjectVersion, Pattern, ResourceKind, Yarn, LinkRes, NoteRes, VariationRes } from '../core/types';
+import { PATTERN_TYPES, activeVersion, isPlaceholderName } from '@threadwick/editor';
+import type { ProjectVersion, Pattern, ResourceKind, Yarn, LinkRes, NoteRes, VariationRes } from '@threadwick/editor';
 
 const { Title } = Typography;
 

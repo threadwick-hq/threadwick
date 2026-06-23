@@ -6,7 +6,7 @@ import { App } from './App';
 import { store } from './core/store';
 import { cloudEnabled } from './cloud/config';
 import './cloud/oauthError'; // capture any OAuth callback error before supabase-js strips the URL
-import { sampleProject } from './core/sample';
+import { sampleProject } from '@threadwick/editor';
 import '@fontsource/space-grotesk/latin-400.css';
 import '@fontsource/space-grotesk/latin-700.css';
 import '@fontsource/inter/latin-400.css';
