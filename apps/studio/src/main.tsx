@@ -1,6 +1,5 @@
 import { createRoot } from 'react-dom/client';
 import { ConfigProvider, App as AntApp } from 'antd';
-import { IconoirProvider } from 'iconoir-react';
 import { theme } from './theme';
 import { App } from './App';
 import { store } from '@threadwick/editor/browser';
@@ -42,9 +41,7 @@ if (cloudEnabled) {
 createRoot(document.getElementById('root')!).render(
   <ConfigProvider theme={theme}>
     <AntApp>
-      <IconoirProvider iconProps={{ width: 18, height: 18, strokeWidth: 1.8 }}>
-        <App />
-      </IconoirProvider>
+      <App />
     </AntApp>
   </ConfigProvider>,
 );
