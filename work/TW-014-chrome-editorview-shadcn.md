@@ -6,9 +6,11 @@ area:
   - apps/studio
   - packages/editor
 phase: 6
-status: backlog
+status: active
 priority: p1
 created: 2026-06-23
+assignee: agent
+started: 2026-06-23
 acceptance:
   - EditorView renders with no AntD imports
   - the editor CSS grid (.editor, .ed-body) is intact via modifier classes
