@@ -8,7 +8,7 @@ import { TopBarSlot } from '../components/TopBar';
 import { Thumb } from '../components/Thumb';
 import { Glyph } from '../components/Glyph';
 import { VersionTag } from '../components/VersionTag';
-import { exportProjectFile, importProjectFile } from '../core/files';
+import { exportProjectFile, importProjectFile } from '@threadwick/editor/browser';
 import { displayVersion, isPlaceholderName } from '@threadwick/editor';
 import type { Project } from '@threadwick/editor';
 

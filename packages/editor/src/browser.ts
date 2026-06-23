@@ -4,3 +4,4 @@
 
 export * from './store';
 export * from './editorCanvas';
+export * from './files';

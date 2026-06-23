@@ -11,8 +11,8 @@ import {
   slug,
   STITCHES,
   summarizeRound,
-} from '@threadwick/editor';
-import type { Pattern, Project } from '@threadwick/editor';
+} from './index';
+import type { Pattern, Project } from './index';
 
 function download(filename: string, blob: Blob): void {
   const url = URL.createObjectURL(blob);
