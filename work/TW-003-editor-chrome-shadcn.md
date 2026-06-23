@@ -6,7 +6,7 @@ area:
   - packages/editor
   - apps/studio
 phase: 6
-status: backlog
+status: abandoned
 priority: p1
 created: 2026-06-22
 blocked_by:
@@ -36,3 +36,4 @@ Out: the editor canvas (already AntD-free).
 ## Log
 
 - 2026-06-22 created.
+- 2026-06-23 abandoned: superseded by TW-014, TW-015, TW-016, TW-017 (Phase 6 re-scope: split per surface).

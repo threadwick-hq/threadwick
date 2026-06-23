@@ -6,7 +6,7 @@ area:
   - apps/studio
   - packages/editor
 phase: 6
-status: backlog
+status: abandoned
 priority: p1
 created: 2026-06-22
 acceptance:
@@ -34,3 +34,4 @@ Out: the AntD -> shadcn chrome migration (TW-003) and the apps/web mount (TW-004
 ## Log
 
 - 2026-06-22 created.
+- 2026-06-23 abandoned: superseded by TW-010, TW-011, TW-012 (Phase 6 re-scope: split into three right-sized PRs).

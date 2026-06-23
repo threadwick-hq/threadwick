@@ -6,7 +6,7 @@ area:
   - apps/web
   - apps/studio
 phase: 6
-status: backlog
+status: abandoned
 priority: p2
 created: 2026-06-22
 blocked_by:
@@ -36,3 +36,4 @@ Out: the broader client-only mount (TW-004).
 ## Log
 
 - 2026-06-22 created.
+- 2026-06-23 abandoned: superseded by TW-048 (same work, renumbered into the Phase-6 batch).

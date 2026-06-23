@@ -6,7 +6,7 @@ area:
   - apps/web
   - packages/editor
 phase: 6
-status: backlog
+status: abandoned
 priority: p1
 created: 2026-06-22
 blocked_by:
@@ -36,3 +36,4 @@ Out: the Supabase redirect pinning (TW-005) and the asset-path audit (TW-006).
 ## Log
 
 - 2026-06-22 created.
+- 2026-06-23 abandoned: superseded by TW-019 (Phase 6 re-scope: acceptance preserved verbatim).
