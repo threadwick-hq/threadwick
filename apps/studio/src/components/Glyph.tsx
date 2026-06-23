@@ -1,6 +1,6 @@
-import { glyphSVG } from '../core/render';
-import { STITCHES } from '../core/symbols';
-import type { StitchType } from '../core/types';
+import { glyphSVG } from '@threadwick/editor';
+import { STITCHES } from '@threadwick/editor';
+import type { StitchType } from '@threadwick/editor';
 
 export function Glyph({ type, size = 34, color }: { type: StitchType; size?: number; color?: string }) {
   return (

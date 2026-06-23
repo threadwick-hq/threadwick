@@ -14,13 +14,14 @@ import { TopBarSlot } from '../components/TopBar';
 import { Glyph } from '../components/Glyph';
 import { statusLabel } from '../components/versionStatus';
 import type { CanvasController, Mode } from '../core/editorCanvas';
-import { STITCH_ORDER, START_ORDER, STITCHES, STITCH_KEYS, isStart, isRealStitch, defaultLen } from '../core/symbols';
-import { chainOrder } from '../core/connectivity';
-import { usedTypes } from '../core/render';
-import { summarizeRound, exportPatternSVG, exportPatternPNG, printPattern } from '../core/files';
-import { hasStart, isStartRow, isPlaceholderName } from '../core/model';
-import { INK, ORIGIN, SPACE, SELECT, NEXT } from '../core/colors';
-import type { Stitch, StitchType } from '../core/types';
+import { STITCH_ORDER, START_ORDER, STITCHES, STITCH_KEYS, isStart, isRealStitch, defaultLen } from '@threadwick/editor';
+import { chainOrder } from '@threadwick/editor';
+import { usedTypes } from '@threadwick/editor';
+import { exportPatternSVG, exportPatternPNG, printPattern } from '../core/files';
+import { summarizeRound } from '@threadwick/editor';
+import { hasStart, isStartRow, isPlaceholderName } from '@threadwick/editor';
+import { INK, ORIGIN, SPACE, SELECT, NEXT } from '@threadwick/editor';
+import type { Stitch, StitchType } from '@threadwick/editor';
 
 const { Title } = Typography;
 const KEY_TO_TYPE: Record<string, StitchType> = Object.fromEntries(
@@ -259,7 +260,7 @@ function HowItWorks() {
 
 // The palette is contextual: on the Start row you pick a starting stitch; on any
 // working row you pick a normal stitch.
-function Palette({ pat, chrome, ctrl }: { pat: import('../core/types').Pattern; chrome: Chrome; ctrl: React.MutableRefObject<CanvasController | null>; }) {
+function Palette({ pat, chrome, ctrl }: { pat: import('@threadwick/editor').Pattern; chrome: Chrome; ctrl: React.MutableRefObject<CanvasController | null>; }) {
   const s = useStore();
   const onStart = isStartRow(pat, pat.activeRound);
   if (onStart) {
@@ -293,7 +294,7 @@ function Palette({ pat, chrome, ctrl }: { pat: import('../core/types').Pattern; 
   );
 }
 
-function Inspector({ pat, ctrl, readOnly }: { pat: import('../core/types').Pattern; ctrl: React.MutableRefObject<CanvasController | null>; readOnly?: boolean; }) {
+function Inspector({ pat, ctrl, readOnly }: { pat: import('@threadwick/editor').Pattern; ctrl: React.MutableRefObject<CanvasController | null>; readOnly?: boolean; }) {
   const s = useStore();
   const sel = [...s.selection];
   const items = sel.map((id) => pat.stitches.find((x) => x.id === id)).filter(Boolean) as Stitch[];
@@ -351,7 +352,7 @@ function Inspector({ pat, ctrl, readOnly }: { pat: import('../core/types').Patte
   );
 }
 
-function Legend({ pat }: { pat: import('../core/types').Pattern }) {
+function Legend({ pat }: { pat: import('@threadwick/editor').Pattern }) {
   const seen = usedTypes(pat.stitches);
   if (!seen.length) return <p className="muted small">Place a stitch to build the legend.</p>;
   return (
@@ -363,7 +364,7 @@ function Legend({ pat }: { pat: import('../core/types').Pattern }) {
   );
 }
 
-function ExportModal({ pattern, onClose }: { pattern: import('../core/types').Pattern; onClose: () => void }) {
+function ExportModal({ pattern, onClose }: { pattern: import('@threadwick/editor').Pattern; onClose: () => void }) {
   const [format, setFormat] = useState<'svg' | 'png' | 'pdf'>('svg');
   const [title, setTitle] = useState(true);
   const [legend, setLegend] = useState(true);

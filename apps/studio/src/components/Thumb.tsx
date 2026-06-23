@@ -1,5 +1,5 @@
-import { chartToSVG, glyphSVG } from '../core/render';
-import type { Pattern } from '../core/types';
+import { chartToSVG, glyphSVG } from '@threadwick/editor';
+import type { Pattern } from '@threadwick/editor';
 
 // A small, chrome-free chart preview for a card (or a placeholder glyph).
 // Decorative — the card's title carries the accessible name, so hide from AT.

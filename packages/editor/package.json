@@ -1,0 +1,21 @@
+{
+	"name": "@threadwick/editor",
+	"version": "0.1.0",
+	"description": "Threadwick's chart-editor core: the framework-agnostic, DOM-free model, renderer, connectivity, symbols, and read primitives that power the Studio editor and the Follow view.",
+	"type": "module",
+	"license": "AGPL-3.0-or-later",
+	"sideEffects": false,
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit",
+		"lint": "biome check .",
+		"test": "vitest run"
+	},
+	"devDependencies": {
+		"@types/node": "^20.14.0",
+		"typescript": "~5.6.3",
+		"vitest": "^2.1.9"
+	}
+}

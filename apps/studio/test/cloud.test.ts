@@ -3,7 +3,7 @@
 import { test } from 'vitest';
 import assert from 'node:assert/strict';
 
-import { uid } from '../src/core/util';
+import { uid } from '@threadwick/editor';
 import { cloudEnabled } from '../src/cloud/config';
 import { supabase } from '../src/cloud/client';
 
