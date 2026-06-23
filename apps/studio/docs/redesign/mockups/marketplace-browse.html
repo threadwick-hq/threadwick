@@ -1,0 +1,86 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketplace — browse — Threadwick Studio redesign</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="./shared.css">
+<style>
+.ap{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.tb{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.bd{display:flex}
+.sb{width:236px;flex:none;border-right:0.5px solid var(--color-border-tertiary);padding:10px 8px}
+.mn{flex:1;min-width:0;padding:16px 18px}
+.craft{display:flex;align-items:center;gap:8px;padding:7px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:8px}
+.item{display:flex;align-items:center;gap:9px;padding:5px 8px;border-radius:var(--border-radius-md);font-size:12.5px;color:var(--color-text-secondary)}
+.item i{font-size:15px}
+.item.on{background:#FAECE7;color:#712B13}
+.sub{margin-left:6px}
+.sec{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-tertiary);padding:5px 8px 2px;margin-top:8px}
+.cnt{margin-left:auto;font-size:11px;color:var(--color-text-tertiary)}
+.fhead{position:sticky;top:0;background:var(--color-background-primary);padding-bottom:12px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:14px}
+.cats{display:flex;gap:7px;overflow:hidden;margin-bottom:10px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:5px 11px;border-radius:99px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);white-space:nowrap}
+.chip.on{background:#993C1D;border-color:#993C1D;color:#fff}
+.frow{display:flex;align-items:center;gap:8px}
+.f{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:5px 11px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+.search{flex:1;display:flex;align-items:center;gap:7px;font-size:12.5px;padding:6px 11px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-tertiary)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card .ph{height:130px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);margin-bottom:8px;position:relative}
+.heart{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary)}
+.nm{font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.by{font-size:11px;color:var(--color-text-tertiary)}
+.meta{display:flex;align-items:center;gap:8px;margin-top:5px}
+.price{font-size:12.5px;font-weight:500}
+.free{color:#1D9E75}
+.rate{font-size:11px;color:var(--color-text-secondary);display:inline-flex;align-items:center;gap:3px;margin-left:auto}
+</style>
+</head><body><div class="wrap">
+<div class="screen-label"><h1>Marketplace — browse</h1><span>one view; categories are the first filter, everything else narrows it</span><a href="./index.html">← all screens</a></div>
+<div class="ap">
+  <div class="tb">
+    <span style="width:17px;height:17px;border-radius:5px;background:#993C1D;flex:none"></span>
+    <span style="font-size:12px;color:var(--color-text-secondary)">threadwick studio</span>
+    <span style="flex:1"></span>
+    <i class="ti ti-search" style="font-size:15px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+    <i class="ti ti-bell" style="font-size:15px;color:var(--color-text-secondary)" aria-hidden="true"></i>
+  </div>
+  <div class="bd">
+    <div class="sb">
+      <div class="craft"><span style="width:16px;height:16px;border-radius:4px;background:#D85A30;flex:none"></span><span style="flex:1;font-size:12.5px">All my crafts</span><i class="ti ti-chevron-down" style="font-size:14px;color:var(--color-text-tertiary)" aria-hidden="true"></i></div>
+      <div class="item"><i class="ti ti-home" aria-hidden="true"></i>Home</div>
+      <div class="sec">Marketplace</div>
+      <div class="item sub"><i class="ti ti-building-store" aria-hidden="true"></i>Home</div>
+      <div class="item sub on"><i class="ti ti-category" aria-hidden="true"></i>Browse</div>
+      <div class="item sub"><i class="ti ti-users" aria-hidden="true"></i>Following<span class="cnt">8</span></div>
+      <div class="item sub"><i class="ti ti-gift" aria-hidden="true"></i>Free</div>
+      <div class="item sub"><i class="ti ti-heart" aria-hidden="true"></i>Wishlist<span class="cnt">4</span></div>
+    </div>
+    <div class="mn">
+      <div class="fhead">
+        <div class="cats">
+          <span class="chip on">All</span>
+          <span class="chip">Blankets</span>
+          <span class="chip">Garments</span>
+          <span class="chip">Amigurumi</span>
+          <span class="chip">Home &amp; bags</span>
+          <span class="chip">Accessories</span>
+        </div>
+        <div class="frow">
+          <span class="search"><i class="ti ti-search" style="font-size:14px" aria-hidden="true"></i>Search patterns</span>
+          <span class="f"><i class="ti ti-coin" style="font-size:14px" aria-hidden="true"></i>Price</span>
+          <span class="f"><i class="ti ti-chart-bar" style="font-size:14px" aria-hidden="true"></i>Difficulty</span>
+          <span class="f"><i class="ti ti-circles" style="font-size:14px" aria-hidden="true"></i>Yarn weight</span>
+          <span class="f"><i class="ti ti-arrows-sort" style="font-size:14px" aria-hidden="true"></i>Popular</span>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="card"><div class="ph"><span class="heart"><i class="ti ti-heart" style="font-size:14px" aria-hidden="true"></i></span><i class="ti ti-photo" style="font-size:24px" aria-hidden="true"></i></div><div class="nm">Boho tassel throw</div><div class="by">@knottedco</div><div class="meta"><span class="price">$4</span><span class="rate"><i class="ti ti-star" style="font-size:12px;color:#D85A30" aria-hidden="true"></i>4.9</span></div></div>
+        <div class="card"><div class="ph"><span class="heart"><i class="ti ti-heart" style="font-size:14px" aria-hidden="true"></i></span><i class="ti ti-photo" style="font-size:24px" aria-hidden="true"></i></div><div class="nm">Classic granny stripes</div><div class="by">@thehooknest</div><div class="meta"><span class="price free">Free</span><span class="rate"><i class="ti ti-star" style="font-size:12px;color:#D85A30" aria-hidden="true"></i>4.8</span></div></div>
+        <div class="card"><div class="ph"><span class="heart"><i class="ti ti-heart" style="font-size:14px" aria-hidden="true"></i></span><i class="ti ti-photo" style="font-size:24px" aria-hidden="true"></i></div><div class="nm">Autumn leaves blanket</div><div class="by">@woolandwhimsy</div><div class="meta"><span class="price">$6</span><span class="rate"><i class="ti ti-star" style="font-size:12px;color:#D85A30" aria-hidden="true"></i>4.7</span></div></div>
+        <div class="card"><div class="ph"><span class="heart"><i class="ti ti-heart" style="font-size:14px" aria-hidden="true"></i></span><i class="ti ti-photo" style="font-size:24px" aria-hidden="true"></i></div><div class="nm">Wildflower square</div><div class="by">@mara_makes</div><div class="meta"><span class="price free">Free</span><span class="rate"><i class="ti ti-star" style="font-size:12px;color:#D85A30" aria-hidden="true"></i>4.8</span></div></div>
+        <div class="card"><div class="ph"><span class="heart"><i class="ti ti-heart" style="font-size:14px" aria-hidden="true"></i></span><i class="ti ti-photo" style="font-size:24px" aria-hidden="true"></i></div><div class="nm">Chunky checkerboard bag</div><div class="by">@knottedco</div><div class="meta"><span class="price">$5</span><span class="rate"><i class="ti ti-star" style="font-size:12px;color:#D85A30" aria-hidden="true"></i>4.6</span></div></div>
+        <div class="card"><div class="ph"><span class="heart"><i class="ti ti-heart" style="font-size:14px" aria-hidden="true"></i></span><i class="ti ti-photo" style="font-size:24px" aria-hidden="true"></i></div><div class="nm">Mini pumpkin set</div><div class="by">@thehooknest</div><div class="meta"><span class="price">$3</span><span class="rate"><i class="ti ti-star" style="font-size:12px;color:#D85A30" aria-hidden="true"></i>4.9</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div></body></html>

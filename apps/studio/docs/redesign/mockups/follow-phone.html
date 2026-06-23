@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Follow view — phone — Threadwick Studio redesign</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="./shared.css">
+<style>
+.phone{width:380px;max-width:100%;margin:0 auto;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:26px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.fhead{display:flex;align-items:center;gap:10px;padding:14px 16px 10px}
+.fhead .t{flex:1;min-width:0}
+.icon-btn{width:30px;height:30px;border-radius:50%;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);flex:none}
+.pillrow{display:flex;gap:7px;padding:2px 16px 12px;flex-wrap:wrap}
+.cpill{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:4px 10px;border-radius:99px;background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.cpill b{font-weight:500;color:var(--color-text-primary)}
+.stage{padding:0 16px}
+.acc{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin-bottom:8px}
+.acc-h{display:flex;align-items:center;gap:10px;padding:11px 13px;font-size:13px}
+.acc-h .n{width:20px;height:20px;border-radius:50%;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--color-text-secondary);flex:none}
+.acc.open{border-color:#E4B9A6}
+.acc.open .acc-h{background:#FAECE7;color:#712B13}
+.acc.open .n{background:#993C1D;color:#fff}
+.acc.done .n{background:#1D9E75;color:#fff}
+.acc-b{padding:4px 13px 14px}
+.instr{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:13px 14px;font-size:15px;line-height:1.55;color:var(--color-text-primary)}
+.instr b{font-weight:500;color:#993C1D}
+.foot{padding:12px 16px 18px;border-top:0.5px solid var(--color-border-tertiary);margin-top:6px}
+.prog{height:6px;border-radius:99px;background:var(--color-background-secondary);overflow:hidden;margin-bottom:12px}
+.prog span{display:block;height:100%;background:#D85A30}
+.cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:54px;border-radius:var(--border-radius-lg);background:#993C1D;color:#fff;font-size:17px;font-weight:500}
+.cta i{font-size:22px}
+.muted{font-size:12px;color:var(--color-text-tertiary)}
+</style>
+</head><body><div class="wrap">
+<div class="screen-label"><h1>Follow view — phone (portrait)</h1><span>work mode; one big action, counters demoted to pills</span><a href="./index.html">← all screens</a></div>
+<div class="phone">
+  <div class="fhead">
+    <span class="icon-btn"><i class="ti ti-x" style="font-size:17px" aria-hidden="true"></i></span>
+    <span class="t"><span style="display:block;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Wildflower granny square</span><span class="muted">Pattern mode · square 18 of 40</span></span>
+    <span class="icon-btn"><i class="ti ti-adjustments-horizontal" style="font-size:17px" aria-hidden="true"></i></span>
+  </div>
+  <div class="pillrow">
+    <span class="cpill"><i class="ti ti-stack-2" style="font-size:14px" aria-hidden="true"></i>Round <b>3</b>/5</span>
+    <span class="cpill"><i class="ti ti-repeat" style="font-size:14px" aria-hidden="true"></i>Rep <b>2</b>/6</span>
+    <span class="cpill"><i class="ti ti-grid-dots" style="font-size:14px" aria-hidden="true"></i>St <b>14</b></span>
+  </div>
+  <div class="stage">
+    <div class="acc done"><div class="acc-h"><span class="n"><i class="ti ti-check" style="font-size:12px" aria-hidden="true"></i></span><span style="flex:1">Start</span><span class="muted">Foundation ring</span></div></div>
+    <div class="acc open">
+      <div class="acc-h"><span class="n">2</span><span style="flex:1;font-weight:500">Round 3</span><i class="ti ti-chevron-up" style="font-size:16px;color:var(--color-text-tertiary)" aria-hidden="true"></i></div>
+      <div class="acc-b">
+        <div class="instr"><b>3 ch</b> (counts as 1 dc), then <b>2 dc</b> into the next space. <b>1 ch</b>, then *<b>3 dc, 1 ch</b>* into each corner space around. Join with a <b>sl st</b> to the top of the beginning ch.</div>
+        <p class="muted" style="margin:9px 0 0">Tap the big button each time you finish a corner repeat.</p>
+      </div>
+    </div>
+    <div class="acc"><div class="acc-h"><span class="n">3</span><span style="flex:1">Finish</span><span class="muted">Fasten off &amp; block</span></div></div>
+  </div>
+  <div class="foot">
+    <div class="prog"><span style="width:42%"></span></div>
+    <div class="cta"><i class="ti ti-check" aria-hidden="true"></i>Next repeat</div>
+  </div>
+</div>
+</div></body></html>

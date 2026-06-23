@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Follow view — desktop — Threadwick Studio redesign</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="./shared.css">
+<style>
+.win{width:100%;background:var(--color-background-tertiary);border:0.5px solid var(--color-border-tertiary);border-radius:18px;overflow:hidden}
+.fhead{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.fhead .t{flex:1;min-width:0}
+.icon-btn{width:32px;height:32px;border-radius:50%;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);flex:none}
+.muted{font-size:12.5px;color:var(--color-text-tertiary)}
+/* UWD: cap the work surface and centre it; let the canvas breathe on either side */
+.stage{padding:26px 24px;display:flex;justify-content:center}
+.card{width:100%;max-width:720px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.split{display:flex;min-height:300px}
+.left{flex:1.1;border-right:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);position:relative}
+.left .tag{position:absolute;top:12px;left:14px;font-size:11px;letter-spacing:.05em;text-transform:uppercase}
+.right{flex:1;display:flex;flex-direction:column;padding:18px 20px}
+.pillrow{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.cpill{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;padding:4px 11px;border-radius:99px;background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.cpill b{font-weight:500;color:var(--color-text-primary)}
+.crumbs{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--color-text-tertiary);margin-bottom:10px}
+.crumbs .now{color:#993C1D;font-weight:500}
+.crumbs .done{color:#1D9E75}
+.instr{flex:1;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px 18px;font-size:17px;line-height:1.6}
+.instr .h{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:8px}
+.instr b{font-weight:500;color:#993C1D}
+.foot{display:flex;align-items:center;gap:14px;margin-top:14px}
+.prog{flex:1;height:7px;border-radius:99px;background:var(--color-background-secondary);overflow:hidden}
+.prog span{display:block;height:100%;background:#D85A30}
+.cta{display:flex;align-items:center;justify-content:center;gap:9px;min-width:190px;height:52px;border-radius:var(--border-radius-lg);background:#993C1D;color:#fff;font-size:16px;font-weight:500}
+.cta i{font-size:21px}
+.hint{text-align:center;font-size:12px;color:var(--color-text-tertiary);margin-top:16px}
+</style>
+</head><body><div class="wrap">
+<div class="screen-label"><h1>Follow view — desktop / ultrawide</h1><span>UWD: work surface is capped and centred, canvas breathes</span><a href="./index.html">← all screens</a></div>
+<div class="win">
+  <div class="fhead">
+    <span class="icon-btn"><i class="ti ti-x" style="font-size:18px" aria-hidden="true"></i></span>
+    <span class="t"><span style="display:block;font-size:15px;font-weight:500">Wildflower granny square</span><span class="muted">Pattern mode · round 3 of 5 · keyboard: space = next</span></span>
+    <span class="icon-btn"><i class="ti ti-adjustments-horizontal" style="font-size:18px" aria-hidden="true"></i></span>
+  </div>
+  <div class="stage">
+    <div class="card">
+      <div class="split">
+        <div class="left"><span class="tag">Chart · round 3 highlighted</span><i class="ti ti-layout-grid" style="font-size:40px" aria-hidden="true"></i></div>
+        <div class="right">
+          <div class="pillrow">
+            <span class="cpill"><i class="ti ti-stack-2" style="font-size:14px" aria-hidden="true"></i>Round <b>3</b>/5</span>
+            <span class="cpill"><i class="ti ti-repeat" style="font-size:14px" aria-hidden="true"></i>Rep <b>2</b>/6</span>
+            <span class="cpill"><i class="ti ti-grid-dots" style="font-size:14px" aria-hidden="true"></i>St <b>14</b></span>
+          </div>
+          <div class="crumbs"><span class="done"><i class="ti ti-check" style="font-size:13px" aria-hidden="true"></i> Start</span><i class="ti ti-chevron-right" style="font-size:13px" aria-hidden="true"></i><span class="now">Round 3</span><i class="ti ti-chevron-right" style="font-size:13px" aria-hidden="true"></i><span>Finish</span></div>
+          <div class="instr"><div class="h">This repeat</div><b>3 ch</b> (counts as 1 dc), <b>2 dc</b> into the next space, <b>1 ch</b>, then *<b>3 dc, 1 ch</b>* into each corner around. Join with a <b>sl st</b>.</div>
+          <div class="foot">
+            <div class="prog"><span style="width:42%"></span></div>
+            <div class="cta"><i class="ti ti-check" aria-hidden="true"></i>Next repeat</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="hint">On very wide screens the work card never stretches past ~720&nbsp;px — the maker's eye keeps a short, calm travel between chart and button.</p>
+</div>
+</div></body></html>

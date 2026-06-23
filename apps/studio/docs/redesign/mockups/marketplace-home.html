@@ -1,0 +1,86 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketplace — home — Threadwick Studio redesign</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="./shared.css">
+<style>
+.ap{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.tb{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.bd{display:flex}
+.sb{width:236px;flex:none;border-right:0.5px solid var(--color-border-tertiary);padding:10px 8px}
+.mn{flex:1;min-width:0;padding:16px 18px}
+.craft{display:flex;align-items:center;gap:8px;padding:7px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:8px}
+.item{display:flex;align-items:center;gap:9px;padding:5px 8px;border-radius:var(--border-radius-md);font-size:12.5px;color:var(--color-text-secondary)}
+.item i{font-size:15px}
+.item.on{background:#FAECE7;color:#712B13}
+.sub{margin-left:6px}
+.sec{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-tertiary);padding:5px 8px 2px;margin-top:8px}
+.cnt{margin-left:auto;font-size:11px;color:var(--color-text-tertiary)}
+.hero{display:flex;gap:14px;padding:16px;border-radius:var(--border-radius-lg);background:linear-gradient(120deg,#FAECE7,#F0ECE3);align-items:center}
+.hero .ph{width:150px;height:104px;flex:none;background:#fff;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary)}
+.lab{font-size:13px;font-weight:500;color:var(--color-text-secondary);margin:18px 0 9px;display:flex;align-items:center}
+.link{font-size:12px;color:var(--color-text-secondary);margin-left:auto}
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.cat{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:14px 12px;display:flex;flex-direction:column;gap:8px}
+.cat i{font-size:20px;color:#993C1D}
+.cat .nm{font-size:12.5px;font-weight:500}
+.cat .ct{font-size:11px;color:var(--color-text-tertiary)}
+.row{display:flex;gap:10px}
+.mini{flex:1;min-width:0}
+.ph{background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);border-radius:var(--border-radius-md)}
+.mt{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.muted{font-size:11px;color:var(--color-text-tertiary)}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:7px 14px;border-radius:var(--border-radius-md);background:#993C1D;color:#fff}
+</style>
+</head><body><div class="wrap">
+<div class="screen-label"><h1>Marketplace — home</h1><span>storefront landing; categories lead into one filterable browse</span><a href="./index.html">← all screens</a></div>
+<div class="ap">
+  <div class="tb">
+    <span style="width:17px;height:17px;border-radius:5px;background:#993C1D;flex:none"></span>
+    <span style="font-size:12px;color:var(--color-text-secondary)">threadwick studio</span>
+    <span style="flex:1"></span>
+    <i class="ti ti-search" style="font-size:15px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+    <i class="ti ti-bell" style="font-size:15px;color:var(--color-text-secondary)" aria-hidden="true"></i>
+  </div>
+  <div class="bd">
+    <div class="sb">
+      <div class="craft"><span style="width:16px;height:16px;border-radius:4px;background:#D85A30;flex:none"></span><span style="flex:1;font-size:12.5px">All my crafts</span><i class="ti ti-chevron-down" style="font-size:14px;color:var(--color-text-tertiary)" aria-hidden="true"></i></div>
+      <div class="item"><i class="ti ti-home" aria-hidden="true"></i>Home</div>
+      <div class="sec">Workbench</div>
+      <div class="item sub"><i class="ti ti-layout-grid" aria-hidden="true"></i>Patterns<span class="cnt">12</span></div>
+      <div class="item sub"><i class="ti ti-folder" aria-hidden="true"></i>Projects<span class="cnt">5</span></div>
+      <div class="sec">Marketplace</div>
+      <div class="item sub on"><i class="ti ti-building-store" aria-hidden="true"></i>Home</div>
+      <div class="item sub"><i class="ti ti-category" aria-hidden="true"></i>Browse</div>
+      <div class="item sub"><i class="ti ti-users" aria-hidden="true"></i>Following<span class="cnt">8</span></div>
+      <div class="item sub"><i class="ti ti-gift" aria-hidden="true"></i>Free</div>
+      <div class="item sub"><i class="ti ti-heart" aria-hidden="true"></i>Wishlist<span class="cnt">4</span></div>
+    </div>
+    <div class="mn">
+      <div class="hero">
+        <div class="ph"><i class="ti ti-photo" style="font-size:26px" aria-hidden="true"></i></div>
+        <div style="flex:1">
+          <span style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-tertiary)">Featured this week</span>
+          <p style="font-size:17px;font-weight:500;margin:4px 0 3px">Cosy autumn collection</p>
+          <p style="font-size:12.5px;color:var(--color-text-secondary);margin:0 0 10px;max-width:360px">28 patterns to wrap up in — blankets, scarves and warm accessories from makers you follow.</p>
+          <span class="btn">Explore collection</span>
+        </div>
+      </div>
+      <p class="lab">Categories</p>
+      <div class="cats">
+        <div class="cat"><i class="ti ti-grid-pattern" aria-hidden="true"></i><span class="nm">Blankets</span><span class="ct">1.2k patterns</span></div>
+        <div class="cat"><i class="ti ti-shirt" aria-hidden="true"></i><span class="nm">Garments</span><span class="ct">980 patterns</span></div>
+        <div class="cat"><i class="ti ti-mood-smile" aria-hidden="true"></i><span class="nm">Amigurumi</span><span class="ct">760 patterns</span></div>
+        <div class="cat"><i class="ti ti-basket" aria-hidden="true"></i><span class="nm">Home &amp; bags</span><span class="ct">540 patterns</span></div>
+      </div>
+      <p class="lab">From makers you follow<span class="link">See all →</span></p>
+      <div class="row">
+        <div class="mini"><div class="ph" style="height:104px;margin-bottom:7px"><i class="ti ti-photo" style="font-size:22px" aria-hidden="true"></i></div><div class="mt">Boho tassel throw</div><div class="muted">@knottedco · $4</div></div>
+        <div class="mini"><div class="ph" style="height:104px;margin-bottom:7px"><i class="ti ti-photo" style="font-size:22px" aria-hidden="true"></i></div><div class="mt">Fern lace shawl</div><div class="muted">@woolandwhimsy · $6</div></div>
+        <div class="mini"><div class="ph" style="height:104px;margin-bottom:7px"><i class="ti ti-photo" style="font-size:22px" aria-hidden="true"></i></div><div class="mt">Pebble coasters</div><div class="muted">@thehooknest · free</div></div>
+        <div class="mini"><div class="ph" style="height:104px;margin-bottom:7px"><i class="ti ti-photo" style="font-size:22px" aria-hidden="true"></i></div><div class="mt">Sunrise cardigan</div><div class="muted">@mara_makes · $8</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div></body></html>

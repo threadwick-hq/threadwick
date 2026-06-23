@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Library — Yarns — Threadwick Studio redesign</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="./shared.css">
+<style>
+.ap{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.tb{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.bd{display:flex}
+.sb{width:236px;flex:none;border-right:0.5px solid var(--color-border-tertiary);padding:10px 8px}
+.mn{flex:1;min-width:0;padding:16px 18px}
+.craft{display:flex;align-items:center;gap:8px;padding:7px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:8px}
+.item{display:flex;align-items:center;gap:9px;padding:5px 8px;border-radius:var(--border-radius-md);font-size:12.5px;color:var(--color-text-secondary)}
+.item i{font-size:15px}
+.item.on{background:#FAECE7;color:#712B13}
+.sub{margin-left:6px}
+.sec{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-tertiary);padding:5px 8px 2px;margin-top:8px}
+.cnt{margin-left:auto;font-size:11px;color:var(--color-text-tertiary)}
+.fbar{display:flex;align-items:center;gap:8px;padding:9px 12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin:12px 0 14px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:4px 10px;border-radius:99px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+.chip.on{background:#FAECE7;border-color:#E4B9A6;color:#712B13}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.sw{height:84px;display:flex;align-items:flex-end;padding:7px}
+.cn{padding:8px 10px}
+.cn .nm{font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cn .br{font-size:11px;color:var(--color-text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qty{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;padding:1px 7px;border-radius:99px;background:var(--color-background-primary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+.tags{display:flex;gap:5px;margin-top:7px}
+.t2{font-size:10.5px;padding:1px 6px;border-radius:99px;background:var(--color-background-secondary);color:var(--color-text-secondary)}
+</style>
+</head><body><div class="wrap">
+<div class="screen-label"><h1>Library — Yarns</h1><span>your stash; metadata from Ravelry, quantities yours</span><a href="./index.html">← all screens</a></div>
+<div class="ap">
+  <div class="tb">
+    <span style="width:17px;height:17px;border-radius:5px;background:#993C1D;flex:none"></span>
+    <span style="font-size:12px;color:var(--color-text-secondary)">threadwick studio</span>
+    <span style="flex:1"></span>
+    <i class="ti ti-search" style="font-size:15px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+    <i class="ti ti-bell" style="font-size:15px;color:var(--color-text-secondary)" aria-hidden="true"></i>
+  </div>
+  <div class="bd">
+    <div class="sb">
+      <div class="craft"><span style="width:16px;height:16px;border-radius:4px;background:#D85A30;flex:none"></span><span style="flex:1;font-size:12.5px">All my crafts</span><i class="ti ti-chevron-down" style="font-size:14px;color:var(--color-text-tertiary)" aria-hidden="true"></i></div>
+      <div class="item"><i class="ti ti-home" aria-hidden="true"></i>Home</div>
+      <div class="sec">Workbench</div>
+      <div class="item sub"><i class="ti ti-layout-grid" aria-hidden="true"></i>Patterns<span class="cnt">12</span></div>
+      <div class="item sub"><i class="ti ti-folder" aria-hidden="true"></i>Projects<span class="cnt">5</span></div>
+      <div class="sec">Library</div>
+      <div class="item sub"><i class="ti ti-books" aria-hidden="true"></i>Patterns<span class="cnt">24</span></div>
+      <div class="item sub on"><i class="ti ti-circles" aria-hidden="true"></i>Yarns<span class="cnt" style="color:#993C1D">23</span></div>
+      <div class="item sub"><i class="ti ti-tools" aria-hidden="true"></i>Tools<span class="cnt">8</span></div>
+      <div class="sec">Marketplace</div>
+      <div class="item sub"><i class="ti ti-building-store" aria-hidden="true"></i>Home</div>
+      <div class="item sub"><i class="ti ti-category" aria-hidden="true"></i>Browse</div>
+    </div>
+    <div class="mn">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between">
+        <div><p style="font-size:18px;font-weight:500;margin:0">Yarns</p><p style="font-size:12px;color:var(--color-text-secondary);margin:3px 0 0">23 in your stash · synced from Ravelry</p></div>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:6px 13px;border-radius:var(--border-radius-md);background:#993C1D;color:#fff"><i class="ti ti-plus" style="font-size:15px" aria-hidden="true"></i>Add yarn</span>
+      </div>
+      <div class="fbar">
+        <i class="ti ti-search" style="font-size:15px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+        <span style="flex:1;font-size:12.5px;color:var(--color-text-tertiary)">Search your stash</span>
+        <span class="chip on">All weights</span>
+        <span class="chip">Fibre</span>
+        <span class="chip">Colour</span>
+        <span class="chip"><i class="ti ti-arrows-sort" style="font-size:13px" aria-hidden="true"></i>Recent</span>
+      </div>
+      <div class="grid">
+        <div class="card"><div class="sw" style="background:#A7B79B"><span class="qty">4 skeins</span></div><div class="cn"><div class="nm">Cotton DK · sage</div><div class="br">Paintbox · 100% cotton</div><div class="tags"><span class="t2">DK</span><span class="t2">cotton</span></div></div></div>
+        <div class="card"><div class="sw" style="background:#EDE6D4"><span class="qty">6 skeins</span></div><div class="cn"><div class="nm">Cotton DK · cream</div><div class="br">Paintbox · 100% cotton</div><div class="tags"><span class="t2">DK</span><span class="t2">cotton</span></div></div></div>
+        <div class="card"><div class="sw" style="background:#C98A6B"><span class="qty">2 skeins</span></div><div class="cn"><div class="nm">Merino · terracotta</div><div class="br">Drops · 100% wool</div><div class="tags"><span class="t2">worsted</span><span class="t2">wool</span></div></div></div>
+        <div class="card"><div class="sw" style="background:#6E8CA0"><span class="qty">1 skein</span></div><div class="cn"><div class="nm">Merino · slate</div><div class="br">Drops · 100% wool</div><div class="tags"><span class="t2">worsted</span><span class="t2">wool</span></div></div></div>
+        <div class="card"><div class="sw" style="background:#D8B7C4"><span class="qty">3 skeins</span></div><div class="cn"><div class="nm">Baby alpaca · rose</div><div class="br">Sandnes · alpaca blend</div><div class="tags"><span class="t2">sport</span><span class="t2">alpaca</span></div></div></div>
+        <div class="card"><div class="sw" style="background:#B9A66B"><span class="qty">5 skeins</span></div><div class="cn"><div class="nm">Linen blend · ochre</div><div class="br">Wool and the Gang</div><div class="tags"><span class="t2">DK</span><span class="t2">linen</span></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div></body></html>
