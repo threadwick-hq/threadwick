@@ -1,0 +1,30 @@
+{
+	"name": "@threadwick/i18n",
+	"version": "0.1.0",
+	"description": "Threadwick's localization layer: an enriched English source of truth, a Claude translation pipeline (change-detection + human overrides), context-stripped per-locale bundles, a typed intl-messageformat runtime, and a CI lint that guards glossary, ICU plurals, placeholders, and length budgets.",
+	"type": "module",
+	"license": "AGPL-3.0-or-later",
+	"sideEffects": false,
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"i18n:translate": "tsx scripts/translate.ts",
+		"i18n:codegen": "tsx scripts/codegen.ts",
+		"i18n:lint": "tsx scripts/lint.ts",
+		"i18n": "tsx scripts/translate.ts && tsx scripts/codegen.ts && tsx scripts/lint.ts",
+		"typecheck": "tsc --noEmit",
+		"lint": "biome check .",
+		"test": "vitest run && tsx scripts/lint.ts"
+	},
+	"dependencies": {
+		"@formatjs/icu-messageformat-parser": "^2.9.4",
+		"intl-messageformat": "^10.7.16"
+	},
+	"devDependencies": {
+		"@types/node": "^20.14.0",
+		"tsx": "^4.19.2",
+		"typescript": "~5.6.3",
+		"vitest": "^2.1.9"
+	}
+}

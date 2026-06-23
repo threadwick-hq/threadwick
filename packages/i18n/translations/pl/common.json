@@ -1,0 +1,42 @@
+{
+	"tooltip_close": {
+		"value": "Zamknij",
+		"hash": "9c5588d4ff57fb81",
+		"origin": "seed"
+	},
+	"nav_studio": {
+		"value": "Studio",
+		"hash": "2b2cfbd6843f94d6",
+		"origin": "seed"
+	},
+	"welcome_back": {
+		"value": "Witaj ponownie, {name}!",
+		"hash": "247017b1466f772b",
+		"origin": "seed"
+	},
+	"saved_ago": {
+		"value": "Zapisano {timeAgo}",
+		"hash": "6acd662add00cc8f",
+		"origin": "seed"
+	},
+	"count_patterns": {
+		"value": "{count, plural, one {# wzór} few {# wzory} many {# wzorów} other {# wzoru}}",
+		"hash": "c4d59e7a467f9972",
+		"origin": "seed"
+	},
+	"palette_single_crochet": {
+		"value": "Półsłupek",
+		"hash": "3057efe69b1233d3",
+		"origin": "seed"
+	},
+	"instr_work_sc": {
+		"value": "{count, plural, one {Zrób # półsłupek w następne oczko.} few {Zrób # półsłupki w następne oczko.} many {Zrób # półsłupków w następne oczko.} other {Zrób # półsłupka w następne oczko.}}",
+		"hash": "63e8cb44c657f041",
+		"origin": "seed"
+	},
+	"empty_projects": {
+		"value": "Nie masz jeszcze projektów. Zacznij swój pierwszy wzór, a pojawi się tutaj.",
+		"hash": "367079581e059576",
+		"origin": "seed"
+	}
+}
