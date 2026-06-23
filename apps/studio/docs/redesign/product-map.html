@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Threadwick Studio — product map</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css" />
+<style>
+  :root {
+    --bg: #f6f4ef;
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f0ece3;
+    --color-text-primary: #21201c;
+    --color-text-secondary: #6b675f;
+    --color-text-tertiary: #8a8275;
+    --color-border-tertiary: #e7e2d8;
+    --color-border-secondary: #d6d0c4;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --accent: #993C1D;
+    --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--color-text-primary); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+  .page { max-width: 1000px; margin: 0 auto; padding: 40px 24px 56px; }
+  .head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .mark { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); display: grid; place-items: center; color: #fff; }
+  h1 { font-size: 22px; font-weight: 500; margin: 0; letter-spacing: -0.01em; }
+  .sub { font-size: 14px; color: var(--color-text-secondary); margin: 0 0 26px 44px; }
+  .pm { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .col { border: 1px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; background: var(--color-background-primary); }
+  .ch { display: flex; align-items: center; gap: 7px; padding: 10px 11px; border-bottom: 1px solid var(--color-border-tertiary); font-size: 13px; font-weight: 500; }
+  .ch i { font-size: 16px; color: var(--accent); }
+  .cb { padding: 9px 11px; }
+  .li { font-size: 11.5px; color: var(--color-text-secondary); padding: 3px 0; line-height: 1.4; }
+  .li small { color: var(--color-text-tertiary); }
+  .def { border-style: dashed; }
+  .def .ch, .def .ch i { color: var(--color-text-tertiary); }
+  .flow { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 16px; padding: 13px 14px; border-radius: var(--border-radius-lg); background: var(--color-background-secondary); }
+  .fn { font-size: 12px; font-weight: 500; padding: 6px 12px; border-radius: 99px; background: var(--color-background-primary); border: 1px solid var(--color-border-tertiary); }
+  .fa { color: var(--color-text-tertiary); font-size: 15px; }
+  .fp { font-size: 12px; font-weight: 500; padding: 6px 12px; border-radius: 99px; background: var(--accent); color: #fff; }
+  .foot { margin-top: 22px; font-size: 12.5px; color: var(--color-text-tertiary); line-height: 1.6; }
+  @media (max-width: 720px) { .pm { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="head">
+    <span class="mark"><i class="ti ti-needle-thread" aria-hidden="true"></i></span>
+    <h1>Threadwick Studio — product map</h1>
+  </div>
+  <p class="sub">One shell for artists and makers. The same Pattern flows through the whole lifecycle.</p>
+
+  <div class="pm">
+    <div class="col">
+      <div class="ch"><i class="ti ti-home" aria-hidden="true"></i>Home</div>
+      <div class="cb">
+        <div class="li">Greeting + quick start</div>
+        <div class="li">Continue <small>(lead + recents)</small></div>
+        <div class="li">Discovery / library block</div>
+        <div class="li">Creator teaser</div>
+        <div class="li">Notifications bell</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="ch"><i class="ti ti-tools" aria-hidden="true"></i>Workbench</div>
+      <div class="cb">
+        <div class="li">Patterns <small>— your designs</small></div>
+        <div class="li"><small>edit · view · versions</small></div>
+        <div class="li"><small>publish · quality checks</small></div>
+        <div class="li">Projects <small>— your makes</small></div>
+        <div class="li"><small>multi-pattern · custom</small></div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="ch"><i class="ti ti-books" aria-hidden="true"></i>Library</div>
+      <div class="cb">
+        <div class="li">Patterns <small>— owned/saved</small></div>
+        <div class="li">Yarns <small>— stash</small></div>
+        <div class="li">Tools <small>— size matrix</small></div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="ch"><i class="ti ti-building-store" aria-hidden="true"></i>Marketplace</div>
+      <div class="cb">
+        <div class="li">Home <small>— curated</small></div>
+        <div class="li">Browse <small>— filter view</small></div>
+        <div class="li">Following</div>
+        <div class="li">Free</div>
+        <div class="li">Wishlist</div>
+      </div>
+    </div>
+    <div class="col def">
+      <div class="ch"><i class="ti ti-chart-bar" aria-hidden="true"></i>Creator</div>
+      <div class="cb">
+        <div class="li"><small>Dashboard</small></div>
+        <div class="li"><small>Listings · Sales</small></div>
+        <div class="li"><small>Stats · Payouts</small></div>
+        <div class="li" style="margin-top:4px;color:var(--color-text-tertiary)">Deferred phase</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow">
+    <span style="font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-tertiary);margin-right:2px">Lifecycle</span>
+    <span class="fn">Design</span><i class="ti ti-arrow-right fa" aria-hidden="true"></i>
+    <span class="fn">Publish</span><i class="ti ti-arrow-right fa" aria-hidden="true"></i>
+    <span class="fn">Discover</span><i class="ti ti-arrow-right fa" aria-hidden="true"></i>
+    <span class="fn">Buy / Make it</span><i class="ti ti-arrow-right fa" aria-hidden="true"></i>
+    <span class="fn">Project</span><i class="ti ti-arrow-right fa" aria-hidden="true"></i>
+    <span class="fp">Follow</span>
+  </div>
+
+  <p class="foot">
+    Craft picker scopes the whole studio · the Marketplace is decouplable (offline / private instances stay complete) · Ravelry metadata backbone · local-first · WCAG 2.1 AA.<br />
+    See <a href="./spec.md" style="color:var(--accent)">spec.md</a> for the full specification.
+  </p>
+</div>
+</body>
+</html>
