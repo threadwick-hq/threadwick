@@ -6,9 +6,11 @@ area:
   - packages/icons
   - apps/studio
 phase: 6
-status: backlog
+status: active
 priority: p1
 created: 2026-06-23
+assignee: agent
+started: 2026-06-23
 acceptance:
   - every editor action renders via @threadwick/icons <Icon name>
   - iconoir-react removed from apps/studio

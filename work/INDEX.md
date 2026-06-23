@@ -2,13 +2,13 @@
 
 Generated from `work/*.md` frontmatter by `scripts/work.ts`. Do not edit by hand; run `pnpm run work index`.
 
-Totals: backlog 40 · active 0 · review 0 · done 4 · blocked 0 · abandoned 5
+Totals: backlog 39 · active 1 · review 0 · done 4 · blocked 0 · abandoned 5
 
 | ID | Title | Type | Area | Phase | Status | Priority | Assignee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | TW-007 | Promote Biome from report-only to a hard CI gate | chore | repo, packages/config | 3 | backlog | p2 | - |
+| TW-013 | Add the editor's action glyphs to @threadwick/icons and swap iconoir out of studio | feat | packages/icons, apps/studio | 6 | active | p1 | agent |
 | TW-012 | Move files.ts (import/export, SVG/PNG, print-PDF) into the editor browser-only entry | refactor | packages/editor, apps/studio | 6 | backlog | p2 | - |
-| TW-013 | Add the editor's action glyphs to @threadwick/icons and swap iconoir out of studio | feat | packages/icons, apps/studio | 6 | backlog | p1 | - |
 | TW-014 | Migrate the EditorView toolbar and inspector chrome from AntD to shadcn | refactor | apps/studio, packages/editor | 6 | backlog | p1 | - |
 | TW-015 | Migrate ProjectView, ProjectsView and TopBar/VersionTag from AntD to shadcn | refactor | apps/studio | 6 | backlog | p2 | - |
 | TW-016 | Replace App.useApp() with a shadcn toast and confirm layer and migrate AuthMenu | refactor | apps/studio, packages/core | 6 | backlog | p2 | - |
