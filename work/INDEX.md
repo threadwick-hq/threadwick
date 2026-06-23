@@ -2,12 +2,12 @@
 
 Generated from `work/*.md` frontmatter by `scripts/work.ts`. Do not edit by hand; run `pnpm run work index`.
 
-Totals: backlog 42 · active 0 · review 0 · done 2 · blocked 0 · abandoned 5
+Totals: backlog 41 · active 1 · review 0 · done 2 · blocked 0 · abandoned 5
 
 | ID | Title | Type | Area | Phase | Status | Priority | Assignee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | TW-007 | Promote Biome from report-only to a hard CI gate | chore | repo, packages/config | 3 | backlog | p2 | - |
-| TW-010 | Scaffold packages/editor and move the DOM-free chart core with its tests | refactor | packages/editor, apps/studio | 6 | backlog | p1 | - |
+| TW-010 | Scaffold packages/editor and move the DOM-free chart core with its tests | refactor | packages/editor, apps/studio | 6 | active | p1 | agent |
 | TW-011 | Move the store and imperative canvas controller into packages/editor behind an SSR-safe entry | refactor | packages/editor, apps/studio | 6 | backlog | p1 | - |
 | TW-012 | Move files.ts (import/export, SVG/PNG, print-PDF) into the editor browser-only entry | refactor | packages/editor, apps/studio | 6 | backlog | p2 | - |
 | TW-013 | Add the editor's action glyphs to @threadwick/icons and swap iconoir out of studio | feat | packages/icons, apps/studio | 6 | backlog | p1 | - |
