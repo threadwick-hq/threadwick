@@ -21,9 +21,9 @@ Foundational extraction. The chart core in apps/studio/src/core is React-free wi
 
 ## Scope
 
-In: Create @threadwick/editor (ESM, tsup, @threadwick/config tsconfig, exports map). Move model/types/symbols/render/connectivity/geometry/util/colors/sample + test/core.test.ts verbatim behind an intentional public barrel that also exports the read-side primitives the Follow view needs (chainOrder, summarizeRound, spacesForRound, chartToSVG/stitchToSVG). Re-point apps/studio imports.
+In: Create @threadwick/editor (ESM, tsup, @threadwick/config tsconfig, exports map). Move model/types/symbols/render/connectivity/geometry/util/colors/sample + test/core.test.ts verbatim behind an intentional public barrel that also exports the read-side primitives the Follow view needs (chainOrder, summarizeRound, spacesForRound, chartToSVG/stitchToSVG); summarizeRound is pure (no DOM) so it is lifted out of files.ts into the core here. Re-point apps/studio imports.
 
-Out: No model change (ships FILE_VERSION 3 intact). No store/canvas/files move (TW-011/012). No chrome change.
+Out: No model change (ships FILE_VERSION 3 intact). No store/canvas move (TW-011); files.ts DOM helpers move in TW-012 (only its pure summarizeRound is lifted here). No chrome change.
 
 Depends on: nothing (can start now).
 

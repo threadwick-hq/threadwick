@@ -4,7 +4,7 @@ title: Add a recents and plain-language-state read model over patterns and proje
 type: feat
 area:
   - apps/web
-  - packages/core
+  - packages/editor
 phase: 6
 status: backlog
 priority: p2

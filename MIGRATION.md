@@ -196,11 +196,11 @@ stays complete.
 - **6a — Core extraction (no model change)** · *TW-010..013, 018.* Scaffold `packages/editor` (ESM,
   tsup, browser-only subpath). Move the DOM-free core (`model/types/symbols/render/connectivity/…` +
   `core.test.ts`) verbatim behind a barrel that also exports the read primitives the Follow view needs
-  (`chainOrder`, `summarizeRound`, `chartToSVG`/`stitchToSVG`). Then move `store.ts` + `editorCanvas.ts`
+  (`chainOrder`, `summarizeRound` [pure, lifted out of `files.ts` into the core], `chartToSVG`/`stitchToSVG`). Then move `store.ts` + `editorCanvas.ts`
   + `files.ts` behind the **browser-only** entry so no `document`/`window`/`localStorage` reaches SSR.
   Ships the v3 model intact — flags, does not migrate, the model seam. Add the editor's ~34 action
-  glyphs to `@threadwick/icons`; drop iconoir. Biome-clean the moved code and drop the `|| true` (folds
-  TW-007).
+  glyphs to `@threadwick/icons`; drop iconoir. Biome-clean the moved code (TW-018); TW-007 flips the
+  `|| true` gate once every package is clean.
 - **6b — Client-only shell + mount** · *TW-019..025 (supersedes the old TW-004).* Mount `/studio*`
   strictly client-only (clientLoader only, `HydrateFallback`; supabase + `cloud/*` behind `import()`).
   Build `StudioShell` (UWD cap-and-centre), the always-expanded sidebar (sections + counts + active),

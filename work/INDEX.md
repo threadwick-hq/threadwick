@@ -10,12 +10,12 @@ Totals: backlog 42 · active 0 · review 0 · done 2 · blocked 0 · abandoned 5
 | TW-010 | Scaffold packages/editor and move the DOM-free chart core with its tests | refactor | packages/editor, apps/studio | 6 | backlog | p1 | - |
 | TW-011 | Move the store and imperative canvas controller into packages/editor behind an SSR-safe entry | refactor | packages/editor, apps/studio | 6 | backlog | p1 | - |
 | TW-012 | Move files.ts (import/export, SVG/PNG, print-PDF) into the editor browser-only entry | refactor | packages/editor, apps/studio | 6 | backlog | p2 | - |
-| TW-013 | Add the editor's action glyphs to @threadwick/icons and swap iconoir out of studio | feat | packages/icons, apps/studio | 6 | backlog | p2 | - |
+| TW-013 | Add the editor's action glyphs to @threadwick/icons and swap iconoir out of studio | feat | packages/icons, apps/studio | 6 | backlog | p1 | - |
 | TW-014 | Migrate the EditorView toolbar and inspector chrome from AntD to shadcn | refactor | apps/studio, packages/editor | 6 | backlog | p1 | - |
 | TW-015 | Migrate ProjectView, ProjectsView and TopBar/VersionTag from AntD to shadcn | refactor | apps/studio | 6 | backlog | p2 | - |
 | TW-016 | Replace App.useApp() with a shadcn toast and confirm layer and migrate AuthMenu | refactor | apps/studio, packages/core | 6 | backlog | p2 | - |
 | TW-017 | Drop AntD from apps/studio and remove the theme and provider wiring | chore | apps/studio | 6 | backlog | p2 | - |
-| TW-018 | Bring packages/editor to Biome-clean and remove the report-only escape hatch | chore | packages/editor, packages/config, repo | 6 | backlog | p2 | - |
+| TW-018 | Bring the moved packages/editor code to Biome-clean | chore | packages/editor, packages/config, repo | 6 | backlog | p2 | - |
 | TW-019 | Mount /studio as a client-only RR7 route with isolated browser bootstrap | feat | apps/web, packages/editor | 6 | backlog | p1 | - |
 | TW-020 | Build the StudioShell layout route with the UWD cap-and-centre rule | feat | apps/web, packages/core | 6 | backlog | p1 | - |
 | TW-021 | Build the always-expanded sidebar nav with sections, counts and active state | feat | apps/web, packages/core, packages/icons | 6 | backlog | p1 | - |
@@ -36,7 +36,7 @@ Totals: backlog 42 · active 0 · review 0 · done 2 · blocked 0 · abandoned 5
 | TW-036 | Build the Pattern interior shell, rail and Overview (edit mode) in shadcn | feat | apps/web, packages/core, packages/icons | 6 | backlog | p2 | - |
 | TW-037 | Build the pinned version tile, publishing controls and reward-never-penalize quality checks | feat | apps/web, packages/core | 6 | backlog | p2 | - |
 | TW-038 | Build the Pattern view-mode decision surface and Start-making/Buy/Remix actions | feat | apps/web, packages/core | 6 | backlog | p2 | - |
-| TW-039 | Add a recents and plain-language-state read model over patterns and projects | feat | apps/web, packages/core | 6 | backlog | p2 | - |
+| TW-039 | Add a recents and plain-language-state read model over patterns and projects | feat | apps/web, packages/editor | 6 | backlog | p2 | - |
 | TW-040 | Add client-only Workbench list routes and shared PhotoCard/CardGrid/EmptyState primitives | feat | apps/web, packages/core | 6 | backlog | p2 | - |
 | TW-041 | Build the Workbench Patterns and Projects lists bound to the top-level collections | feat | apps/web | 6 | backlog | p2 | - |
 | TW-042 | Build the Home route (greeting, quick-start chips, Continue card and recents shelf) | feat | apps/web, packages/core | 6 | backlog | p2 | - |

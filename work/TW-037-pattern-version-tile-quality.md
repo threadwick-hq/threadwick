@@ -21,7 +21,7 @@ The pinned version tile = switcher + a contextual action (Publish pattern / Publ
 
 ## Scope
 
-In: Build the version tile + publishing controls over the TW-035 contract, and the quality checks (edit audit: present=checked, missing=muted add-to-strengthen; a minimum floor that gently gates publish).
+In: Build the version tile + publishing controls over the TW-035 contract, and the quality checks (edit audit: present=checked, missing=muted add-to-strengthen; a minimum floor that gently gates publish: >=1 chart-or-written artifact, >=1 photo, materials + gauge, and difficulty).
 
 Out: View-mode what-is-included (TW-038).
 

@@ -7,7 +7,7 @@ area:
   - apps/studio
 phase: 6
 status: backlog
-priority: p2
+priority: p1
 created: 2026-06-23
 acceptance:
   - every editor action renders via @threadwick/icons <Icon name>

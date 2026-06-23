@@ -14,6 +14,7 @@ acceptance:
   - ⌘K opens the palette shell and the topbar trigger works
   - the bell shows an unread count and opens the inbox shell
   - Import/New is reachable
+  - the Shop inbox filter renders only for published creators
 ---
 
 ## Context
@@ -24,7 +25,7 @@ Global search (⌘K, spans library + marketplace), a notifications bell with unr
 
 In: Build the topbar: the ⌘K command-palette shell + keybinding (result population owned elsewhere), the bell + unread badge + inbox shell with All/Activity/Shop filter, and the Import/New entry.
 
-Out: Search result population; notification event sources (networked layer).
+Out: Search result population; notification event sources (networked layer); the contextual newer-version signal on items (owned by the TW-045 Library nudge + the TW-038 owned-pattern banner) — the bell is the global log, item signals ride contextually.
 
 Depends on: TW-020.
 
@@ -33,6 +34,7 @@ Depends on: TW-020.
 - [ ] ⌘K opens the palette shell and the topbar trigger works
 - [ ] the bell shows an unread count and opens the inbox shell
 - [ ] Import/New is reachable
+- [ ] the Shop inbox filter renders only for published creators
 
 ## Log
 

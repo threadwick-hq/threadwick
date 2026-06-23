@@ -25,7 +25,7 @@ In: Compose the instruction box + chart pane across the five breakpoints (stacke
 
 Out: External-pattern fallback (TW-032).
 
-Depends on: TW-029, TW-030, TW-025.
+Depends on: TW-029, TW-030, TW-033 (the project interior Follow is launched from; not the sidebar slot contract — Follow recedes the global nav to its own back-to-project bar).
 
 ## Acceptance
 

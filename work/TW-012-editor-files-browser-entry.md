@@ -21,7 +21,7 @@ files.ts owns import/export JSON, SVG/PNG export, and the print-PDF composer (qr
 
 ## Scope
 
-In: Move files.ts into the browser-only subpath; keep the export->import->deep-equal round-trip covered by the moved test. Re-point apps/studio.
+In: Move files.ts DOM helpers (import/export download, SVG/PNG, print-PDF) into the browser-only subpath; the pure summarizeRound already moved to the core in TW-010. Keep the export->import->deep-equal round-trip covered by the moved test. Re-point apps/studio.
 
 Out: No format change; data-ownership round-trip must stay lossless.
 
