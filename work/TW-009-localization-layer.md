@@ -7,11 +7,13 @@ area:
   - apps/web
   - repo
 phase: 6
-status: active
+status: done
 priority: p1
 created: 2026-06-23
 assignee: agent
 started: 2026-06-23
+completed: 2026-06-23
+pr: 4
 acceptance:
   - packages/i18n exists with an enriched EN source schema (text, context, maxLength, placeholders, icu, glossaryRefs, tone, doNotTranslate, worstCaseSample), a glossary, and a voice config, all committed and namespaced by surface (common, marketing, studio)
   - a Claude translation pipeline emits per-locale bundles with hash-based change-detection and a human-override channel that survives re-translation (re-uses Lingo.dev's i18n.lock + lockedKeys pattern, reimplemented)
