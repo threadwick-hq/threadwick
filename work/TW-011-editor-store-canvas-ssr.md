@@ -6,9 +6,11 @@ area:
   - packages/editor
   - apps/studio
 phase: 6
-status: backlog
+status: active
 priority: p1
 created: 2026-06-23
+assignee: agent
+started: 2026-06-23
 acceptance:
   - store + canvas live in @threadwick/editor behind a browser-only subpath; the data subpath imports cleanly server-side
   - no document/window/localStorage executes on import of the data subpath
