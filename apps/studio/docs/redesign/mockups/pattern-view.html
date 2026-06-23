@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pattern view mode — Threadwick Studio redesign</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="./shared.css">
+<style>
+.ap{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.tb{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.bd{display:flex}
+.sb{width:248px;flex:none;border-right:0.5px solid var(--color-border-tertiary);padding:10px 8px;display:flex;flex-direction:column}
+.mn{flex:1;min-width:0;padding:18px 20px}
+.item{display:flex;align-items:center;gap:9px;padding:5px 8px;border-radius:var(--border-radius-md);font-size:12.5px;color:var(--color-text-secondary)}
+.item i{font-size:15px}
+.on{background:#FAECE7;color:#712B13}
+.sub{margin-left:14px}
+.sec{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-tertiary);padding:5px 8px 2px;margin-top:8px;display:flex;align-items:center}
+.cnt{margin-left:auto;font-size:11px;color:var(--color-text-tertiary)}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;padding:1px 7px;border-radius:99px;background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.ph{background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);border-radius:var(--border-radius-md)}
+.fact{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:9px 11px}
+.fl{font-size:11px;color:var(--color-text-tertiary)}
+.fv{font-size:13px;font-weight:500;margin-top:1px}
+.inrow{display:flex;align-items:center;gap:12px;padding:10px 12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:8px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary)}
+.bp{background:#993C1D;color:#fff;border-color:#993C1D;font-weight:500}
+</style>
+</head><body><div class="wrap">
+<div class="screen-label"><h1>Pattern interior — view mode</h1><span>same screen, re-skinned as a maker decision surface</span><a href="./index.html">← all screens</a></div>
+<div class="ap">
+  <div class="tb">
+    <span style="width:17px;height:17px;border-radius:5px;background:#993C1D;flex:none"></span>
+    <span style="font-size:12px;color:var(--color-text-secondary)">threadwick studio</span>
+    <span style="flex:1"></span>
+    <i class="ti ti-search" style="font-size:15px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+    <i class="ti ti-bell" style="font-size:15px;color:var(--color-text-secondary)" aria-hidden="true"></i>
+  </div>
+  <div class="bd">
+    <div class="sb">
+      <div style="display:flex;align-items:center;gap:9px;padding:7px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)">
+        <span style="width:28px;height:28px;border-radius:6px;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;flex:none;color:var(--color-text-tertiary)"><i class="ti ti-photo" style="font-size:15px" aria-hidden="true"></i></span>
+        <span style="flex:1;min-width:0"><span style="display:block;font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Wildflower granny square</span><span style="display:block;font-size:11px;color:var(--color-text-secondary)">by @mara_makes</span></span>
+        <i class="ti ti-bookmark" style="font-size:16px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+      </div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--color-text-tertiary);padding:6px 8px 2px"><i class="ti ti-arrow-left" style="font-size:13px" aria-hidden="true"></i>Marketplace / Browse</div>
+      <div class="item on" style="margin-top:4px"><i class="ti ti-file-description" aria-hidden="true"></i>Overview</div>
+      <div class="sec">Components<span class="cnt">1</span></div>
+      <div class="item"><i class="ti ti-flower" aria-hidden="true"></i>Flower square<i class="ti ti-chevron-right" style="font-size:13px;margin-left:auto;color:var(--color-text-tertiary)" aria-hidden="true"></i></div>
+      <div class="sec" style="color:var(--color-text-tertiary)">Materials &amp; reference</div>
+      <div class="item"><i class="ti ti-palette" aria-hidden="true"></i>Yarns &amp; hooks<span class="cnt">1</span></div>
+      <div class="item"><i class="ti ti-sparkles" aria-hidden="true"></i>Special stitches<span class="cnt">1</span></div>
+      <div style="flex:1;min-height:10px"></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:9px 10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)"><i class="ti ti-history" style="font-size:15px;color:var(--color-text-secondary)" aria-hidden="true"></i><span style="font-size:12.5px">v3 · latest</span><i class="ti ti-chevron-down" style="font-size:14px;margin-left:auto;color:var(--color-text-tertiary)" aria-hidden="true"></i></div>
+    </div>
+    <div class="mn">
+      <div style="display:flex;gap:8px">
+        <div class="ph" style="width:190px;height:140px;flex:none"><i class="ti ti-photo" style="font-size:30px" aria-hidden="true"></i></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div class="ph" style="width:64px;height:42px"><i class="ti ti-photo" style="font-size:16px" aria-hidden="true"></i></div><div class="ph" style="width:64px;height:42px"><i class="ti ti-photo" style="font-size:16px" aria-hidden="true"></i></div><div class="ph" style="width:64px;height:42px"><i class="ti ti-photo" style="font-size:16px" aria-hidden="true"></i></div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:14px"><p style="font-size:22px;font-weight:500;margin:0">Wildflower granny square</p><span style="display:inline-flex;align-items:center;gap:4px;font-size:12.5px;color:var(--color-text-secondary)"><i class="ti ti-star" style="font-size:14px;color:#D85A30" aria-hidden="true"></i>4.8 · 312</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:5px"><span style="font-size:13px;color:var(--color-text-secondary)">by <span style="color:#993C1D">@mara_makes</span></span><span class="btn" style="font-size:11.5px;padding:3px 11px">Follow</span></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:14px"><span style="font-size:18px;font-weight:500">Free</span><span class="btn bp"><i class="ti ti-player-play" aria-hidden="true"></i>Start making</span><span class="btn">Remix</span></div>
+      <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.5;margin:14px 0 0;max-width:540px">A bright beginner-friendly granny square — quick to memorise and endlessly repeatable. Great for blankets, bags and scrap-busting.</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;max-width:540px">
+        <div class="fact"><div class="fl">Difficulty</div><div class="fv">Beginner</div></div>
+        <div class="fact"><div class="fl">Yarn</div><div class="fv">Any · DK</div></div>
+        <div class="fact"><div class="fl">Hook</div><div class="fv">4.0 mm</div></div>
+        <div class="fact"><div class="fl">Rounds</div><div class="fv">5</div></div>
+        <div class="fact"><div class="fl">US / UK terms</div><div class="fv">Both</div></div>
+        <div class="fact"><div class="fl">Made by</div><div class="fv">1.3k makers</div></div>
+      </div>
+      <p style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-tertiary);margin:18px 0 8px">What's inside</p>
+      <div style="max-width:540px">
+        <div class="inrow"><i class="ti ti-layout-grid" style="font-size:18px;color:var(--color-text-secondary)" aria-hidden="true"></i><span style="flex:1"><span style="display:block;font-size:13px;font-weight:500">Chart</span><span style="font-size:11.5px;color:var(--color-text-secondary)">5 rounds · symbol key</span></span><i class="ti ti-chevron-right" style="font-size:16px;color:var(--color-text-tertiary)" aria-hidden="true"></i></div>
+        <div class="inrow"><i class="ti ti-file-text" style="font-size:18px;color:var(--color-text-secondary)" aria-hidden="true"></i><span style="flex:1"><span style="display:block;font-size:13px;font-weight:500">Written instructions</span><span style="font-size:11.5px;color:var(--color-text-secondary)">round-by-round</span></span><i class="ti ti-chevron-right" style="font-size:16px;color:var(--color-text-tertiary)" aria-hidden="true"></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div></body></html>

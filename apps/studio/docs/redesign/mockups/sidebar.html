@@ -1,0 +1,64 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sidebar — Threadwick Studio redesign</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="./shared.css">
+<style>
+.ap{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.tb{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.bd{display:flex}
+.sb{width:244px;flex:none;border-right:0.5px solid var(--color-border-tertiary);padding:10px 8px;display:flex;flex-direction:column}
+.mn{flex:1;min-width:0;padding:16px}
+.craft{display:flex;align-items:center;gap:8px;padding:7px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:8px}
+.item{display:flex;align-items:center;gap:9px;padding:5px 8px;border-radius:var(--border-radius-md);font-size:12.5px;color:var(--color-text-secondary)}
+.item i{font-size:15px}
+.item.on{background:#FAECE7;color:#712B13}
+.sub{margin-left:6px}
+.sec{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-tertiary);padding:5px 8px 2px;margin-top:8px}
+.cnt{margin-left:auto;font-size:11px;color:var(--color-text-tertiary)}
+</style>
+</head><body><div class="wrap">
+<div class="screen-label"><h1>Sidebar — full nav</h1><span>always expanded; craft picker on top, pinned footer</span><a href="./index.html">← all screens</a></div>
+<div class="ap">
+  <div class="tb">
+    <span style="width:17px;height:17px;border-radius:5px;background:#993C1D;flex:none"></span>
+    <span style="font-size:12px;color:var(--color-text-secondary)">threadwick studio</span>
+    <span style="flex:1"></span>
+    <i class="ti ti-search" style="font-size:15px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+    <i class="ti ti-bell" style="font-size:15px;color:var(--color-text-secondary)" aria-hidden="true"></i>
+  </div>
+  <div class="bd">
+    <div class="sb">
+      <div class="craft"><span style="width:16px;height:16px;border-radius:4px;background:#D85A30;flex:none"></span><span style="flex:1;font-size:12.5px;color:var(--color-text-primary)">All my crafts</span><i class="ti ti-chevron-down" style="font-size:14px;color:var(--color-text-tertiary)" aria-hidden="true"></i></div>
+      <div class="item"><i class="ti ti-home" aria-hidden="true"></i>Home</div>
+      <div class="sec">Workbench</div>
+      <div class="item sub on"><i class="ti ti-layout-grid" aria-hidden="true"></i>Patterns<span class="cnt" style="color:#993C1D">12</span></div>
+      <div class="item sub"><i class="ti ti-folder" aria-hidden="true"></i>Projects<span class="cnt">5</span></div>
+      <div class="sec">Library</div>
+      <div class="item sub"><i class="ti ti-books" aria-hidden="true"></i>Patterns<span class="cnt">24</span></div>
+      <div class="item sub"><i class="ti ti-circles" aria-hidden="true"></i>Yarns<span class="cnt">23</span></div>
+      <div class="item sub"><i class="ti ti-tools" aria-hidden="true"></i>Tools<span class="cnt">8</span></div>
+      <div class="sec">Marketplace</div>
+      <div class="item sub"><i class="ti ti-building-store" aria-hidden="true"></i>Home</div>
+      <div class="item sub"><i class="ti ti-category" aria-hidden="true"></i>Browse</div>
+      <div class="item sub"><i class="ti ti-users" aria-hidden="true"></i>Following<span class="cnt">8</span></div>
+      <div class="item sub"><i class="ti ti-gift" aria-hidden="true"></i>Free</div>
+      <div class="item sub"><i class="ti ti-heart" aria-hidden="true"></i>Wishlist<span class="cnt">4</span></div>
+      <div class="sec">Creator insights</div>
+      <div class="item sub"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard</div>
+      <div class="item sub"><i class="ti ti-list" aria-hidden="true"></i>Listings<span class="cnt">6</span></div>
+      <div class="item sub"><i class="ti ti-coin" aria-hidden="true"></i>Sales</div>
+      <div class="item sub"><i class="ti ti-chart-bar" aria-hidden="true"></i>Stats</div>
+      <div class="item sub"><i class="ti ti-wallet" aria-hidden="true"></i>Payouts</div>
+      <div style="flex:1;min-height:10px"></div>
+      <div class="item" style="border:0.5px solid var(--color-border-tertiary);margin-top:8px"><span style="width:8px;height:8px;border-radius:50%;background:#1D9E75;flex:none"></span>Saved in this browser<i class="ti ti-chevron-down" style="font-size:14px;margin-left:auto;color:var(--color-text-tertiary)" aria-hidden="true"></i></div>
+    </div>
+    <div class="mn" style="opacity:.55">
+      <p style="font-size:18px;font-weight:500;margin:0">Good afternoon</p>
+      <p style="font-size:12px;color:var(--color-text-secondary);margin:3px 0 14px">Your work and the marketplace, all in one place.</p>
+      <div style="height:90px;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);margin-bottom:12px"></div>
+      <div style="display:flex;gap:10px"><div style="flex:1;height:64px;background:var(--color-background-secondary);border-radius:var(--border-radius-md)"></div><div style="flex:1;height:64px;background:var(--color-background-secondary);border-radius:var(--border-radius-md)"></div><div style="flex:1;height:64px;background:var(--color-background-secondary);border-radius:var(--border-radius-md)"></div></div>
+    </div>
+  </div>
+</div>
+</div></body></html>

@@ -9,7 +9,17 @@ It was produced through a collaborative design session and is **complete and rea
 | File | What it is |
 |---|---|
 | [`spec.md`](./spec.md) | The full design specification — the source of truth. Every surface, behaviour, and the locked decisions, organised for engineering. |
+| [`mockups/`](./mockups/index.html) | Static, browser-viewable mockups of every locked screen. Open [`mockups/index.html`](./mockups/index.html) for the gallery. |
 | [`product-map.html`](./product-map.html) | The one-page information architecture + object lifecycle, on a single diagram. Open in a browser. |
+
+## Mockups
+
+[`mockups/index.html`](./mockups/index.html) is a gallery linking a standalone HTML file per locked screen, all sharing one stylesheet (`mockups/shared.css`) in Threadwick's warm Brick & Ecru light palette. Gray blocks are image placeholders; they are **visual references for layout and hierarchy, not production markup**.
+
+- **Home & nav** — Home, full sidebar.
+- **Interiors** — pattern overview (edit), pattern view mode, project hub, Library → Yarns.
+- **Follow view** — the round-by-round work mode at four breakpoints: phone, tablet portrait, tablet landscape, desktop/ultrawide (with the UWD cap-and-centre rule).
+- **Marketplace** — home (storefront) and browse (one filterable view).
 
 ## The shape, in one breath
 
