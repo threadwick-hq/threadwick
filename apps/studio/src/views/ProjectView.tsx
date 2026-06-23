@@ -12,7 +12,7 @@ import { TopBarSlot } from '../components/TopBar';
 import { Thumb } from '../components/Thumb';
 import { VersionTag } from '../components/VersionTag';
 import { statusLabel } from '../components/versionStatus';
-import { exportProjectFile, printProject } from '../core/files';
+import { exportProjectFile, printProject } from '@threadwick/editor/browser';
 import { PATTERN_TYPES, activeVersion, isPlaceholderName } from '@threadwick/editor';
 import type { ProjectVersion, Pattern, ResourceKind, Yarn, LinkRes, NoteRes, VariationRes } from '@threadwick/editor';
 

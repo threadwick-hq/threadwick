@@ -17,7 +17,7 @@ import type { CanvasController, Mode } from '@threadwick/editor/browser';
 import { STITCH_ORDER, START_ORDER, STITCHES, STITCH_KEYS, isStart, isRealStitch, defaultLen } from '@threadwick/editor';
 import { chainOrder } from '@threadwick/editor';
 import { usedTypes } from '@threadwick/editor';
-import { exportPatternSVG, exportPatternPNG, printPattern } from '../core/files';
+import { exportPatternSVG, exportPatternPNG, printPattern } from '@threadwick/editor/browser';
 import { summarizeRound } from '@threadwick/editor';
 import { hasStart, isStartRow, isPlaceholderName } from '@threadwick/editor';
 import { INK, ORIGIN, SPACE, SELECT, NEXT } from '@threadwick/editor';
