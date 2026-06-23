@@ -9,23 +9,23 @@ export const deg2rad = (d: number): number => (d * Math.PI) / 180;
 export const rad2deg = (r: number): number => (r * 180) / Math.PI;
 
 export function toPolar(x: number, y: number): { r: number; a: number } {
-  return { r: Math.hypot(x, y), a: rad2deg(Math.atan2(y, x)) };
+	return { r: Math.hypot(x, y), a: rad2deg(Math.atan2(y, x)) };
 }
 
 export function fromPolar(r: number, aDeg: number): Point {
-  const a = deg2rad(aDeg);
-  return { x: r * Math.cos(a), y: r * Math.sin(a) };
+	const a = deg2rad(aDeg);
+	return { x: r * Math.cos(a), y: r * Math.sin(a) };
 }
 
 export function norm360(a: number): number {
-  a %= 360;
-  return a < 0 ? a + 360 : a;
+	const m = a % 360;
+	return m < 0 ? m + 360 : m;
 }
 
 // Rotate a point about the origin by `deg` (clockwise in y-down space).
 export function rotatePoint(x: number, y: number, deg: number): Point {
-  const a = deg2rad(deg);
-  const c = Math.cos(a);
-  const s = Math.sin(a);
-  return { x: x * c - y * s, y: x * s + y * c };
+	const a = deg2rad(deg);
+	const c = Math.cos(a);
+	const s = Math.sin(a);
+	return { x: x * c - y * s, y: x * s + y * c };
 }
