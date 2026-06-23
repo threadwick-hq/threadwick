@@ -13,7 +13,7 @@ import { CanvasView } from '../editor/CanvasView';
 import { TopBarSlot } from '../components/TopBar';
 import { Glyph } from '../components/Glyph';
 import { statusLabel } from '../components/versionStatus';
-import type { CanvasController, Mode } from '../core/editorCanvas';
+import type { CanvasController, Mode } from '@threadwick/editor/browser';
 import { STITCH_ORDER, START_ORDER, STITCHES, STITCH_KEYS, isStart, isRealStitch, defaultLen } from '@threadwick/editor';
 import { chainOrder } from '@threadwick/editor';
 import { usedTypes } from '@threadwick/editor';

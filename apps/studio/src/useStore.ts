@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from 'react';
-import { store } from './core/store';
+import { store } from '@threadwick/editor/browser';
 
 // Subscribe a component to the store: re-render on every emit(). Components read
 // the current project/pattern straight off the singleton.

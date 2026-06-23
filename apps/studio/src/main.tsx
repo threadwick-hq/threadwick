@@ -3,7 +3,7 @@ import { ConfigProvider, App as AntApp } from 'antd';
 import { IconoirProvider } from 'iconoir-react';
 import { theme } from './theme';
 import { App } from './App';
-import { store } from './core/store';
+import { store } from '@threadwick/editor/browser';
 import { cloudEnabled } from './cloud/config';
 import './cloud/oauthError'; // capture any OAuth callback error before supabase-js strips the URL
 import { sampleProject } from '@threadwick/editor';
