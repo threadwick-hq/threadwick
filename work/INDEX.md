@@ -2,12 +2,11 @@
 
 Generated from `work/*.md` frontmatter by `scripts/work.ts`. Do not edit by hand; run `pnpm run work index`.
 
-Totals: backlog 41 · active 1 · review 0 · done 2 · blocked 0 · abandoned 5
+Totals: backlog 41 · active 0 · review 0 · done 3 · blocked 0 · abandoned 5
 
 | ID | Title | Type | Area | Phase | Status | Priority | Assignee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | TW-007 | Promote Biome from report-only to a hard CI gate | chore | repo, packages/config | 3 | backlog | p2 | - |
-| TW-010 | Scaffold packages/editor and move the DOM-free chart core with its tests | refactor | packages/editor, apps/studio | 6 | active | p1 | agent |
 | TW-011 | Move the store and imperative canvas controller into packages/editor behind an SSR-safe entry | refactor | packages/editor, apps/studio | 6 | backlog | p1 | - |
 | TW-012 | Move files.ts (import/export, SVG/PNG, print-PDF) into the editor browser-only entry | refactor | packages/editor, apps/studio | 6 | backlog | p2 | - |
 | TW-013 | Add the editor's action glyphs to @threadwick/icons and swap iconoir out of studio | feat | packages/icons, apps/studio | 6 | backlog | p1 | - |
@@ -49,6 +48,7 @@ Totals: backlog 41 · active 1 · review 0 · done 2 · blocked 0 · abandoned 5
 | TW-049 | Audit and fix hardcoded /studio/ absolute asset paths in studio source | chore | apps/studio | 6 | backlog | p3 | - |
 | TW-001 | Introduce the work/ tracking system | chore | repo | 6 | done | p1 | agent |
 | TW-009 | Introduce @threadwick/i18n (enriched source + Claude translation pipeline + typed runtime + CI lint) | feat | packages/i18n, apps/web, repo | 6 | done | p1 | agent |
+| TW-010 | Scaffold packages/editor and move the DOM-free chart core with its tests | refactor | packages/editor, apps/studio | 6 | done | p1 | agent |
 | TW-002 | Factor the editor/viewer out of apps/studio into packages/editor | refactor | apps/studio, packages/editor | 6 | abandoned | p1 | - |
 | TW-003 | Migrate the editor chrome from AntD to shadcn | refactor | packages/editor, apps/studio | 6 | abandoned | p1 | - |
 | TW-004 | Mount @threadwick/editor in apps/web as a client-only /studio route | feat | apps/web, packages/editor | 6 | abandoned | p1 | - |

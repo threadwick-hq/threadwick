@@ -6,11 +6,13 @@ area:
   - packages/editor
   - apps/studio
 phase: 6
-status: active
+status: done
 priority: p1
 created: 2026-06-23
 assignee: agent
 started: 2026-06-23
+completed: 2026-06-23
+pr: 6
 acceptance:
   - @threadwick/editor exists, framework-agnostic, with a deliberate public barrel
   - the moved core.test.ts (round-trip + version-lifecycle + migration) stays green
