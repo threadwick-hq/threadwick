@@ -36,10 +36,30 @@ export type IconName =
 	| 'add-round'
 	| 'delete-stitch'
 	| 'set-stitch-color'
+	| 'set-origin'
 	| 'undo'
 	| 'redo'
 	| 'zoom-in'
 	| 'zoom-out'
+	| 'fit'
+	// editor — tool modes & chrome
+	| 'select-mode'
+	| 'insert-mode'
+	| 'pan-mode'
+	| 'import'
+	| 'more'
+	| 'chevron-down'
+	| 'help'
+	// project resources
+	| 'yarn'
+	| 'notes'
+	| 'variation'
+	// account & auth
+	| 'sign-in'
+	| 'sign-out'
+	| 'account'
+	| 'google'
+	| 'mail'
 	// content & feature illustration (marketing)
 	| 'organize'
 	| 'draft'
@@ -103,10 +123,27 @@ export const iconMeta: Record<IconName, IconMeta> = {
 	'add-round': { label: 'Add round' },
 	'delete-stitch': { label: 'Delete stitch' },
 	'set-stitch-color': { label: 'Set stitch color' },
+	'set-origin': { label: 'Set origin' },
 	undo: { label: 'Undo' },
 	redo: { label: 'Redo' },
 	'zoom-in': { label: 'Zoom in' },
 	'zoom-out': { label: 'Zoom out' },
+	fit: { label: 'Fit to screen' },
+	'select-mode': { label: 'Select' },
+	'insert-mode': { label: 'Insert' },
+	'pan-mode': { label: 'Pan' },
+	import: { label: 'Import' },
+	more: { label: 'More' },
+	'chevron-down': { label: 'Expand' },
+	help: { label: 'How it works' },
+	yarn: { label: 'Yarn' },
+	notes: { label: 'Notes' },
+	variation: { label: 'Variation' },
+	'sign-in': { label: 'Sign in' },
+	'sign-out': { label: 'Sign out' },
+	account: { label: 'Account' },
+	google: { label: 'Continue with Google' },
+	mail: { label: 'Email' },
 	organize: { label: 'Organize' },
 	draft: { label: 'Drafts and versions' },
 	'share-qr': { label: 'Share via QR' },
