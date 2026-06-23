@@ -1,0 +1,38 @@
+{
+	"pl": {
+		"common": {
+			"tooltip_close": {
+				"hash": "9c5588d4ff57fb81",
+				"origin": "seed"
+			},
+			"nav_studio": {
+				"hash": "2b2cfbd6843f94d6",
+				"origin": "seed"
+			},
+			"welcome_back": {
+				"hash": "247017b1466f772b",
+				"origin": "seed"
+			},
+			"saved_ago": {
+				"hash": "6acd662add00cc8f",
+				"origin": "seed"
+			},
+			"count_patterns": {
+				"hash": "c4d59e7a467f9972",
+				"origin": "seed"
+			},
+			"palette_single_crochet": {
+				"hash": "3057efe69b1233d3",
+				"origin": "seed"
+			},
+			"instr_work_sc": {
+				"hash": "63e8cb44c657f041",
+				"origin": "seed"
+			},
+			"empty_projects": {
+				"hash": "367079581e059576",
+				"origin": "seed"
+			}
+		}
+	}
+}

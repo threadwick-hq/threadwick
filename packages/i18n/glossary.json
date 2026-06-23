@@ -1,0 +1,21 @@
+{
+	"studio": {
+		"source": "Studio",
+		"translate": false,
+		"note": "Product surface name; stays in English in every locale."
+	},
+	"pattern": {
+		"source": "pattern",
+		"translations": { "pl": "wzór" }
+	},
+	"stitch": {
+		"source": "stitch",
+		"translations": { "pl": "oczko" }
+	},
+	"single_crochet_us": {
+		"source": "single crochet",
+		"translations": { "pl": "półsłupek" },
+		"abbrUs": "sc",
+		"note": "US single crochet. Placeholder canonical PL term; ratify with a native speaker."
+	}
+}

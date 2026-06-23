@@ -1,0 +1,54 @@
+{
+	"tooltip_close": {
+		"text": "Close",
+		"context": "Tooltip on the X button that closes a pop-up.",
+		"maxLength": 12
+	},
+	"nav_studio": {
+		"text": "Studio",
+		"context": "Top nav link that opens the pattern editor.",
+		"maxLength": 12,
+		"glossaryRefs": ["studio"]
+	},
+	"welcome_back": {
+		"text": "Welcome back, {name}!",
+		"context": "Greeting shown on return. {name} is the user's display name and must not be translated.",
+		"tone": "friendly",
+		"placeholders": { "name": "string" },
+		"doNotTranslate": ["name"]
+	},
+	"saved_ago": {
+		"text": "Saved {timeAgo}",
+		"context": "Autosave indicator. {timeAgo} is a localized relative time such as \"2 minutes ago\".",
+		"maxLength": 24,
+		"placeholders": { "timeAgo": "string" },
+		"doNotTranslate": ["timeAgo"],
+		"worstCaseSample": "Saved 11 minutes ago"
+	},
+	"count_patterns": {
+		"text": "{count, plural, one {# pattern} other {# patterns}}",
+		"context": "Count of patterns in a list header. Needs full plural forms in every locale.",
+		"icu": true,
+		"placeholders": { "count": "number" },
+		"glossaryRefs": ["pattern"]
+	},
+	"palette_single_crochet": {
+		"text": "Single crochet",
+		"context": "Stitch palette label, US terminology.",
+		"maxLength": 18,
+		"glossaryRefs": ["single_crochet_us"]
+	},
+	"instr_work_sc": {
+		"text": "{count, plural, one {Work # single crochet in the next stitch.} other {Work # single crochet in the next stitch.}}",
+		"context": "Pattern instruction with a stitch count. ICU so the noun agrees with the number in every locale.",
+		"icu": true,
+		"placeholders": { "count": "number" },
+		"glossaryRefs": ["single_crochet_us", "stitch"]
+	},
+	"empty_projects": {
+		"text": "No projects yet. Start your first pattern and it will show up here.",
+		"context": "Empty-state message in the projects list.",
+		"tone": "encouraging",
+		"glossaryRefs": ["pattern"]
+	}
+}

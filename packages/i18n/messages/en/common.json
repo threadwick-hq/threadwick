@@ -1,0 +1,10 @@
+{
+	"tooltip_close": "Close",
+	"nav_studio": "Studio",
+	"welcome_back": "Welcome back, {name}!",
+	"saved_ago": "Saved {timeAgo}",
+	"count_patterns": "{count, plural, one {# pattern} other {# patterns}}",
+	"palette_single_crochet": "Single crochet",
+	"instr_work_sc": "{count, plural, one {Work # single crochet in the next stitch.} other {Work # single crochet in the next stitch.}}",
+	"empty_projects": "No projects yet. Start your first pattern and it will show up here."
+}

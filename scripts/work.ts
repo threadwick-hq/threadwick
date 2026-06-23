@@ -33,6 +33,7 @@ type Area =
 	| 'packages/config'
 	| 'packages/core'
 	| 'packages/editor'
+	| 'packages/i18n'
 	| 'packages/icons'
 	| 'packages/org'
 	| 'packages/types'
@@ -85,6 +86,7 @@ const AREAS = [
 	'packages/config',
 	'packages/core',
 	'packages/editor',
+	'packages/i18n',
 	'packages/icons',
 	'packages/org',
 	'packages/types',

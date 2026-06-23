@@ -1,0 +1,10 @@
+{
+	"tooltip_close": "Zamknij",
+	"nav_studio": "Studio",
+	"welcome_back": "Witaj ponownie, {name}!",
+	"saved_ago": "Zapisano {timeAgo}",
+	"count_patterns": "{count, plural, one {# wzór} few {# wzory} many {# wzorów} other {# wzoru}}",
+	"palette_single_crochet": "Półsłupek",
+	"instr_work_sc": "{count, plural, one {Zrób # półsłupek w następne oczko.} few {Zrób # półsłupki w następne oczko.} many {Zrób # półsłupków w następne oczko.} other {Zrób # półsłupka w następne oczko.}}",
+	"empty_projects": "Nie masz jeszcze projektów. Zacznij swój pierwszy wzór, a pojawi się tutaj."
+}
