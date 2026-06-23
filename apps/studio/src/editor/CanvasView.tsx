@@ -1,6 +1,6 @@
 import { useEffect, useRef, type MutableRefObject } from 'react';
-import { initCanvas, type CanvasController } from '../core/editorCanvas';
-import { store } from '../core/store';
+import { initCanvas, type CanvasController } from '@threadwick/editor/browser';
+import { store } from '@threadwick/editor/browser';
 
 // Mounts the imperative canvas controller into React. The controller draws the
 // <svg> directly and subscribes to the store itself (RAF-coalesced), so the

@@ -3,8 +3,8 @@
 import { test } from 'vitest';
 import assert from 'node:assert/strict';
 
-import { store } from '../src/core/store';
-import { activeVersion, chainOrder, draftVersion, publishedVersion, startRowId, topOfStitch } from '@threadwick/editor';
+import { store } from '../src/browser';
+import { activeVersion, chainOrder, draftVersion, publishedVersion, startRowId, topOfStitch } from '../src';
 
 const near = (a: number, b: number, eps = 1e-6) => Math.abs(a - b) < eps;
 
