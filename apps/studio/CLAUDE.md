@@ -3,6 +3,21 @@
 Guidance for working in this repo. See [`README.md`](README.md) for the full
 architecture and mental model.
 
+> **⚠️ Monorepo migration in progress (Phase 6).** This app is being folded into the `threadwick-hq`
+> monorepo. Read the root [`CLAUDE.md`](../../CLAUDE.md) and [`MIGRATION.md`](../../MIGRATION.md)
+> first — they take precedence where they differ from this file. Key deltas from the guidance below:
+>
+> - **The chart core moved to [`@threadwick/editor`](../../packages/editor/README.md)** (model,
+>   render, store, canvas controller, symbols, files I/O — formerly `src/core/*`).
+>   `apps/studio/src/core` no longer exists. The versioning invariants below still hold — they live
+>   in `@threadwick/editor` now (`.` = SSR-safe core, `./browser` = client runtime).
+> - **Work is tracked as `work/TW-NNN-*.md` files, not GitHub issues** — the "Document all work with
+>   GitHub issues" section below is **superseded**. See [`work/README.md`](../../work/README.md) and
+>   `pnpm run work next`.
+> - **Icons** come from `@threadwick/icons` via `src/icons.tsx`; iconoir is gone. The AntD chrome is
+>   mid-migration to shadcn (sub-phase 6c); the AntD notes below apply only until it lands.
+> - Run scripts as `pnpm --filter threadwick-studio <script>` from the repo root.
+
 ## Core principles
 
 ### Brand & values (must-have — see [`docs/BRAND.md`](docs/BRAND.md))
@@ -89,10 +104,17 @@ Run typecheck, lint, tests, and build before pushing.
 
 ## Where things live
 
-- **Portable file format + migration:** `src/core/model.ts`
-- **Import / export, SVG / PNG, print-PDF:** `src/core/files.ts`
-- **Store + `localStorage` persistence:** `src/core/store.ts`
-- **Domain types:** `src/core/types.ts`
+The chart core was extracted to **`@threadwick/editor`** (Phase 6, TW-010/011/012) — these moved:
+
+- **Portable file format + migration:** `model.ts` — `@threadwick/editor`
+- **Import / export, SVG / PNG, print-PDF:** `files.ts` — `@threadwick/editor/browser`
+- **Store + `localStorage` persistence:** `store.ts` — `@threadwick/editor/browser`
+- **Domain types:** `types.ts` — `@threadwick/editor`
+- **Stitch symbols (US/UK terms):** `symbols.ts` — `@threadwick/editor`
+
+What remains in `apps/studio/src`: the React chrome (`views/`, `components/`, `editor/CanvasView`),
+cloud/auth (`cloud/`), and the `icons.tsx` shim. See
+[`packages/editor/README.md`](../../packages/editor/README.md).
 
 ## Versioning model (invariants)
 

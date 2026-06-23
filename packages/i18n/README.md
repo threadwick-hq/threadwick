@@ -23,7 +23,7 @@ translations/<l>/*.json  the translation memory, with a fingerprint + provenance
    src/runtime.ts        createTranslator(locale, messages) over intl-messageformat (ICU)
    src/negotiate.ts      negotiateLocale(url > cookie > Accept-Language) for SSR + client
         |
-   i18n:lint            nine rules guard glossary, ICU plurals, placeholders, and length budgets
+   i18n:lint            ten rules guard glossary, ICU plurals, placeholders, and length budgets
 ```
 
 ## Scripts
