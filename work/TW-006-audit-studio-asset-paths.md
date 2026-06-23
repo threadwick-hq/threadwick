@@ -5,7 +5,7 @@ type: chore
 area:
   - apps/studio
 phase: 6
-status: backlog
+status: abandoned
 priority: p3
 created: 2026-06-22
 acceptance:
@@ -29,3 +29,4 @@ Out: route mounting and auth (TW-004, TW-005).
 ## Log
 
 - 2026-06-22 created.
+- 2026-06-23 abandoned: superseded by TW-049 (same work, renumbered into the Phase-6 batch).

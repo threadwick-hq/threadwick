@@ -178,25 +178,64 @@ JSON-LD / FAQ intact; old SSR machinery + tests gone; `turbo build` green.
 
 ---
 
-## Phase 6 — Editor → `packages/editor`, mounted as a client-only route  ·  *large (trickiest)*
+## Phase 6 — Studio app surface: editor extraction, client-only shell, and the Follow view  ·  *large (the redesign-heavy phase)*
 
-**Goal:** the editor/viewer extracted, AntD-free, mounted client-only/offline in `apps/web`.
+**Goal:** the chart editor extracted into `packages/editor` (AntD-free, SSR-safe), mounted as a
+client-only `/studio` sub-tree in `apps/web` inside a real navigation shell, with the priority maker
+surface — the **Follow view** — built on a maker-plane Project/progress model. The redesign
+(`apps/studio/docs/redesign/spec.md` §1–§8) turns this from "lift-and-mount the editor" into "stand up
+the Studio app." Tracked as `work/` tasks **TW-010..TW-049**. Parallelizable with Phase 7; it
+front-loads Phase 7's maker-plane model increment.
 
-1. Factor the editor/viewer out of `apps/studio` into **`packages/editor`** (framework-agnostic:
-   singleton store, imperative canvas, UI state). Keep the editor canvas as-is (already AntD-free).
-2. Migrate the chrome AntD → shadcn: the **3 forms → react-hook-form** (validation/error parity on the
-   auth path verified), a small **toast + confirm** layer replacing `App.useApp()` (8 `message.*` + 6
-   `modal.confirm`), Segmented/Select/Dropdown/Modal → shadcn.
-3. Mount `@threadwick/editor` in `apps/web` as a **client-only** route (`/studio/...`): no server
-   loader; keep `editorCanvas`/bootstrap browser-only out of SSR; preserve the `localStorage` store +
-   `window.threadwick`. (`store.ts` import is SSR-safe; the bootstrap is the isolation point.)
-4. Pin Supabase `redirectTo` to a **fixed** `/studio/auth/callback` (not `origin+pathname`); add it to
-   the Supabase allow-list; keep `supabase` + `cloud/*` behind `import()` so SSR + the PWA exclude it.
-5. Audit studio source for hardcoded `/studio/` absolute asset paths.
+Runs as five sub-phases. Every stored-shape change bumps `FILE_VERSION` + adds a `normalizeProject`
+migration (both `threadwickstudio:v2` and legacy `stitchgridstudio:v2`) + keeps the export → import →
+deep-equal round-trip green, in the same PR. `SAVE_KEY` never changes. Cards use photos, never chart
+snapshots. Every networked feature sits behind a runtime capability flag so the offline PWA (Phase 8)
+stays complete.
 
-**Verify:** RR7 build with `/studio` strictly client-only (no `window`/`localStorage` in the server
-bundle; supabase absent from SSR + initial bundle); `/studio` loads, store seeds + autosaves,
-`window.threadwick` inspectable; marketing routes still SSR. (Parallelizable with Phase 7.)
+- **6a — Core extraction (no model change)** · *TW-010..013, 018.* Scaffold `packages/editor` (ESM,
+  tsup, browser-only subpath). Move the DOM-free core (`model/types/symbols/render/connectivity/…` +
+  `core.test.ts`) verbatim behind a barrel that also exports the read primitives the Follow view needs
+  (`chainOrder`, `summarizeRound`, `chartToSVG`/`stitchToSVG`). Then move `store.ts` + `editorCanvas.ts`
+  + `files.ts` behind the **browser-only** entry so no `document`/`window`/`localStorage` reaches SSR.
+  Ships the v3 model intact — flags, does not migrate, the model seam. Add the editor's ~34 action
+  glyphs to `@threadwick/icons`; drop iconoir. Biome-clean the moved code and drop the `|| true` (folds
+  TW-007).
+- **6b — Client-only shell + mount** · *TW-019..025 (supersedes the old TW-004).* Mount `/studio*`
+  strictly client-only (clientLoader only, `HydrateFallback`; supabase + `cloud/*` behind `import()`).
+  Build `StudioShell` (UWD cap-and-centre), the always-expanded sidebar (sections + counts + active),
+  the craft picker (studio-wide persisted scope in its own key, inclusion semantics), the topbar
+  (⌘K shell, bell, Import/New), the mobile bottom tab bar, and the identity-tile slot-swap contract.
+- **6c — Editor chrome AntD → shadcn** · *TW-014..017 (parallel with 6b).* Rebuild EditorView,
+  ProjectView/TopBar, AuthMenu on `@threadwick/core` shadcn; replace `App.useApp()` with a toast+confirm
+  layer (8 `message.*` + 6 `modal.confirm`); 3 forms → react-hook-form; then delete AntD. Hold the
+  editor CSS-grid gotcha (modifier classes; never add/remove grid children).
+- **6d — Maker-plane model + Follow view (priority feature; Phase-7 increment)** · *TW-026..032.* Land
+  the maker-plane `Project` (pattern refs + source tags, per-pattern follow mode, status union + Ravelry
+  mapping, progress cursor) in `@threadwick/types` — the first increment of Phase 7, co-designed. Build
+  the pure **instruction-decomposition engine** (round → follow Units at per-row/pattern/granular, from
+  **explicit** repeat/corner marks with a per-row fallback) and the **Follow progress state machine**
+  (one-big-action cursor, Undo, aggregation; this is the `FILE_VERSION` 3→4 bump). Then the Follow
+  instruction box, chart pane, the locked-responsive shell across five breakpoints + Wake Lock, and the
+  external-pattern checklist fallback.
+- **6e — List + interior + library/marketplace screens** · *TW-033..047.* Home (recents read model,
+  Continue + recents shelf, decouple flag), Workbench Patterns/Projects lists, Pattern interior
+  (edit+view, versioning types anchored for Phase 7, reward-never-penalize quality checks), Project
+  interior + Overview, Library (Yarns/Tools/Patterns over a top-level stash model + decouplable Ravelry
+  seam, fixture seed for now), Marketplace (Home/Browse behind a `MarketplaceGate` capability flag).
+  Pin Supabase `redirectTo` (TW-048); audit hardcoded `/studio/` asset paths (TW-049).
+
+**Model seam (decided):** ship v3 intact in 6a; land **only** the maker-plane subset in 6d (the first
+Phase-7 increment); the full Pattern-as-versioned-root re-seating (publish/draft engine altitude,
+remix/lineage, unpublish/ownership) is **deferred to Phase 7**, with only its types anchored in 6e
+(TW-035). One owner decides the canonical version primitives; the maker-plane and pattern-versioning
+types are co-designed against one `@threadwick/types` sequence, never forked.
+
+**Verify:** `/studio` strictly client-only (no `window`/`localStorage` in the server bundle; supabase
+absent from SSR + initial bundle); the shell renders with sidebar/craft-picker/topbar; the editor loads,
+store seeds + autosaves, `window.threadwick` inspectable; the Follow view drives a project to completion
+on phone + desktop with progress persisting through an export → import round-trip; marketing routes
+still SSR; `pnpm check` green.
 
 ---
 
