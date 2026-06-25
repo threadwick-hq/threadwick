@@ -6,9 +6,11 @@ area:
   - apps/web
   - packages/editor
 phase: 6
-status: backlog
+status: active
 priority: p1
 created: 2026-06-23
+assignee: agent
+started: 2026-06-23
 acceptance:
   - /studio is client-only: no window/localStorage in the server bundle; supabase absent from SSR + initial bundle
   - the editor loads, store seeds + autosaves, window.threadwick inspectable
