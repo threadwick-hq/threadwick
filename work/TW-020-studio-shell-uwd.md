@@ -6,9 +6,11 @@ area:
   - apps/web
   - packages/core
 phase: 6
-status: backlog
+status: active
 priority: p1
 created: 2026-06-23
+assignee: agent
+started: 2026-06-23
 acceptance:
   - StudioShell renders the sidebar + main frame
   - content caps and centers on ultra-wide; chrome stays fixed-width
