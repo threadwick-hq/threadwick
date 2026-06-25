@@ -2,12 +2,11 @@
 
 Generated from `work/*.md` frontmatter by `scripts/work.ts`. Do not edit by hand; run `pnpm run work index`.
 
-Totals: backlog 36 · active 0 · review 1 · done 8 · blocked 0 · abandoned 5
+Totals: backlog 36 · active 0 · review 0 · done 9 · blocked 0 · abandoned 5
 
 | ID | Title | Type | Area | Phase | Status | Priority | Assignee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | TW-007 | Promote Biome from report-only to a hard CI gate | chore | repo, packages/config | 3 | backlog | p2 | - |
-| TW-019 | Mount /studio as a client-only RR7 route with isolated browser bootstrap | feat | apps/web, packages/editor | 6 | review | p1 | agent |
 | TW-015 | Migrate ProjectView, ProjectsView and TopBar/VersionTag from AntD to shadcn | refactor | apps/studio | 6 | backlog | p2 | - |
 | TW-016 | Replace App.useApp() with a shadcn toast and confirm layer and migrate AuthMenu | refactor | apps/studio, packages/core | 6 | backlog | p2 | - |
 | TW-017 | Drop AntD from apps/studio and remove the theme and provider wiring | chore | apps/studio | 6 | backlog | p2 | - |
@@ -49,6 +48,7 @@ Totals: backlog 36 · active 0 · review 1 · done 8 · blocked 0 · abandoned 5
 | TW-013 | Add the editor's action glyphs to @threadwick/icons and swap iconoir out of studio | feat | packages/icons, apps/studio | 6 | done | p1 | agent |
 | TW-014 | Migrate the EditorView toolbar and inspector chrome from AntD to shadcn | refactor | apps/studio, packages/editor | 6 | done | p1 | agent |
 | TW-018 | Bring the moved packages/editor code to Biome-clean | chore | packages/editor, packages/config, repo | 6 | done | p2 | agent |
+| TW-019 | Mount /studio as a client-only RR7 route with isolated browser bootstrap | feat | apps/web, packages/editor | 6 | done | p1 | agent |
 | TW-002 | Factor the editor/viewer out of apps/studio into packages/editor | refactor | apps/studio, packages/editor | 6 | abandoned | p1 | - |
 | TW-003 | Migrate the editor chrome from AntD to shadcn | refactor | packages/editor, apps/studio | 6 | abandoned | p1 | - |
 | TW-004 | Mount @threadwick/editor in apps/web as a client-only /studio route | feat | apps/web, packages/editor | 6 | abandoned | p1 | - |
