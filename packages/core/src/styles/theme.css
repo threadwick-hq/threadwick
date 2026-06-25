@@ -79,4 +79,8 @@
 	/* type */
 	--font-sans: var(--tw-font-body);
 	--font-display: var(--tw-font-display);
+
+	/* UWD (ultra-wide) rule, app-wide: fixed-width chrome + content capped and centred so
+	   excess becomes calm margin (`max-w-uwd`). Never stretch line-lengths or bloat focal art. */
+	--container-uwd: 1440px;
 }

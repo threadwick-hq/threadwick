@@ -80,7 +80,7 @@ export function EditorMount() {
 	}, []);
 
 	return (
-		<div className="relative h-[calc(100dvh-4rem)] min-h-[600px] w-full overflow-hidden bg-secondary">
+		<div className="relative h-full min-h-[400px] w-full overflow-hidden bg-secondary">
 			<svg
 				ref={svgRef}
 				className="block h-full w-full touch-none"

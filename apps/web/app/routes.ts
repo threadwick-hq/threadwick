@@ -1,8 +1,13 @@
-import { type RouteConfig, index, route } from '@react-router/dev/routes';
+import { type RouteConfig, index, layout, route } from '@react-router/dev/routes';
 
 export default [
-	index('routes/home.tsx'),
-	// The chart editor — a strictly client-only subtree (see routes/studio.tsx). The splat
-	// reserves /studio* for the Studio app; its nav shell + child screens land in TW-020+.
-	route('studio/*', 'routes/studio.tsx'),
+	// Public marketing site (streaming SSR) under its own header/footer chrome.
+	layout('routes/marketing.tsx', [index('routes/home.tsx')]),
+	// The Studio app — a full-takeover, client-only shell (StudioShell). Children render into
+	// its outlet; the editor is client-only, the rest are placeholders until later Phase 6 tasks.
+	route('studio', 'routes/studio.tsx', [
+		index('routes/studio/home.tsx'),
+		route('editor', 'routes/studio/editor.tsx'),
+		route(':section', 'routes/studio/section.tsx'),
+	]),
 ] satisfies RouteConfig;
