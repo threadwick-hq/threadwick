@@ -1,6 +1,7 @@
 import { Icon } from '@threadwick/icons';
 import { useState } from 'react';
 import {
+	Button as AriaButton,
 	type Color,
 	ColorArea,
 	ColorField,
@@ -76,17 +77,15 @@ export function ColorPicker({
 
 	return (
 		<DialogTrigger onOpenChange={(open) => open && setDraft(safeParse(value))}>
-			<Button
-				type="button"
-				variant="outline"
+			<AriaButton
 				aria-label={label}
 				className={cn(
-					'h-9 w-full justify-start gap-2 px-3 font-normal',
+					'flex h-9 w-full items-center justify-start gap-2 rounded-md border border-input bg-background px-3 text-sm font-normal shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring',
 					className,
 				)}
 			>
 				{face}
-			</Button>
+			</AriaButton>
 			<Popover
 				placement="bottom start"
 				className="z-50 rounded-lg border border-border bg-popover p-3 text-popover-foreground shadow-md"

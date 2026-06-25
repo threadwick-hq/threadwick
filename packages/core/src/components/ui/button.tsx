@@ -1,6 +1,6 @@
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
-import type { ComponentProps } from 'react';
+import { type ComponentProps, forwardRef } from 'react';
 import { cn } from '../../lib/utils';
 
 /**
@@ -39,20 +39,14 @@ export type ButtonProps = ComponentProps<'button'> &
 		asChild?: boolean;
 	};
 
-export function Button({
-	className,
-	variant,
-	size,
-	asChild = false,
-	...props
-}: ButtonProps) {
-	const Comp = asChild ? Slot : 'button';
-	return (
-		<Comp
-			className={cn(buttonVariants({ variant, size, className }))}
-			{...props}
-		/>
-	);
-}
+// forwardRef so Radix `asChild` triggers (Tooltip, DropdownMenu, Dialog…) can pass
+// their ref through to the underlying button for positioning and focus management.
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+	({ className, variant, size, asChild = false, ...props }, ref) => {
+		const Comp = asChild ? Slot : 'button';
+		return <Comp ref={ref} className={cn(buttonVariants({ variant, size, className }))} {...props} />;
+	},
+);
+Button.displayName = 'Button';
 
 export { buttonVariants };
