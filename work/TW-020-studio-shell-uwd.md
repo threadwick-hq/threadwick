@@ -6,11 +6,12 @@ area:
   - apps/web
   - packages/core
 phase: 6
-status: review
+status: done
 priority: p1
 created: 2026-06-23
 assignee: agent
 started: 2026-06-23
+completed: 2026-06-23
 pr: 14
 acceptance:
   - StudioShell renders the sidebar + main frame
@@ -47,3 +48,7 @@ Depends on: TW-019.
   at 1440 + centres, sidebar 244) and 375px (sidebar hidden), editor mounts in-shell, SSR
   unchanged (/ marketing, /studio shell skeleton only, 0 localStorage server-side). PR #14.
   Sidebar nav → TW-021; topbar → TW-022; mobile bottom bar → TW-024.
+- 2026-06-23 Adversarial code-review workflow (4 lenses): 1 major confirmed (1 refuted as
+  TW-021 scope) — moving the marketing chrome out of root dropped the skip-to-content link
+  for the /studio subtree; restored it in StudioShell targeting #studio-main. Re-verified
+  responsiveness at 375/768/1280/1920. Merged via PR #14.
