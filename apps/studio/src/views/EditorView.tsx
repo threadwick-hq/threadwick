@@ -278,7 +278,7 @@ export function EditorView() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              <AlertDialogAction variant="destructive"
                 onClick={() => { if (confirmDel) { s.removeRound(confirmDel.id); ctrl.current?.resetInsert(); } setConfirmDel(null); }}>Delete</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -380,7 +380,9 @@ function Inspector({ pat, ctrl, readOnly }: { pat: import('@threadwick/editor').
     <div className="inspector">
       <p className="muted small">{items.length} stitch{items.length > 1 ? 'es' : ''} selected</p>
       <label className="field"><span>Type</span>
-        <Select disabled={readOnly} value={sameType ? first.type : undefined} onValueChange={(v) => s.updateSelection({ type: v as StitchType })}>
+        {/* value is undefined when the selection mixes types so the "(mixed)" placeholder shows;
+            onValueChange looks the string back up in STITCH_ORDER to narrow it to a StitchType. */}
+        <Select disabled={readOnly} value={sameType ? first.type : undefined} onValueChange={(v) => { const t = STITCH_ORDER.find((x) => x === v); if (t) s.updateSelection({ type: t }); }}>
           <SelectTrigger aria-label="Stitch type"><SelectValue placeholder="(mixed)" /></SelectTrigger>
           <SelectContent>
             {STITCH_ORDER.map((t) => (

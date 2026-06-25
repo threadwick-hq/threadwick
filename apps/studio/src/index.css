@@ -107,7 +107,9 @@ span.crumb-name { padding: 2px 6px; white-space: nowrap; max-width: 260px; overf
 .card-main { flex: 1; min-width: 0; cursor: pointer; }
 /* untouched default names render muted to read as "rename me" placeholders */
 .name-placeholder, .ant-input.name-placeholder { color: var(--ink-muted); }
-.pat-name.name-placeholder { color: var(--ink-muted); }
+/* outrank the base `.pat-name-wrap .pat-name { color: inherit }` rule below so the
+   placeholder name stays muted in the breadcrumb (the "rename me" affordance) */
+.pat-name-wrap .pat-name.name-placeholder { color: var(--ink-muted); }
 .empty-wrap { padding: 50px 0; }
 .empty-art { display: flex; justify-content: center; gap: 10px; }
 .empty-wrap h2 { font-size: 20px; margin: 10px 0 4px; }
@@ -132,7 +134,9 @@ span.crumb-name { padding: 2px 6px; white-space: nowrap; max-width: 260px; overf
 .version-readonly { margin: 10px 0 2px; }
 /* read-only banner: leading icon + text column + trailing action (shadcn Alert is a flex row) */
 .ed-readonly .ed-readonly-text { flex: 1; min-width: 0; }
-.ed-readonly .ed-readonly-action { flex: 0 0 auto; margin-left: 12px; }
+/* the text column's flex:1 already pushes the action to the far right; the Alert's own
+   gap-3 supplies the spacing — no extra margin (which would double it) */
+.ed-readonly .ed-readonly-action { flex: 0 0 auto; }
 
 .section { margin-top: 28px; }
 .section-head { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 16px; }
@@ -280,6 +284,9 @@ span.crumb-name { padding: 2px 6px; white-space: nowrap; max-width: 260px; overf
 .legend-row .glyph-wrap { flex: 0 0 auto; }
 
 .help-steps { padding-left: 20px; line-height: 1.7; list-style: decimal; }
+/* the "Keys" subheading (was an antd Typography Title); preflight flattens a bare <h4> */
+.help-subhead { margin: 16px 0 4px; font-size: 15px; font-weight: 600; color: var(--ink); }
+.help-body > p:first-child { margin-top: 0; }
 .sw { display: inline-block; width: 11px; height: 11px; border-radius: 3px; vertical-align: -1px; }
 .keys { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 4px; }
 .keys td { padding: 4px 8px 4px 0; border-bottom: 1px solid var(--line-2); }

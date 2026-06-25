@@ -1,5 +1,5 @@
 import { Icon } from '@threadwick/icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Button as AriaButton,
 	type Color,
@@ -47,6 +47,12 @@ export function ColorPicker({
 	className,
 }: ColorPickerProps) {
 	const [draft, setDraft] = useState<Color>(() => safeParse(value));
+	// Keep the popover's working colour in step with the controlled value, even when it
+	// changes from outside (the swatch already reads `value` directly). During a drag the
+	// value only changes on release (onChangeEnd), so this never interrupts an in-flight pick.
+	useEffect(() => {
+		setDraft(safeParse(value));
+	}, [value]);
 	const swatchColor = safeParse(value);
 	const commit = (color: Color) =>
 		onChange(color.toString('hex').toLowerCase());
@@ -76,7 +82,7 @@ export function ColorPicker({
 	}
 
 	return (
-		<DialogTrigger onOpenChange={(open) => open && setDraft(safeParse(value))}>
+		<DialogTrigger>
 			<AriaButton
 				aria-label={label}
 				className={cn(
