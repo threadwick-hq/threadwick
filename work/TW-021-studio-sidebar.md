@@ -7,11 +7,12 @@ area:
   - packages/core
   - packages/icons
 phase: 6
-status: review
+status: done
 priority: p1
 created: 2026-06-23
 assignee: agent
 started: 2026-06-23
+completed: 2026-06-23
 pr: 15
 acceptance:
   - the sidebar shows all sections + items, always expanded
@@ -49,3 +50,7 @@ Depends on: TW-020.
   @threadwick/icons. Counts: Workbench from the store; Library/Following/Wishlist honest
   zeros until TW-044/046. Verified at 375/1280 + active state + editor still loads + SSR
   isolation (0 localStorage server-side). PR #15. Craft picker → TW-023; mobile bar → TW-024.
+- 2026-06-23 Adversarial code-review workflow (4 lenses): 1 minor confirmed (1 refuted) —
+  nav section labels weren't programmatically associated with their links, so duplicate
+  link names were ambiguous; wrapped each section in role=group + aria-labelledby. Merged
+  via PR #15.
