@@ -7,6 +7,12 @@ declare global {
 	}
 }
 
+// The store is a module singleton that outlives client navigation (the dynamically imported
+// module stays cached), so hydrate from localStorage exactly once per page load. Re-mounting on
+// navigate-back must re-attach the canvas to the LIVE in-memory state, not reload over it —
+// reloading would discard undo/redo history and any edit still inside the autosave debounce.
+let hydrated = false;
+
 /**
  * Client-only mount for the chart editor. The editor runtime — the imperative DOM canvas
  * controller and the `localStorage`-backed store — is dynamically imported inside the effect,
@@ -27,18 +33,22 @@ export function EditorMount() {
 			if (!active) return;
 			const { store, initCanvas } = browser;
 
-			// First run: seed a worked sample so the editor opens on something real.
-			if (!store.loadLocal()) {
-				store.state.library.projects.push(core.sampleProject());
-				store.saveLocal();
-			}
-
-			// Open the most recent project's active pattern so the canvas has a chart to draw.
-			const project = store.state.library.projects[0];
-			if (project && store.state.ui.view !== 'editor') {
-				const version = project.versions.find((v) => v.id === project.activeVersionId);
-				const pattern = version?.patterns[0];
-				if (pattern) store.openPattern(project.id, pattern.id);
+			// Hydrate once per page load; a re-mount keeps the live in-memory state untouched.
+			if (!hydrated) {
+				hydrated = true;
+				// First run: seed a worked sample so the editor opens on something real.
+				store.loadLocal();
+				if (store.state.library.projects.length === 0) {
+					store.state.library.projects.push(core.sampleProject());
+					store.saveLocal();
+				}
+				// Open the most recent project's active pattern so the canvas has a chart to draw.
+				const project = store.state.library.projects[0];
+				if (project && store.state.ui.view !== 'editor') {
+					const version = project.versions.find((v) => v.id === project.activeVersionId);
+					const pattern = version?.patterns[0];
+					if (pattern) store.openPattern(project.id, pattern.id);
+				}
 			}
 
 			// Autosave on data changes (the canvas only persists view changes itself).
