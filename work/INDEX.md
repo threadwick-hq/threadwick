@@ -2,7 +2,7 @@
 
 Generated from `work/*.md` frontmatter by `scripts/work.ts`. Do not edit by hand; run `pnpm run work index`.
 
-Totals: backlog 35 · active 0 · review 0 · done 10 · blocked 0 · abandoned 5
+Totals: backlog 34 · active 0 · review 0 · done 11 · blocked 0 · abandoned 5
 
 | ID | Title | Type | Area | Phase | Status | Priority | Assignee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -10,7 +10,6 @@ Totals: backlog 35 · active 0 · review 0 · done 10 · blocked 0 · abandoned 
 | TW-015 | Migrate ProjectView, ProjectsView and TopBar/VersionTag from AntD to shadcn | refactor | apps/studio | 6 | backlog | p2 | - |
 | TW-016 | Replace App.useApp() with a shadcn toast and confirm layer and migrate AuthMenu | refactor | apps/studio, packages/core | 6 | backlog | p2 | - |
 | TW-017 | Drop AntD from apps/studio and remove the theme and provider wiring | chore | apps/studio | 6 | backlog | p2 | - |
-| TW-021 | Build the always-expanded sidebar nav with sections, counts and active state | feat | apps/web, packages/core, packages/icons | 6 | backlog | p1 | - |
 | TW-022 | Build the topbar with search/Cmd+K trigger, notifications bell and Import/New | feat | apps/web, packages/core, packages/icons | 6 | backlog | p2 | - |
 | TW-023 | Implement the craft picker as a studio-wide persisted scope with inclusion semantics | feat | apps/web, packages/core, packages/types | 6 | backlog | p2 | - |
 | TW-024 | Build the mobile bottom tab bar and responsive sidebar collapse | feat | apps/web, packages/core | 6 | backlog | p2 | - |
@@ -49,6 +48,7 @@ Totals: backlog 35 · active 0 · review 0 · done 10 · blocked 0 · abandoned 
 | TW-018 | Bring the moved packages/editor code to Biome-clean | chore | packages/editor, packages/config, repo | 6 | done | p2 | agent |
 | TW-019 | Mount /studio as a client-only RR7 route with isolated browser bootstrap | feat | apps/web, packages/editor | 6 | done | p1 | agent |
 | TW-020 | Build the StudioShell layout route with the UWD cap-and-centre rule | feat | apps/web, packages/core | 6 | done | p1 | agent |
+| TW-021 | Build the always-expanded sidebar nav with sections, counts and active state | feat | apps/web, packages/core, packages/icons | 6 | done | p1 | agent |
 | TW-002 | Factor the editor/viewer out of apps/studio into packages/editor | refactor | apps/studio, packages/editor | 6 | abandoned | p1 | - |
 | TW-003 | Migrate the editor chrome from AntD to shadcn | refactor | packages/editor, apps/studio | 6 | abandoned | p1 | - |
 | TW-004 | Mount @threadwick/editor in apps/web as a client-only /studio route | feat | apps/web, packages/editor | 6 | abandoned | p1 | - |

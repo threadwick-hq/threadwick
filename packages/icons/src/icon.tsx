@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { iconMeta, type IconName, type IconSet } from './contract';
+import { type IconName, type IconSet, iconMeta } from './contract';
 import { faFree } from './sets/fa-free';
 
 /**
@@ -20,7 +20,9 @@ export type IconProps = {
 export function Icon({ name, label, className }: IconProps) {
 	const glyph = activeSet.resolve(name);
 	if (label === '') {
-		return <FontAwesomeIcon icon={glyph} className={className} aria-hidden={true} />;
+		return (
+			<FontAwesomeIcon icon={glyph} className={className} aria-hidden={true} />
+		);
 	}
 	return (
 		<FontAwesomeIcon
