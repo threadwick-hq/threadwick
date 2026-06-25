@@ -1,19 +1,14 @@
-import { EditorMount } from '../studio/editor-mount';
+import { Outlet } from 'react-router';
+import { StudioShell } from '../studio/studio-shell';
 
 export function meta() {
-	return [
-		{ title: 'Threadwick Studio — chart editor' },
-		{ name: 'description', content: 'Design crochet charts the way you crochet them — round by round.' },
-	];
+	return [{ title: 'Threadwick Studio' }];
 }
 
 /**
- * /studio is the offline-capable chart editor: it runs entirely in the browser (a DOM
- * canvas controller + a localStorage-backed store), so it must never reach streaming SSR.
- *
- * A `clientLoader` (with `hydrate`) plus a `HydrateFallback` makes the server render only the
- * fallback and mount the editor after hydration; the browser runtime is dynamically imported
- * inside `EditorMount`, so no `window`/`localStorage` code is bundled into the server output.
+ * The Studio shell is a client-only, offline-capable app surface (it reads localStorage and, in
+ * the editor, drives a DOM canvas), so the whole /studio subtree renders after hydration: a
+ * `clientLoader` + `HydrateFallback` make the server emit only the shell skeleton.
  */
 export async function clientLoader() {
 	return null;
@@ -22,12 +17,18 @@ clientLoader.hydrate = true as const;
 
 export function HydrateFallback() {
 	return (
-		<div className="flex min-h-[70vh] items-center justify-center">
-			<p className="text-sm text-muted-foreground">Loading the studio…</p>
-		</div>
+		<StudioShell>
+			<div className="px-6 py-8">
+				<p className="text-sm text-muted-foreground">Loading the studio…</p>
+			</div>
+		</StudioShell>
 	);
 }
 
-export default function StudioRoute() {
-	return <EditorMount />;
+export default function StudioLayout() {
+	return (
+		<StudioShell>
+			<Outlet />
+		</StudioShell>
+	);
 }

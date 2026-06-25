@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
-import { Footer } from './components/footer';
-import { Header } from './components/header';
 import './app.css';
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -22,20 +20,8 @@ export function Layout({ children }: { children: ReactNode }) {
 	);
 }
 
+// The root renders only the matched layout's outlet; marketing chrome (header/footer) lives in
+// routes/marketing.tsx, and the studio runs in its own full-takeover shell (routes/studio.tsx).
 export default function App() {
-	return (
-		<>
-			<a
-				href="#main"
-				className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
-			>
-				Skip to content
-			</a>
-			<Header />
-			<main id="main">
-				<Outlet />
-			</main>
-			<Footer />
-		</>
-	);
+	return <Outlet />;
 }
