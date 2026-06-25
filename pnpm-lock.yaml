@@ -108,6 +108,9 @@ importers:
       '@threadwick/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@threadwick/editor':
+        specifier: workspace:*
+        version: link:../../packages/editor
       '@threadwick/icons':
         specifier: workspace:*
         version: link:../../packages/icons
