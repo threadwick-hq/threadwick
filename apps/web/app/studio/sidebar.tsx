@@ -64,18 +64,32 @@ export function Sidebar() {
 	return (
 		<div className="flex min-h-0 flex-1 flex-col">
 			<nav aria-label="Studio sections" className="flex-1 overflow-y-auto px-2 py-2">
-				{sections.map((section, index) => (
-					<div key={section.label ?? `section-${index}`} className={index > 0 ? 'mt-3' : undefined}>
-						{section.label && (
-							<p className="px-2 pb-1 pt-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80">
-								{section.label}
-							</p>
-						)}
-						{section.items.map((item) => (
-							<SidebarLink key={item.to} {...item} />
-						))}
-					</div>
-				))}
+				{sections.map((section, index) => {
+					// Associate each group with its label so the duplicate link names ("Patterns" under
+					// both Workbench and Library, "Home" under both top-level and Marketplace) resolve in
+					// context for screen readers, instead of reading as identical, ambiguous links.
+					const labelId = section.label ? `nav-section-${section.label.toLowerCase()}` : undefined;
+					return (
+						<div
+							key={section.label ?? `section-${index}`}
+							className={index > 0 ? 'mt-3' : undefined}
+							role={section.label ? 'group' : undefined}
+							aria-labelledby={labelId}
+						>
+							{section.label && (
+								<p
+									id={labelId}
+									className="px-2 pb-1 pt-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80"
+								>
+									{section.label}
+								</p>
+							)}
+							{section.items.map((item) => (
+								<SidebarLink key={item.to} {...item} />
+							))}
+						</div>
+					);
+				})}
 			</nav>
 			<div className="border-t border-border p-2">
 				<div className="flex items-center gap-2 rounded-md border border-border px-2.5 py-2 text-xs text-muted-foreground">
