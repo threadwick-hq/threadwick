@@ -6,11 +6,12 @@ area:
   - apps/studio
   - packages/editor
 phase: 6
-status: review
+status: done
 priority: p1
 created: 2026-06-23
 assignee: agent
 started: 2026-06-23
+completed: 2026-06-23
 pr: 12
 acceptance:
   - EditorView renders with no AntD imports
@@ -47,3 +48,8 @@ Depends on: TW-011, TW-013.
   renamed the studio-local --muted/--accent vars (collided with shadcn role tokens),
   restored preflight-stripped list markers. Verified every surface headless (no
   console errors). PR #12 (review). Confirm + AuthMenu → TW-016; AntD removal → TW-017.
+- 2026-06-23 Ran an adversarial multi-dimension code-review workflow (5 lenses, each
+  finding verified): 7 minor findings confirmed, all addressed — NumberInput free-text
+  buffer, ColorPicker external-value sync, AlertDialogAction variant prop, Select `as`-cast
+  removed, and 3 CSS regressions (placeholder muting, Help subheading, banner spacing).
+  Re-verified in the browser. Merged via PR #12.
