@@ -7,9 +7,11 @@ area:
   - packages/core
   - packages/icons
 phase: 6
-status: backlog
+status: active
 priority: p1
 created: 2026-06-23
+assignee: agent
+started: 2026-06-23
 acceptance:
   - the sidebar shows all sections + items, always expanded
   - counts render on Workbench/Library/Following/Wishlist
