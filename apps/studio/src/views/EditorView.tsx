@@ -1,13 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import {
-  App, Alert, Breadcrumb, Button, Segmented, Select, InputNumber, Switch, ColorPicker, Dropdown, Modal, Input, Tooltip, Typography,
-} from 'antd';
-import {
-  UndoIcon, RedoIcon, DownloadIcon, HelpIcon, MenuIcon,
-  PlusIcon, ZoomInIcon, ZoomOutIcon, FitIcon, MoreIcon, DeleteIcon,
-  EditIcon, RotateRightIcon, OriginIcon,
-  SelectModeIcon, InsertModeIcon, PanModeIcon, MirrorIcon, ChevronDownIcon,
-} from '../icons';
+  Alert, AlertDescription, AlertTitle,
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator,
+  Button,
+  ColorPicker,
+  Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+  Input,
+  NumberInput,
+  Segmented, SegmentedItem,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Switch,
+  Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
+} from '@threadwick/core/components';
+import { Icon } from '@threadwick/icons';
 import { useStore } from '../useStore';
 import { CanvasView } from '../editor/CanvasView';
 import { TopBarSlot } from '../components/TopBar';
@@ -23,12 +31,22 @@ import { hasStart, isStartRow, isPlaceholderName } from '@threadwick/editor';
 import { INK, ORIGIN, SPACE, SELECT, NEXT } from '@threadwick/editor';
 import type { Stitch, StitchType } from '@threadwick/editor';
 
-const { Title } = Typography;
 const KEY_TO_TYPE: Record<string, StitchType> = Object.fromEntries(
   Object.entries(STITCH_KEYS).map(([t, k]) => [k as string, t as StitchType]),
 );
 
 interface Chrome { mode: Mode; armed: StitchType; phase: 'base' | 'head'; nextId: string | null; transientMode: Mode | null; }
+
+// Small wrapper so a control reads as one line: `<Tip label="…"><Button/></Tip>`.
+// The child must be a single focusable element (Radix merges the trigger onto it).
+function Tip({ label, children }: { label: ReactNode; children: ReactElement }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
+  );
+}
 
 export function EditorView() {
   const s = useStore();
@@ -41,7 +59,7 @@ export function EditorView() {
   const [help, setHelp] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [rename, setRename] = useState<{ id: string; name: string } | null>(null);
-  const { modal } = App.useApp();
+  const [confirmDel, setConfirmDel] = useState<{ id: string; name: string } | null>(null);
 
   const sync = () => {
     const c = ctrl.current; if (!c) return;
@@ -100,129 +118,173 @@ export function EditorView() {
   // differs from the mode you're actually in
   const heldMode = chrome.transientMode && chrome.transientMode !== chrome.mode ? chrome.transientMode : null;
   return (
-    <div className={'editor' + (readOnly ? ' has-banner' : '')}>
-      <TopBarSlot>
-        <Breadcrumb className="crumbs" items={[
-          { title: <button className="crumb-link" onClick={() => s.goProjects()}>All projects</button> },
-          { title: <button className={'crumb-link crumb-name' + (proj && isPlaceholderName(proj.name) ? ' name-placeholder' : '')} onClick={() => s.backToProject()}>{proj?.name ?? 'Project'}</button> },
-          { title: (
-            <span className="crumb-leaf">
-              <span className="pat-name-wrap" data-value={pat.name}>
-                <Input variant="borderless" className={'pat-name' + (isPlaceholderName(pat.name) ? ' name-placeholder' : '')} value={pat.name} readOnly={readOnly} onChange={(e) => s.renamePattern(pat.id, e.target.value)} onPressEnter={(e) => e.currentTarget.blur()} />
-              </span>
-              <span className="badge">Granny square</span>
-            </span>
-          ) },
-        ]} />
-        <div className="grow" />
-        <Tooltip title="Undo (⌘Z)"><Button type="text" aria-label="Undo" icon={<UndoIcon />} disabled={!s.undoStack.length} onClick={() => s.undo()} /></Tooltip>
-        <Tooltip title="Redo (⇧⌘Z)"><Button type="text" aria-label="Redo" icon={<RedoIcon />} disabled={!s.redoStack.length} onClick={() => s.redo()} /></Tooltip>
-        <Tooltip title="How it works"><Button type="text" aria-label="How it works" icon={<HelpIcon />} onClick={() => setHelp(true)} /></Tooltip>
-        <Dropdown trigger={['click']} menu={{
-          items: [{ key: 'export', icon: <DownloadIcon />, label: 'Export pattern…' }],
-          onClick: ({ key }) => { if (key === 'export') setExportOpen(true); },
-        }}>
-          <Button type="text" aria-label="Menu" icon={<MenuIcon />} />
-        </Dropdown>
-      </TopBarSlot>
+    <TooltipProvider delayDuration={300}>
+      <div className={'editor' + (readOnly ? ' has-banner' : '')}>
+        <TopBarSlot>
+          <Breadcrumb className="crumbs">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <button className="crumb-link" onClick={() => s.goProjects()}>All projects</button>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator>/</BreadcrumbSeparator>
+              <BreadcrumbItem>
+                <button className={'crumb-link crumb-name' + (proj && isPlaceholderName(proj.name) ? ' name-placeholder' : '')} onClick={() => s.backToProject()}>{proj?.name ?? 'Project'}</button>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator>/</BreadcrumbSeparator>
+              <BreadcrumbItem>
+                <span className="crumb-leaf">
+                  <span className="pat-name-wrap" data-value={pat.name}>
+                    <input
+                      className={'pat-name' + (isPlaceholderName(pat.name) ? ' name-placeholder' : '')}
+                      aria-label="Pattern name"
+                      value={pat.name}
+                      readOnly={readOnly}
+                      onChange={(e) => s.renamePattern(pat.id, e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
+                    />
+                  </span>
+                  <span className="badge">Granny square</span>
+                </span>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <div className="grow" />
+          <Tip label="Undo (⌘Z)"><Button variant="ghost" size="iconSm" aria-label="Undo" disabled={!s.undoStack.length} onClick={() => s.undo()}><Icon name="undo" label="" /></Button></Tip>
+          <Tip label="Redo (⇧⌘Z)"><Button variant="ghost" size="iconSm" aria-label="Redo" disabled={!s.redoStack.length} onClick={() => s.redo()}><Icon name="redo" label="" /></Button></Tip>
+          <Tip label="How it works"><Button variant="ghost" size="iconSm" aria-label="How it works" onClick={() => setHelp(true)}><Icon name="help" label="" /></Button></Tip>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="iconSm" aria-label="Menu"><Icon name="open-menu" label="" /></Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onSelect={() => setExportOpen(true)}><Icon name="download" label="" /> Export pattern…</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </TopBarSlot>
 
-      <div className="toolbar">
-        {/* A held mode (e.g. hold Space for pan) lights that button as "held"
-            in place — dashed + tinted — while the real selection stays put, so
-            it's clearly different from a mode you clicked to keep, and changes
-            directly between current and held (no sliding across the others).
-            `held-<mode>` is generic: any future hold-to-use mode reuses it. */}
-        <Segmented className={'mode-seg' + (heldMode ? ' holding held-' + heldMode : '')}
-          value={chrome.mode === 'insert' && readOnly ? 'select' : chrome.mode}
-          onChange={(v) => ctrl.current?.setMode(v as Mode)}
-          options={[
-            { label: (<Tooltip title="Select (V)"><span className="seg-icon" aria-label="Select"><SelectModeIcon /></span></Tooltip>), value: 'select' },
-            ...(readOnly ? [] : [{ label: (<Tooltip title="Insert (I)"><span className="seg-icon" aria-label="Insert"><InsertModeIcon /></span></Tooltip>), value: 'insert' }]),
-            { label: (<Tooltip title="Pan (P) · or hold Space"><span className="seg-icon" aria-label="Pan"><PanModeIcon /></span></Tooltip>), value: 'pan' },
-          ]} />
-        <div className="grow" />
-        {!readOnly && <Tooltip title="Fan the current row out evenly"><Button size="small" onClick={() => s.evenRound(pat.activeRound)}>Even out row</Button></Tooltip>}
-        <div className="tool-view">
-          <Tooltip title="Zoom out"><Button size="small" type="text" aria-label="Zoom out" icon={<ZoomOutIcon />} onClick={() => ctrl.current?.zoomOut()} /></Tooltip>
-          <Tooltip title="Fit to view"><Button size="small" icon={<FitIcon />} onClick={() => ctrl.current?.fit()}>Fit</Button></Tooltip>
-          <Tooltip title="Zoom in"><Button size="small" type="text" aria-label="Zoom in" icon={<ZoomInIcon />} onClick={() => ctrl.current?.zoomIn()} /></Tooltip>
+        <div className="toolbar">
+          {/* A held mode (e.g. hold Space for pan) lights that button as "held"
+              in place — dashed + tinted — while the real selection stays put, so
+              it's clearly different from a mode you clicked to keep, and changes
+              directly between current and held (no sliding across the others).
+              `held-<mode>` is generic: any future hold-to-use mode reuses it. */}
+          <Segmented className={'mode-seg' + (heldMode ? ' holding held-' + heldMode : '')}
+            aria-label="Editor mode"
+            value={chrome.mode === 'insert' && readOnly ? 'select' : chrome.mode}
+            onValueChange={(v) => ctrl.current?.setMode(v as Mode)}>
+            {/* Tooltip wraps the inner glyph (as the AntD version did), NOT the toggle
+                button — TooltipTrigger asChild would otherwise overwrite the item's own
+                data-state="on" and kill the selected-pill styling. */}
+            <SegmentedItem value="select" aria-label="Select"><Tip label="Select (V)"><span className="seg-icon"><Icon name="select-mode" label="" /></span></Tip></SegmentedItem>
+            {!readOnly && <SegmentedItem value="insert" aria-label="Insert"><Tip label="Insert (I)"><span className="seg-icon"><Icon name="insert-mode" label="" /></span></Tip></SegmentedItem>}
+            <SegmentedItem value="pan" aria-label="Pan"><Tip label="Pan (P) · or hold Space"><span className="seg-icon"><Icon name="pan-mode" label="" /></span></Tip></SegmentedItem>
+          </Segmented>
+          <div className="grow" />
+          {!readOnly && <Tip label="Fan the current row out evenly"><Button variant="outline" size="sm" onClick={() => s.evenRound(pat.activeRound)}>Even out row</Button></Tip>}
+          <div className="tool-view">
+            <Tip label="Zoom out"><Button variant="ghost" size="iconSm" aria-label="Zoom out" onClick={() => ctrl.current?.zoomOut()}><Icon name="zoom-out" label="" /></Button></Tip>
+            <Tip label="Fit to view"><Button variant="outline" size="sm" onClick={() => ctrl.current?.fit()}><Icon name="fit" label="" /> Fit</Button></Tip>
+            <Tip label="Zoom in"><Button variant="ghost" size="iconSm" aria-label="Zoom in" onClick={() => ctrl.current?.zoomIn()}><Icon name="zoom-in" label="" /></Button></Tip>
+          </div>
         </div>
-      </div>
 
-      {readOnly && (
-        <Alert className="ed-readonly" type="info" showIcon banner
-          message="You are viewing a read-only version"
-          description={ver ? `Version ${ver.label} is ${statusLabel(ver.status).toLowerCase()} and cannot be edited.` : undefined}
-          action={proj && <Button size="small" type="primary" icon={<EditIcon />} onClick={() => s.createDraft(proj.id)}>Edit as new draft</Button>} />
-      )}
-
-      <div className={'ed-body' + (readOnly ? ' readonly' : '')}>
-        {!readOnly && (
-          <aside className="ed-left">
-            <Palette pat={pat} chrome={chrome} ctrl={ctrl} />
-            <HowItWorks />
-          </aside>
+        {readOnly && (
+          <Alert variant="info" banner className="ed-readonly">
+            <Icon name="view" label="" />
+            <div className="ed-readonly-text">
+              <AlertTitle>You are viewing a read-only version</AlertTitle>
+              {ver && <AlertDescription>Version {ver.label} is {statusLabel(ver.status).toLowerCase()} and cannot be edited.</AlertDescription>}
+            </div>
+            {proj && <Button size="sm" className="ed-readonly-action" onClick={() => s.createDraft(proj.id)}><Icon name="edit" label="" /> Edit as new draft</Button>}
+          </Alert>
         )}
 
-        <div className="canvas-wrap">
-          <CanvasView controllerRef={ctrl} onChange={sync} />
-          {!readOnly && <StepToast chrome={chrome} onStart={onStart} started={started} />}
-          {!readOnly && <Hint chrome={chrome} onStart={onStart} started={started} />}
+        <div className={'ed-body' + (readOnly ? ' readonly' : '')}>
+          {!readOnly && (
+            <aside className="ed-left">
+              <Palette pat={pat} chrome={chrome} ctrl={ctrl} />
+              <HowItWorks />
+            </aside>
+          )}
+
+          <div className="canvas-wrap">
+            <CanvasView controllerRef={ctrl} onChange={sync} />
+            {!readOnly && <StepToast chrome={chrome} onStart={onStart} started={started} />}
+            {!readOnly && <Hint chrome={chrome} onStart={onStart} started={started} />}
+          </div>
+
+          <aside className="ed-right">
+            <div className="rows-panel">
+              <div className="panel-head"><div className="panel-title">Rows</div>{!readOnly && <Button variant="outline" size="sm" onClick={() => { s.addRound(); ctrl.current?.resetInsert(); }}><Icon name="add" label="" /> Row</Button>}</div>
+              <div className="rows-list">
+                {startRow && (
+                  <div className={'row-item start-row' + (onStart ? ' on' : '')}>
+                    <button className="row-main" onClick={() => { s.setActiveRound(startRow.id); ctrl.current?.resetInsert(); }}>
+                      <b>Start</b><small>{pat.start ? STITCHES[pat.start].name : 'pick a starting stitch'}</small>
+                    </button>
+                  </div>
+                )}
+                {working.map((r) => {
+                  const count = chainOrder(pat.stitches, r.id).filter((x) => !isStart(x.type)).length;
+                  const summary = summarizeRound(pat, r.id);
+                  return (
+                    <div key={r.id} className={'row-item' + (r.id === pat.activeRound ? ' on' : '')}>
+                      <button className="row-main" onClick={() => { s.setActiveRound(r.id); ctrl.current?.resetInsert(); }}>
+                        <b>{r.name}</b><small>{count ? summary : 'empty'}</small>
+                      </button>
+                      {!readOnly && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="iconSm" aria-label={`${r.name} options`}><Icon name="more" label="" /></Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuItem onSelect={() => setRename({ id: r.id, name: r.name })}><Icon name="edit" label="" /> Rename</DropdownMenuItem>
+                            {working.length > 1 && <DropdownMenuItem variant="destructive" onSelect={() => setConfirmDel({ id: r.id, name: r.name })}><Icon name="delete" label="" /> Delete row</DropdownMenuItem>}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="ed-right-scroll">
+              <div className="panel"><div className="panel-title">Selection</div><Inspector pat={pat} ctrl={ctrl} readOnly={readOnly} /></div>
+              <div className="panel"><div className="panel-title">Legend</div><Legend pat={pat} /></div>
+            </div>
+          </aside>
         </div>
 
-        <aside className="ed-right">
-          <div className="rows-panel">
-            <div className="panel-head"><div className="panel-title">Rows</div>{!readOnly && <Button size="small" icon={<PlusIcon />} onClick={() => { s.addRound(); ctrl.current?.resetInsert(); }}>Row</Button>}</div>
-            <div className="rows-list">
-              {startRow && (
-                <div className={'row-item start-row' + (onStart ? ' on' : '')}>
-                  <button className="row-main" onClick={() => { s.setActiveRound(startRow.id); ctrl.current?.resetInsert(); }}>
-                    <b>Start</b><small>{pat.start ? STITCHES[pat.start].name : 'pick a starting stitch'}</small>
-                  </button>
-                </div>
-              )}
-              {working.map((r) => {
-                const count = chainOrder(pat.stitches, r.id).filter((x) => !isStart(x.type)).length;
-                const summary = summarizeRound(pat, r.id);
-                return (
-                  <div key={r.id} className={'row-item' + (r.id === pat.activeRound ? ' on' : '')}>
-                    <button className="row-main" onClick={() => { s.setActiveRound(r.id); ctrl.current?.resetInsert(); }}>
-                      <b>{r.name}</b><small>{count ? summary : 'empty'}</small>
-                    </button>
-                    {!readOnly && <Dropdown trigger={['click']} menu={{
-                      items: [
-                        { key: 'rename', icon: <EditIcon />, label: 'Rename' },
-                        ...(working.length > 1 ? [{ key: 'del', icon: <DeleteIcon />, label: 'Delete row', danger: true }] : []),
-                      ],
-                      onClick: ({ key }) => {
-                        if (key === 'rename') setRename({ id: r.id, name: r.name });
-                        else modal.confirm({ title: `Delete ${r.name} and its stitches?`, okText: 'Delete', okButtonProps: { danger: true }, onOk: () => { s.removeRound(r.id); ctrl.current?.resetInsert(); } });
-                      },
-                    }}>
-                      <Button type="text" size="small" icon={<MoreIcon />} />
-                    </Dropdown>}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-          <div className="ed-right-scroll">
-            <div className="panel"><div className="panel-title">Selection</div><Inspector pat={pat} ctrl={ctrl} readOnly={readOnly} /></div>
-            <div className="panel"><div className="panel-title">Legend</div><Legend pat={pat} /></div>
-          </div>
-        </aside>
+        <HelpModal open={help} onClose={() => setHelp(false)} />
+        {exportOpen && <ExportModal pattern={pat} onClose={() => setExportOpen(false)} />}
+
+        <Dialog open={!!rename} onOpenChange={(o) => { if (!o) setRename(null); }}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader><DialogTitle>Rename row</DialogTitle></DialogHeader>
+            <Input value={rename?.name ?? ''} autoFocus aria-label="Row name"
+              onChange={(e) => setRename((r) => r && { ...r, name: e.target.value })}
+              onKeyDown={(e) => { if (e.key === 'Enter') { if (rename) s.renameRound(rename.id, rename.name.trim() || 'Row'); setRename(null); } }} />
+            <DialogFooter>
+              <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
+              <Button onClick={() => { if (rename) s.renameRound(rename.id, rename.name.trim() || 'Row'); setRename(null); }}>Save</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <AlertDialog open={!!confirmDel} onOpenChange={(o) => { if (!o) setConfirmDel(null); }}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete {confirmDel?.name} and its stitches?</AlertDialogTitle>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction variant="destructive"
+                onClick={() => { if (confirmDel) { s.removeRound(confirmDel.id); ctrl.current?.resetInsert(); } setConfirmDel(null); }}>Delete</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
-
-      <HelpModal open={help} onClose={() => setHelp(false)} />
-      {exportOpen && <ExportModal pattern={pat} onClose={() => setExportOpen(false)} />}
-
-      <Modal title="Rename row" open={!!rename} okText="Save" destroyOnHidden
-        onOk={() => { if (rename) s.renameRound(rename.id, rename.name.trim() || 'Row'); setRename(null); }}
-        onCancel={() => setRename(null)}>
-        <Input value={rename?.name ?? ''} autoFocus onChange={(e) => setRename((r) => r && { ...r, name: e.target.value })}
-          onPressEnter={() => { if (rename) s.renameRound(rename.id, rename.name.trim() || 'Row'); setRename(null); }} />
-      </Modal>
-    </div>
+    </TooltipProvider>
   );
 }
 
@@ -243,7 +305,7 @@ function HowItWorks() {
     <div className="howto-card">
       <button className="howto-toggle" onClick={toggle} aria-expanded={open}>
         <span className="panel-title">How it works</span>
-        <ChevronDownIcon className={'howto-chevron' + (open ? '' : ' closed')} />
+        <Icon name="chevron-down" label="" className={'howto-chevron' + (open ? '' : ' closed')} />
       </button>
       <div className={'howto-body' + (open ? '' : ' closed')} aria-hidden={!open}>
         <ol className="howto">
@@ -318,35 +380,40 @@ function Inspector({ pat, ctrl, readOnly }: { pat: import('@threadwick/editor').
     <div className="inspector">
       <p className="muted small">{items.length} stitch{items.length > 1 ? 'es' : ''} selected</p>
       <label className="field"><span>Type</span>
-        <Select size="small" disabled={readOnly} value={sameType ? first.type : undefined} placeholder="(mixed)" style={{ width: '100%' }}
-          onChange={(v) => s.updateSelection({ type: v })}
-          options={STITCH_ORDER.map((t) => ({
-            value: t,
-            label: <span className="type-opt"><Glyph type={t} size={16} /> {STITCHES[t].name}</span>,
-          }))} />
+        {/* value is undefined when the selection mixes types so the "(mixed)" placeholder shows;
+            onValueChange looks the string back up in STITCH_ORDER to narrow it to a StitchType. */}
+        <Select disabled={readOnly} value={sameType ? first.type : undefined} onValueChange={(v) => { const t = STITCH_ORDER.find((x) => x === v); if (t) s.updateSelection({ type: t }); }}>
+          <SelectTrigger aria-label="Stitch type"><SelectValue placeholder="(mixed)" /></SelectTrigger>
+          <SelectContent>
+            {STITCH_ORDER.map((t) => (
+              <SelectItem key={t} value={t}><span className="type-opt"><Glyph type={t} size={16} /> {STITCHES[t].name}</span></SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </label>
       <label className="field"><span>Colour</span>
-        <ColorPicker value={first.color || INK} disabled={readOnly} onChangeComplete={(c) => s.updateSelection({ color: c.toHexString() })}
-          allowClear onClear={() => s.updateSelection({ color: null })} showText />
+        <ColorPicker label="Stitch colour" value={first.color || INK} isCleared={!first.color} disabled={readOnly}
+          onChange={(hex) => s.updateSelection({ color: hex })}
+          onClear={() => s.updateSelection({ color: null })} />
       </label>
       {post && (
         <label className="field"><span>Length</span>
-          <InputNumber size="small" min={10} max={70} disabled={readOnly} style={{ width: '100%' }}
+          <NumberInput label="Stitch length" min={10} max={70} disabled={readOnly}
             value={Math.round(first.len ?? defaultLen(first.type))}
-            onChange={(v) => { if (typeof v === 'number') s.updateSelection({ len: v }); }} />
+            onChange={(v) => s.updateSelection({ len: v })} />
         </label>
       )}
       {chains.length > 0 && (
         <label className="field row"><span>Auto-position chain{chains.length > 1 ? 's' : ''}</span>
-          <Switch size="small" disabled={readOnly} checked={allAuto} onChange={(v) => s.setChainAuto(v)} />
+          <Switch disabled={readOnly} checked={allAuto} onCheckedChange={(v) => s.setChainAuto(v)} />
         </label>
       )}
       {!readOnly && <div className="insp-acts">
-        <Tooltip title="Rotate −15°"><Button size="small" icon={<RotateRightIcon className="icon-flip-h" />} onClick={() => s.rotateSelectionBy(-15)} /></Tooltip>
-        <Tooltip title="Rotate +15°"><Button size="small" icon={<RotateRightIcon />} onClick={() => s.rotateSelectionBy(15)} /></Tooltip>
-        <Tooltip title="Flip the selection horizontally"><Button size="small" icon={<MirrorIcon />} onClick={() => s.mirrorSelection()}>Mirror</Button></Tooltip>
-        {items.length === 1 && <Button size="small" icon={<OriginIcon />} onClick={() => { ctrl.current?.setMode('insert'); ctrl.current?.setOrigin(first.id); }}>Set as origin</Button>}
-        <Button size="small" danger icon={<DeleteIcon />} onClick={() => s.deleteSelection()}>Delete</Button>
+        <Tip label="Rotate −15°"><Button variant="outline" size="iconSm" aria-label="Rotate −15°" onClick={() => s.rotateSelectionBy(-15)}><Icon name="rotate-stitch-right" label="" className="icon-flip-h" /></Button></Tip>
+        <Tip label="Rotate +15°"><Button variant="outline" size="iconSm" aria-label="Rotate +15°" onClick={() => s.rotateSelectionBy(15)}><Icon name="rotate-stitch-right" label="" /></Button></Tip>
+        <Tip label="Flip the selection horizontally"><Button variant="outline" size="sm" onClick={() => s.mirrorSelection()}><Icon name="mirror-stitch" label="" /> Mirror</Button></Tip>
+        {items.length === 1 && <Button variant="outline" size="sm" onClick={() => { ctrl.current?.setMode('insert'); ctrl.current?.setOrigin(first.id); }}><Icon name="set-origin" label="" /> Set as origin</Button>}
+        <Button variant="outline" size="sm" className="insp-delete" onClick={() => s.deleteSelection()}><Icon name="delete-stitch" label="" /> Delete</Button>
       </div>}
     </div>
   );
@@ -379,29 +446,44 @@ function ExportModal({ pattern, onClose }: { pattern: import('@threadwick/editor
   };
 
   return (
-    <Modal title="Export pattern" open okText="Export" onOk={doExport} onCancel={onClose} destroyOnHidden>
-      <div className="export-form">
-        <label className="field"><span>Format</span>
-          <Segmented block value={format} onChange={(v) => setFormat(v as 'svg' | 'png' | 'pdf')}
-            options={[{ label: 'SVG', value: 'svg' }, { label: 'PNG', value: 'png' }, { label: 'Printable PDF', value: 'pdf' }]} />
-        </label>
-        <label className="field check"><Switch size="small" checked={title} onChange={setTitle} /> Include title</label>
-        <label className="field check"><Switch size="small" checked={legend} onChange={setLegend} /> Include legend</label>
-        {format !== 'pdf' && (
-          <label className="field"><span>Background</span>
-            <Segmented value={bg} onChange={(v) => setBg(v as 'white' | 'transparent')}
-              options={[{ label: 'White', value: 'white' }, { label: 'Transparent', value: 'transparent' }]} />
+    <Dialog open onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent>
+        <DialogHeader><DialogTitle>Export pattern</DialogTitle></DialogHeader>
+        <div className="export-form">
+          <label className="field"><span>Format</span>
+            <Segmented block value={format} onValueChange={(v) => setFormat(v as 'svg' | 'png' | 'pdf')}>
+              <SegmentedItem block value="svg">SVG</SegmentedItem>
+              <SegmentedItem block value="png">PNG</SegmentedItem>
+              <SegmentedItem block value="pdf">Printable PDF</SegmentedItem>
+            </Segmented>
           </label>
-        )}
-        {format === 'png' && (
-          <label className="field"><span>Resolution</span>
-            <Segmented value={scale} onChange={(v) => setScale(v as number)}
-              options={[{ label: '1×', value: 1 }, { label: '2×', value: 2 }, { label: '3×', value: 3 }]} />
-          </label>
-        )}
-        {format === 'pdf' && <p className="muted small">Print-ready — this pattern's chart, legend and written instructions. (For the whole project with QR-coded links, use “Printable PDF” on the project page.)</p>}
-      </div>
-    </Modal>
+          <label className="field check"><Switch checked={title} onCheckedChange={setTitle} /> Include title</label>
+          <label className="field check"><Switch checked={legend} onCheckedChange={setLegend} /> Include legend</label>
+          {format !== 'pdf' && (
+            <label className="field"><span>Background</span>
+              <Segmented value={bg} onValueChange={(v) => setBg(v as 'white' | 'transparent')}>
+                <SegmentedItem value="white">White</SegmentedItem>
+                <SegmentedItem value="transparent">Transparent</SegmentedItem>
+              </Segmented>
+            </label>
+          )}
+          {format === 'png' && (
+            <label className="field"><span>Resolution</span>
+              <Segmented value={String(scale)} onValueChange={(v) => setScale(Number(v))}>
+                <SegmentedItem value="1">1×</SegmentedItem>
+                <SegmentedItem value="2">2×</SegmentedItem>
+                <SegmentedItem value="3">3×</SegmentedItem>
+              </Segmented>
+            </label>
+          )}
+          {format === 'pdf' && <p className="muted small">Print-ready — this pattern's chart, legend and written instructions. (For the whole project with QR-coded links, use “Printable PDF” on the project page.)</p>}
+        </div>
+        <DialogFooter>
+          <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
+          <Button onClick={doExport}>Export</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -430,28 +512,33 @@ function Hint({ chrome, onStart, started }: { chrome: Chrome; onStart: boolean; 
 
 function HelpModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   return (
-    <Modal title="Designing a granny square" open={open} onCancel={onClose} footer={null} width={560}>
-      <p>This editor recreates your crochet work. Every stitch <b>comes out of</b> an origin and is <b>worked into</b> a base — a stitch head or the space between two stitches. Build on even bases and the chart stays even, no symmetry maths required.</p>
-      <ol className="help-steps">
-        <li><b>Start:</b> pick a centre (magic ring, etc.). It drops into the Start row.</li>
-        <li><b>Row:</b> choose which row you're working in the Rows panel (top-right).</li>
-        <li><b>Insert:</b> press <kbd>I</kbd> or a stitch key (<kbd>D</kbd>=dc). The origin is <span className="sw" style={{ background: ORIGIN }} /> light blue.</li>
-        <li><b>Base:</b> orange dots <span className="sw" style={{ background: SPACE }} /> mark spaces. Click a space or a stitch head, then click again to set the head.</li>
-        <li><b>Chains:</b> flow off the origin in one click and auto-align evenly between neighbours.</li>
-        <li><b>Insert after:</b> <kbd>Alt</kbd>/<kbd>⌘</kbd>-click a stitch to set it as origin; the next stitch turns <span className="sw" style={{ background: NEXT }} /> purple and everything after greys out.</li>
-      </ol>
-      <Title level={5}>Keys</Title>
-      <table className="keys">
-        <tbody>
-          <tr><td><kbd>V</kbd> / <kbd>I</kbd></td><td>Select / Insert mode</td></tr>
-          <tr><td><kbd>S H D T E</kbd></td><td>arm sc / hdc / dc / tr / dtr</td></tr>
-          <tr><td><kbd>C</kbd> / <kbd>L</kbd></td><td>arm chain / slip stitch</td></tr>
-          <tr><td><kbd>R</kbd> / <kbd>⇧R</kbd></td><td>rotate selection ±15°</td></tr>
-          <tr><td>Arrows</td><td>nudge selection</td></tr>
-          <tr><td><kbd>Esc</kbd></td><td>step back / deselect</td></tr>
-          <tr><td><kbd>⌘Z</kbd> / <kbd>⇧⌘Z</kbd></td><td>undo / redo</td></tr>
-        </tbody>
-      </table>
-    </Modal>
+    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent className="help-modal max-w-[560px]">
+        <DialogHeader><DialogTitle>Designing a granny square</DialogTitle></DialogHeader>
+        <div className="help-body">
+          <p>This editor recreates your crochet work. Every stitch <b>comes out of</b> an origin and is <b>worked into</b> a base — a stitch head or the space between two stitches. Build on even bases and the chart stays even, no symmetry maths required.</p>
+          <ol className="help-steps">
+            <li><b>Start:</b> pick a centre (magic ring, etc.). It drops into the Start row.</li>
+            <li><b>Row:</b> choose which row you're working in the Rows panel (top-right).</li>
+            <li><b>Insert:</b> press <kbd>I</kbd> or a stitch key (<kbd>D</kbd>=dc). The origin is <span className="sw" style={{ background: ORIGIN }} /> light blue.</li>
+            <li><b>Base:</b> orange dots <span className="sw" style={{ background: SPACE }} /> mark spaces. Click a space or a stitch head, then click again to set the head.</li>
+            <li><b>Chains:</b> flow off the origin in one click and auto-align evenly between neighbours.</li>
+            <li><b>Insert after:</b> <kbd>Alt</kbd>/<kbd>⌘</kbd>-click a stitch to set it as origin; the next stitch turns <span className="sw" style={{ background: NEXT }} /> purple and everything after greys out.</li>
+          </ol>
+          <h4 className="help-subhead">Keys</h4>
+          <table className="keys">
+            <tbody>
+              <tr><td><kbd>V</kbd> / <kbd>I</kbd></td><td>Select / Insert mode</td></tr>
+              <tr><td><kbd>S H D T E</kbd></td><td>arm sc / hdc / dc / tr / dtr</td></tr>
+              <tr><td><kbd>C</kbd> / <kbd>L</kbd></td><td>arm chain / slip stitch</td></tr>
+              <tr><td><kbd>R</kbd> / <kbd>⇧R</kbd></td><td>rotate selection ±15°</td></tr>
+              <tr><td>Arrows</td><td>nudge selection</td></tr>
+              <tr><td><kbd>Esc</kbd></td><td>step back / deselect</td></tr>
+              <tr><td><kbd>⌘Z</kbd> / <kbd>⇧⌘Z</kbd></td><td>undo / redo</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

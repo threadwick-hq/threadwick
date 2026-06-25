@@ -8,7 +8,11 @@ export const Select = SelectPrimitive.Root;
 export const SelectGroup = SelectPrimitive.Group;
 export const SelectValue = SelectPrimitive.Value;
 
-export function SelectTrigger({ className, children, ...props }: ComponentProps<typeof SelectPrimitive.Trigger>) {
+export function SelectTrigger({
+	className,
+	children,
+	...props
+}: ComponentProps<typeof SelectPrimitive.Trigger>) {
 	return (
 		<SelectPrimitive.Trigger
 			className={cn(
@@ -19,7 +23,11 @@ export function SelectTrigger({ className, children, ...props }: ComponentProps<
 		>
 			{children}
 			<SelectPrimitive.Icon asChild>
-				<Icon name="expand" label="" className="text-muted-foreground opacity-70" />
+				<Icon
+					name="expand"
+					label=""
+					className="text-muted-foreground opacity-70"
+				/>
 			</SelectPrimitive.Icon>
 		</SelectPrimitive.Trigger>
 	);
@@ -43,7 +51,11 @@ export function SelectContent({
 				{...props}
 			>
 				<SelectPrimitive.Viewport
-					className={cn('p-1', position === 'popper' && 'w-full min-w-[var(--radix-select-trigger-width)]')}
+					className={cn(
+						'p-1',
+						position === 'popper' &&
+							'w-full min-w-[var(--radix-select-trigger-width)]',
+					)}
 				>
 					{children}
 				</SelectPrimitive.Viewport>
@@ -52,7 +64,11 @@ export function SelectContent({
 	);
 }
 
-export function SelectItem({ className, children, ...props }: ComponentProps<typeof SelectPrimitive.Item>) {
+export function SelectItem({
+	className,
+	children,
+	...props
+}: ComponentProps<typeof SelectPrimitive.Item>) {
 	return (
 		<SelectPrimitive.Item
 			className={cn(
