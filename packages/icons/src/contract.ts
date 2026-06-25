@@ -81,7 +81,14 @@ export type IconName =
 	| 'pdf'
 	| 'link'
 	| 'view'
-	| 'customize';
+	| 'customize'
+	// studio sidebar navigation
+	| 'home'
+	| 'patterns'
+	| 'projects'
+	| 'tools'
+	| 'browse'
+	| 'wishlist';
 
 /** Per-action metadata, independent of any icon set. `label` is the default accessible name. */
 export type IconMeta = {
@@ -164,4 +171,10 @@ export const iconMeta: Record<IconName, IconMeta> = {
 	link: { label: 'Share link' },
 	view: { label: 'Viewer' },
 	customize: { label: 'Customize' },
+	home: { label: 'Home' },
+	patterns: { label: 'Patterns' },
+	projects: { label: 'Projects' },
+	tools: { label: 'Tools' },
+	browse: { label: 'Browse' },
+	wishlist: { label: 'Wishlist' },
 };
