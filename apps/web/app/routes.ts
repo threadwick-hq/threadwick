@@ -8,6 +8,7 @@ export default [
 	route('studio', 'routes/studio.tsx', [
 		index('routes/studio/home.tsx'),
 		route('editor', 'routes/studio/editor.tsx'),
-		route(':section', 'routes/studio/section.tsx'),
+		// Every other destination (Workbench, Library, Marketplace, …) is a placeholder for now.
+		route('*', 'routes/studio/section.tsx'),
 	]),
 ] satisfies RouteConfig;
