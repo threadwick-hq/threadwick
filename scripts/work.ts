@@ -276,6 +276,7 @@ function runClaim(rest: string[]): void {
 		`${today} claimed by ${assignee}.`,
 	);
 	writeFileSync(filePath, logged, 'utf8');
+	runIndex();
 	console.log(`work: claimed ${id} (${task.file}) for ${assignee}`);
 	console.log(`  branch feat/${id.toLowerCase()}-<slug>`);
 }

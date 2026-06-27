@@ -78,3 +78,14 @@ jobs:
               --label "tw-stale-sweep,tw-tracker" \
               --body "$BODY"
           fi
+
+      - name: Close stale-work issue when clear
+        if: steps.stale.outputs.count == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING="$(gh issue list --label tw-stale-sweep --state open --json number --jq '.[0].number' 2>/dev/null || true)"
+          if [ -n "$EXISTING" ]; then
+            gh issue close "$EXISTING" --comment "No stale active tasks remain."
+            echo "Closed stale sweep issue #$EXISTING"
+          fi
