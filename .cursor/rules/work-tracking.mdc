@@ -18,12 +18,14 @@ Source of truth: `work/TW-NNN-*.md` files. Read `work/README.md` before claiming
 - Tick acceptance checklist items in the task body as criteria pass.
 - Append decisions to `## Log` with ISO dates.
 - End every commit message with `Refs TW-NNN`.
+- Open a **draft PR** on the first commit (`gt submit --draft`) and update it on every push. Keep `status: active` until implementation is complete.
 
 ## Closing
 
-1. Set `status: review`, fill `pr`, open PR with `Closes TW-NNN` in the body.
-2. On merge: set `status: done`, `completed`, keep `pr`; run `pnpm run work index`.
-3. Squash commit message must include `Closes TW-NNN` (derivation gate).
+1. When implementation is complete: publish the PR (`gt submit --publish` or `gh pr ready`), set `status: review`, fill `pr`, ensure `Closes TW-NNN` is in the PR body.
+2. Wait for Graphite Agent review; fix findings until CI and review are clean.
+3. On merge: set `status: done`, `completed`, keep `pr`; run `pnpm run work index`.
+4. Squash commit message must include `Closes TW-NNN` (derivation gate).
 
 ## After frontmatter edits
 

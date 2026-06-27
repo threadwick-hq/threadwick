@@ -7,10 +7,11 @@ alwaysApply: true
 
 Every change follows this loop — do not skip steps.
 
-1. **Branch** — create a new branch from `main` before editing (`cursor/…` or `feat/TW-NNN-slug` for task work).
-2. **Commit & push** — stage only related files; run `pnpm check` and `pnpm run work check` when touching `work/`; push the branch.
-3. **Independent review** — run Bugbot (`/review-bugbot`) or Security Review on the branch diff before opening or merging a PR.
-4. **Fix loop** — if review finds issues, fix them, commit, push, and re-run review until clean.
-5. **Merge & cleanup** — open a PR, **squash-merge** into `main`, delete the working branch (local and remote).
+1. **Branch** — create a new branch from `main` before editing (`cursor/…` or `feat/TW-NNN-slug` for task work). Run `gt sync` at session start.
+2. **Commit & draft PR** — after each commit, run `pnpm check` (and `pnpm run work check` when touching `work/`), then `gt submit --draft` (or plain `gt submit`, which creates new PRs as drafts by default). **Always open or update a draft PR** — never push commits without syncing them to GitHub. Task stays `status: active` while the PR is draft. Do not use `/review-bugbot` or local Bugbot.
+3. **Finish implementation** — tick acceptance criteria, append to the task `## Log`, fill `pr` in frontmatter once the draft PR exists.
+4. **Mark ready** — when implementation is complete, publish the PR: `gt submit --publish` or `gh pr ready`. Set task `status: review`. Graphite Agent review runs on published PRs only.
+5. **Review & fix loop** — wait for Graphite Agent comments on GitHub or [app.graphite.com](https://app.graphite.com); poll with `gh pr view --comments` if needed. Address valid findings with `gt modify` (or commit + `gt submit --publish`); repeat until blocking comments are resolved and CI passes. If more implementation is needed, mark draft again with `gt submit --draft` and return to step 2.
+6. **Merge & done** — **squash-merge** from Graphite (or GitHub for single PRs), then `gt sync`. Set task `status: done` and `completed`. Work is complete only after merge.
 
-Never commit directly to `main`. Never merge without a review pass on the final diff.
+Never commit directly to `main`. Never merge while the PR is still draft or before Graphite AI review completes on the published diff.
