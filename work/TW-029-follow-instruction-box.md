@@ -6,7 +6,8 @@ area:
   - apps/web
   - packages/core
 phase: 6
-status: active
+status: review
+pr: 22
 priority: p1
 created: 2026-06-23
 acceptance:
@@ -36,6 +37,6 @@ Depends on: TW-028, TW-020.
 
 ## Log
 
-- 2026-06-28 implemented phone-baseline Follow UI: `follow-ui.ts` helpers, `@threadwick/core` Follow components (mode selector, counter pills, instruction box, footer), `/studio/follow/:projectId/:refId` route + editor entry link; sample seeds `makePatterns`.
+- 2026-06-28 published PR #22 (stacked on TW-028); Graphite Agent review pending.
 - 2026-06-27 claimed by agent.
 - 2026-06-23 created (Phase 6 re-scope from the studio redesign handoff).
