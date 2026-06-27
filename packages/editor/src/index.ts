@@ -11,6 +11,7 @@ export * from './instructions';
 export * from './model';
 export * from './progress';
 export * from './follow-ui';
+export * from './follow-chart';
 export * from './render';
 export * from './sample';
 export * from './symbols';

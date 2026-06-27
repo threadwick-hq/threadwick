@@ -2,7 +2,7 @@
 
 Generated from `work/*.md` frontmatter by `scripts/work.ts`. Do not edit by hand; run `pnpm run work index`.
 
-Totals: backlog 30 · active 0 · review 3 · done 12 · blocked 0 · abandoned 5
+Totals: backlog 29 · active 0 · review 4 · done 12 · blocked 0 · abandoned 5
 
 | ID | Title | Type | Area | Phase | Status | Priority | Assignee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -10,6 +10,7 @@ Totals: backlog 30 · active 0 · review 3 · done 12 · blocked 0 · abandoned 
 | TW-027 | Build the instruction-decomposition engine (round to follow Units per granularity) | feat | packages/editor, packages/types | 6 | review | p1 | agent |
 | TW-028 | Build the Follow progress state machine, Undo and aggregation (FILE_VERSION 3 to 4) | feat | packages/editor, packages/types | 6 | review | p1 | agent |
 | TW-029 | Build the Follow instruction box, counter pills and mode selector (phone baseline) | feat | apps/web, packages/core | 6 | review | p1 | agent |
+| TW-030 | Build the Follow chart pane (state styling, follow-position, zoom, tap-to-inspect) | feat | apps/web, packages/editor | 6 | review | p1 | agent |
 | TW-015 | Migrate ProjectView, ProjectsView and TopBar/VersionTag from AntD to shadcn | refactor | apps/studio | 6 | backlog | p2 | - |
 | TW-016 | Replace App.useApp() with a shadcn toast and confirm layer and migrate AuthMenu | refactor | apps/studio, packages/core | 6 | backlog | p2 | - |
 | TW-017 | Drop AntD from apps/studio and remove the theme and provider wiring | chore | apps/studio | 6 | backlog | p2 | - |
@@ -17,7 +18,6 @@ Totals: backlog 30 · active 0 · review 3 · done 12 · blocked 0 · abandoned 
 | TW-023 | Implement the craft picker as a studio-wide persisted scope with inclusion semantics | feat | apps/web, packages/core, packages/types | 6 | backlog | p2 | - |
 | TW-024 | Build the mobile bottom tab bar and responsive sidebar collapse | feat | apps/web, packages/core | 6 | backlog | p2 | - |
 | TW-025 | Define the identity-tile slot-swap and breadcrumb contract for interiors (no layout shift) | feat | apps/web, packages/core | 6 | backlog | p2 | - |
-| TW-030 | Build the Follow chart pane (state styling, follow-position, zoom, tap-to-inspect) | feat | apps/web, packages/editor | 6 | backlog | p1 | - |
 | TW-031 | Wire the locked-responsive Follow shell across all five breakpoints plus Wake Lock | feat | apps/web, packages/core | 6 | backlog | p1 | - |
 | TW-032 | Add the external-pattern Follow fallback (Ravelry/PDF to checklist or open source) | feat | apps/web, packages/editor | 6 | backlog | p2 | - |
 | TW-033 | Build the Project interior shell, rail and pinned status tile | feat | apps/web, packages/core | 6 | backlog | p2 | - |
