@@ -5,11 +5,12 @@ type: feat
 area:
   - packages/types
 phase: 6
-status: active
+status: review
 priority: p1
 created: 2026-06-23
 assignee: agent
 started: 2026-06-27
+pr: 16
 acceptance:
   - @threadwick/types encodes the maker-plane Project (references + progress + status + follow-mode)
   - pattern.schema.json mirrors the additions
