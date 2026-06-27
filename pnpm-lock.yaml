@@ -114,6 +114,9 @@ importers:
       '@threadwick/icons':
         specifier: workspace:*
         version: link:../../packages/icons
+      '@threadwick/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       isbot:
         specifier: ^5.1.0
         version: 5.1.43
