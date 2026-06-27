@@ -1,6 +1,7 @@
 import { cn } from '@threadwick/core/lib/utils';
 import { Icon, type IconName } from '@threadwick/icons';
 import { NavLink } from 'react-router';
+import { InteriorSlot } from '@threadwick/core/components';
 import { useStudioStore } from './studio-store';
 
 type NavItem = {
@@ -99,6 +100,22 @@ export function Sidebar() {
 				</div>
 			</div>
 		</div>
+	);
+}
+
+/** Reserved craft-picker slot (TW-023) — same footprint as the interior identity tile (TW-025). */
+export function CraftPickerSlot() {
+	return (
+		<InteriorSlot>
+			<button
+				type="button"
+				className="flex w-full items-center justify-between rounded-md border border-border px-2.5 py-2 text-xs text-muted-foreground"
+				disabled
+			>
+				<span>All my crafts</span>
+				<Icon name="chevron-down" label="" className="opacity-60 [&_svg]:size-3" />
+			</button>
+		</InteriorSlot>
 	);
 }
 

@@ -6,15 +6,16 @@ area:
   - apps/web
   - packages/core
 phase: 6
-status: backlog
+status: active
 priority: p2
 created: 2026-06-23
 acceptance:
   - the project interior takes over with identity tile + breadcrumb (no layout shift)
   - the rail lists Overview, Patterns, Materials & notes, + Add section
   - the pinned status tile shows the state selector + aggregated progress + Continue making
+assignee: agent
+started: 2026-06-27
 ---
-
 ## Context
 
 A project is a make. Drill-in takeover mirroring the pattern interior: identity tile + state pill + cog, breadcrumb, Overview first, pinned status tile (state selector + aggregated progress + Continue making). Spec §5. (Phase 6 sub-phase 6e.) From the Studio redesign handoff at `apps/studio/docs/redesign/`.
@@ -29,10 +30,12 @@ Depends on: TW-026, TW-025.
 
 ## Acceptance
 
-- [ ] the project interior takes over with identity tile + breadcrumb (no layout shift)
-- [ ] the rail lists Overview, Patterns, Materials & notes, + Add section
-- [ ] the pinned status tile shows the state selector + aggregated progress + Continue making
+- [x] the project interior takes over with identity tile + breadcrumb (no layout shift)
+- [x] the rail lists Overview, Patterns, Materials & notes, + Add section
+- [x] the pinned status tile shows the state selector + aggregated progress + Continue making
 
 ## Log
 
+- 2026-06-28 Implemented project interior drill-in on `/studio/projects/:projectId`: TW-025 slot contract (`InteriorSlot`, `InteriorChromeProvider`), identity tile + breadcrumb, rail (Overview, per-pattern Follow links, Materials & notes, + Add section placeholder), pinned status tile (maker status selector, aggregated progress, Continue making). Overview/materials bodies remain placeholders for TW-034. Stacked on TW-032 for Follow route + progress aggregation.
+- 2026-06-27 claimed by agent.
 - 2026-06-23 created (Phase 6 re-scope from the studio redesign handoff).

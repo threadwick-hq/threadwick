@@ -4,6 +4,7 @@
 // AA-contrast · never colour-only · reduced-motion-safe · screen-reader-checked.
 export * from './Stack';
 export * from './follow';
+export * from './interior';
 export * from './ui/accordion';
 export * from './ui/alert';
 export * from './ui/alert-dialog';
