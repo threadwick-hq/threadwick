@@ -8,10 +8,10 @@ alwaysApply: true
 Every change follows this loop — do not skip steps.
 
 1. **Branch** — create a new branch from `main` before editing (`cursor/…` or `feat/TW-NNN-slug` for task work). Run `gt sync` at session start.
-2. **Commit** — stage only related files; run `pnpm check` and `pnpm run work check` when touching `work/`.
-3. **Submit PR** — `gt submit` (or `gt submit --stack` when stacked). Set task `status: review` and fill `pr`. Do not use `/review-bugbot` or local Bugbot.
-4. **Graphite AI review** — Graphite Agent reviews the PR automatically. Wait for comments on GitHub or [app.graphite.com](https://app.graphite.com); poll with `gh pr view --comments` if needed.
-5. **Fix loop** — address valid Graphite findings with `gt modify` (or commit + `gt submit`); push updates until blocking comments are resolved.
-6. **Merge & cleanup** — **squash-merge** from Graphite (or GitHub for single PRs), then `gt sync` to prune merged branches.
+2. **Commit & draft PR** — after each commit, run `pnpm check` (and `pnpm run work check` when touching `work/`), then `gt submit --draft` (or plain `gt submit`, which creates new PRs as drafts by default). **Always open or update a draft PR** — never push commits without syncing them to GitHub. Task stays `status: active` while the PR is draft. Do not use `/review-bugbot` or local Bugbot.
+3. **Finish implementation** — tick acceptance criteria, append to the task `## Log`, fill `pr` in frontmatter once the draft PR exists.
+4. **Mark ready** — when implementation is complete, publish the PR: `gt submit --publish` or `gh pr ready`. Set task `status: review`. Graphite Agent review runs on published PRs only.
+5. **Review & fix loop** — wait for Graphite Agent comments on GitHub or [app.graphite.com](https://app.graphite.com); poll with `gh pr view --comments` if needed. Address valid findings with `gt modify` (or commit + `gt submit --publish`); repeat until blocking comments are resolved and CI passes. If more implementation is needed, mark draft again with `gt submit --draft` and return to step 2.
+6. **Merge & done** — **squash-merge** from Graphite (or GitHub for single PRs), then `gt sync`. Set task `status: done` and `completed`. Work is complete only after merge.
 
-Never commit directly to `main`. Never merge without Graphite AI review completing on the final diff and CI passing.
+Never commit directly to `main`. Never merge while the PR is still draft or before Graphite AI review completes on the published diff.
