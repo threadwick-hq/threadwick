@@ -17,6 +17,8 @@ import {
 	fromPolar,
 	isRealStitch,
 	isStart,
+	FILE_FORMAT,
+	FILE_VERSION,
 	newPattern,
 	newProject,
 	normalizeProject,
@@ -250,10 +252,15 @@ test('projectToFile / projectFromFile round-trip', () => {
 	const p = sampleProject();
 	const file = projectToFile(p);
 	assert.equal(file.format, 'threadwick-studio');
+	assert.equal(file.version, FILE_VERSION);
 	const back = projectFromFile(JSON.parse(JSON.stringify(file)))!;
 	assert.equal(
 		activeVersion(back).patterns[0]!.stitches.length,
 		activeVersion(p).patterns[0]!.stitches.length,
+	);
+	assert.deepEqual(
+		JSON.parse(JSON.stringify(back)),
+		JSON.parse(JSON.stringify(p)),
 	);
 	assert.ok(projectFromFile(p));
 });

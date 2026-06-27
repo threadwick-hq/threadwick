@@ -1,5 +1,23 @@
 // Shared domain types for threadwick studio.
 
+import type {
+	FollowMode,
+	MakerStatus,
+	PatternProgress,
+	PatternReference,
+	ProgressCursor,
+	UnitAddress,
+} from '@threadwick/types';
+
+export type {
+	FollowMode,
+	MakerStatus,
+	PatternProgress,
+	PatternReference,
+	ProgressCursor,
+	UnitAddress,
+};
+
 export type StitchType =
 	| 'ch'
 	| 'slst'
@@ -132,6 +150,10 @@ export interface Project {
 	activeVersionId: string; // which version the UI is currently showing
 	createdAt: string;
 	updatedAt: string;
+	/** Maker-plane status (§5); distinct from VersionStatus. */
+	makerStatus?: MakerStatus;
+	/** Source-tagged pattern refs for Follow (§5/§6); converges with @threadwick/types Project.patterns in Phase 7. */
+	makePatterns?: PatternReference[];
 }
 
 export interface Point {

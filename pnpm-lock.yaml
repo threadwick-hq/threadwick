@@ -249,6 +249,9 @@ importers:
 
   packages/editor:
     dependencies:
+      '@threadwick/types':
+        specifier: workspace:*
+        version: link:../types
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
