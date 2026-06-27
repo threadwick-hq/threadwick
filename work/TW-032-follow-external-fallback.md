@@ -6,9 +6,10 @@ area:
   - apps/web
   - packages/editor
 phase: 6
-status: active
+status: review
 priority: p2
 created: 2026-06-23
+pr: 25
 acceptance:
   - an external pattern follows via a plain round checklist or opens its source
   - progress is tracked for the external pattern in the project
