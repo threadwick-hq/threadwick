@@ -244,11 +244,17 @@ export interface ProgressCursor {
   followMode: FollowMode; // the granularity this cursor was produced at (Units are mode-specific, so Undo is exact)
 }
 
+// DONE-SIGNAL PRECEDENCE (cross-field — JSON-Schema can't express it; TW-028 enforces it at
+// runtime): `completed` is the SOLE per-pattern authority for "is this ref finished?". When it is
+// true, `cursor` and the unit counts are advisory only — a make can finish without ticking every
+// Unit, so a finished ref may still carry a mid-round cursor. `unitsDone`/`unitsTotal` drive the
+// display % (see above), never done-ness. `Project.status` is the independent PROJECT-level state:
+// a make spans several refs, so it is not redundant with any single ref's `completed`.
 export interface PatternProgress {
   cursor?: ProgressCursor; // omit before the first action / when finished
   unitsDone: number; // completed Units at cursor.followMode — the only stored progress scalar
   unitsTotal?: number; // total Units at decomposition time; omit when not yet decomposed (external/checklist) — a cache for cheap %
-  completed?: boolean; // explicit done flag (the maker can finish without ticking every Unit; default false/absent)
+  completed?: boolean; // explicit done flag (see DONE-SIGNAL PRECEDENCE above; default false/absent)
   updatedAt?: string; // last advance/undo; ISO 8601 (matches the editor's createdAt/updatedAt convention) — also drives "Continue making"
 }
 

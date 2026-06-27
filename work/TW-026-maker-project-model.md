@@ -5,11 +5,12 @@ type: feat
 area:
   - packages/types
 phase: 6
-status: review
+status: done
 priority: p1
 created: 2026-06-23
 assignee: agent
 started: 2026-06-27
+completed: 2026-06-27
 pr: 16
 acceptance:
   - @threadwick/types encodes the maker-plane Project (references + progress + status + follow-mode)
@@ -86,3 +87,7 @@ optional/omit-not-null, so the `export → import → deep-equal` round-trip hol
   a thin `customSections` escape hatch; overall progress + Continue-making left derived. Mirrored in
   `pattern.schema.json` by flipping the root to `oneOf: [Pattern, Project]` (closing the fail-closed
   gap); validated with ajv. Forward-migration of the `{patternIds}` stub specified for TW-028.
+- 2026-06-27 independent review (4-dimension adversarial pass): TS↔schema parity, spec fidelity and
+  hygiene all clean; one nit — documented the done-signal precedence on `PatternProgress`
+  (`completed` is the sole per-ref authority; cursor/unit-counts advisory; `Project.status` is the
+  independent project-level state). Merged via #16.
