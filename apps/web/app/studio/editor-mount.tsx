@@ -1,5 +1,22 @@
 import { useEffect, useRef } from 'react';
-import { ensureStudioStore } from './studio-store';
+import { Link } from 'react-router';
+import { Button } from '@threadwick/core/components';
+import { ensureStudioStore, useStudioStore } from './studio-store';
+
+function FollowEntry() {
+	const store = useStudioStore();
+	if (!store) return null;
+	const project = store.state.library.projects[0];
+	const ref = project?.makePatterns?.[0];
+	if (!project || !ref) return null;
+	return (
+		<div className="absolute right-3 top-3 z-10">
+			<Button variant="secondary" size="sm" asChild>
+				<Link to={`/studio/follow/${project.id}/${ref.id}`}>Follow</Link>
+			</Button>
+		</div>
+	);
+}
 
 /**
  * Client-only mount for the chart editor. The store is hydrated once by `ensureStudioStore`
@@ -31,6 +48,13 @@ export function EditorMount() {
 				if (pattern) store.openPattern(project.id, pattern.id);
 			}
 
+			// Seed a make ref when the sample project has none yet.
+			if (project?.makePatterns?.length === 0) {
+				const version = project.versions.find((v) => v.id === project.activeVersionId);
+				const pattern = version?.patterns[0];
+				if (pattern) store.addMakePatternRef(pattern.id);
+			}
+
 			// Autosave on data changes (the canvas only persists view changes itself).
 			let saveTimer: ReturnType<typeof setTimeout> | undefined;
 			const unsubscribeSave = store.subscribe(() => {
@@ -59,6 +83,7 @@ export function EditorMount() {
 
 	return (
 		<div className="relative h-full min-h-[400px] w-full overflow-hidden bg-secondary">
+			<FollowEntry />
 			<svg
 				ref={svgRef}
 				className="block h-full w-full touch-none"
