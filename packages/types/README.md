@@ -27,10 +27,20 @@ import schema from '@threadwick/types/pattern.schema.json';
 
 ## Model
 
-`Project` (a make) → references `Pattern`s. `Pattern` (the authored design) → `components`,
-`materials`, `tutorials`, `stitches`, `notes`, `variations`, `overview`. `Component` → `artifacts`
-(`Chart | Written | Schematic`). Only **authoring artifacts** (the sidebar tree) are modelled here;
-publishing/consumption chrome (comments, ratings, ads, PDF export) is rendered by the platform.
+`Pattern` (the authored design) → `components`, `materials`, `tutorials`, `stitches`, `notes`,
+`variations`, `overview`. `Component` → `artifacts` (`Chart | Written | Schematic`). Only
+**authoring artifacts** (the sidebar tree) are modelled here; publishing/consumption chrome
+(comments, ratings, ads, PDF export) is rendered by the platform.
+
+`Project` (a **make**) → references one or more `Pattern`s **across crafts**, each via a
+source-tagged `PatternReference` (`threadwick` internal id · `ravelry`/`blog` link · `pdf` file). A
+make carries a `MakerStatus` (with quiet-colour + Ravelry-sync `const` maps), a per-reference follow
+mode and a stored progress cursor (`unitAddress` is opaque — TW-027 owns its grammar, TW-028 the
+advance/undo machine; overall progress is **derived**, never stored), plus the Materials & notes rail
+(`yarns · tools · notes · photos`, each yarn/tool optionally linked _from stash_ via `stashId` →
+TW-044) and a lightweight `customSections` escape hatch. This is the first **Phase-7** increment: the
+maker plane references patterns, it never re-models pattern content; whole-pattern versioning/lineage
+(TW-035) lives on the `Pattern`.
 
 ## License
 
