@@ -1,0 +1,22 @@
+---
+description: Threadwick monorepo stack, commands, and migration context
+alwaysApply: true
+---
+
+# Monorepo
+
+pnpm workspaces + Turborepo. Apps in `apps/*` (studio, web); packages in `packages/*`
+(config, core, icons, org, types, i18n; `editor` in Phase 6). Lint + format: Biome.
+
+Read [MIGRATION.md](MIGRATION.md) for the phase plan. Tasks carry a `phase` field in `work/`.
+
+## Commands
+
+- `pnpm check` — typecheck + lint + test + work gates (run before every push)
+- `pnpm --filter <package> <script>` — run a workspace script from the repo root
+
+## Entry points
+
+- [AGENTS.md](AGENTS.md) — start here
+- [`.cursor/rules/`](.cursor/rules/) — scoped Cursor rules (work tracking, studio, packages)
+- Package-local [AGENTS.md](packages/core/AGENTS.md) when editing a specific package

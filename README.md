@@ -26,11 +26,12 @@ apps/
 ## Status & resuming work
 
 All work is tracked as `work/TW-NNN-*.md` files (the source of truth, not GitHub Issues) — see
-[work/README.md](work/README.md). To pick up where the last contributor left off:
+[work/README.md](work/README.md) and [AGENTS.md](AGENTS.md). To pick up where the last contributor left off:
 
 ```sh
 pnpm install
 pnpm run work next        # the next claimable task
+pnpm run work claim TW-NNN   # claim before implementing
 pnpm check                # typecheck + lint + test
 ```
 

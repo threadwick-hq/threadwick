@@ -8,6 +8,10 @@
  *   next [--area A] [--phase N]   print the next claimable backlog task.
  *   list [--status S] [--area A] [--phase N]   print a table of tasks.
  *   new  --title "..." [--type T] [--area A] [--phase N] [--priority P]   scaffold a task.
+ *   claim TW-NNN [--assignee name]   set status active + started (backlog only).
+ *   show TW-NNN [--json]             print one task.
+ *   stale [--days N] [--json]        list active tasks older than N days (default 3).
+ *   export [--json]                  print all tasks (for mirrors/automation).
  *
  * Status is derived, not trusted: a task marked `done` must be referenced by a real commit,
  * and any id a commit closes (`Closes TW-NNN`) must actually be `done`. See checkGitDerivation.
@@ -130,9 +134,21 @@ function main(): void {
 		case 'new':
 			runNew(rest);
 			break;
+		case 'claim':
+			runClaim(rest);
+			break;
+		case 'show':
+			runShow(rest);
+			break;
+		case 'stale':
+			runStale(rest);
+			break;
+		case 'export':
+			runExport(rest);
+			break;
 		default:
 			console.error(
-				`work: unknown command "${command}". Use: check | index | next | list | new`,
+				`work: unknown command "${command}". Use: check | index | next | list | new | claim | show | stale | export`,
 			);
 			process.exit(2);
 	}
@@ -210,6 +226,135 @@ function runList(rest: string[]): void {
 		);
 	}
 	console.log(`  ${rows.length} task(s)`);
+}
+
+function runClaim(rest: string[]): void {
+	const id = rest.find((a) => !a.startsWith('--'));
+	if (id === undefined) {
+		console.error('work claim: TW-NNN is required');
+		process.exit(2);
+	}
+	const assignee = getFlag(rest, '--assignee') ?? 'agent';
+	const { tasks, violations } = loadTasks();
+	if (violations.length > 0) {
+		console.error(
+			'work claim: fix task file violations first (`pnpm run work check`).',
+		);
+		process.exit(1);
+	}
+	const task = tasks.find((t) => t.id === id);
+	if (task === undefined) {
+		console.error(`work claim: ${id} not found`);
+		process.exit(1);
+	}
+	if (task.status !== 'backlog') {
+		console.error(
+			`work claim: ${id} is "${task.status}" — only backlog tasks can be claimed`,
+		);
+		process.exit(1);
+	}
+	const doneIds = new Set(
+		tasks.filter((t) => t.status === 'done').map((t) => t.id),
+	);
+	const blocked = task.blockedBy.filter((dep) => !doneIds.has(dep));
+	if (blocked.length > 0) {
+		console.error(
+			`work claim: ${id} is blocked by unfinished ${blocked.join(', ')}`,
+		);
+		process.exit(1);
+	}
+	const today = new Date().toISOString().slice(0, 10);
+	const filePath = join(WORK_DIR, task.file);
+	const content = readFileSync(filePath, 'utf8');
+	const patched = patchFrontmatter(content, {
+		status: 'active',
+		assignee,
+		started: today,
+	});
+	const logged = appendLogLine(
+		patched,
+		`${today} claimed by ${assignee}.`,
+	);
+	writeFileSync(filePath, logged, 'utf8');
+	runIndex();
+	console.log(`work: claimed ${id} (${task.file}) for ${assignee}`);
+	console.log(`  branch feat/${id.toLowerCase()}-<slug>`);
+}
+
+function runShow(rest: string[]): void {
+	const id = rest.find((a) => !a.startsWith('--'));
+	if (id === undefined) {
+		console.error('work show: TW-NNN is required');
+		process.exit(2);
+	}
+	const json = hasFlag(rest, '--json');
+	const { tasks } = loadTasks();
+	const task = tasks.find((t) => t.id === id);
+	if (task === undefined) {
+		console.error(`work show: ${id} not found`);
+		process.exit(1);
+	}
+	if (json) {
+		console.log(JSON.stringify(taskToJson(task), null, 2));
+		return;
+	}
+	console.log(`${task.id}  ${task.title}`);
+	console.log(
+		`  ${task.file}  (${task.type}, ${task.area.join(', ')}, phase ${task.phase}, ${task.priority}, ${task.status})`,
+	);
+	if (task.assignee) {
+		console.log(`  assignee: ${task.assignee}`);
+	}
+	if (task.started) {
+		console.log(`  started: ${task.started}`);
+	}
+}
+
+function runStale(rest: string[]): void {
+	const daysRaw = getFlag(rest, '--days') ?? '3';
+	const days = Number.parseInt(daysRaw, 10);
+	if (!Number.isInteger(days) || days < 1) {
+		console.error('work stale: --days must be a positive integer');
+		process.exit(2);
+	}
+	const json = hasFlag(rest, '--json');
+	const cutoff = new Date();
+	cutoff.setDate(cutoff.getDate() - days);
+	const cutoffStr = cutoff.toISOString().slice(0, 10);
+	const { tasks } = loadTasks();
+	const stale = tasks
+		.filter((t) => t.status === 'active' && t.started !== undefined)
+		.filter((t) => t.started! < cutoffStr)
+		.sort(byPriorityThenId);
+	if (json) {
+		console.log(JSON.stringify(stale.map(taskToJson), null, 2));
+		return;
+	}
+	for (const t of stale) {
+		console.log(
+			`${t.id}  started ${t.started}  ${t.assignee ?? '-'}  ${t.title}`,
+		);
+	}
+	console.log(`  ${stale.length} stale active task(s) (>${days} day(s))`);
+	process.exit(stale.length > 0 ? 1 : 0);
+}
+
+function runExport(rest: string[]): void {
+	const json = hasFlag(rest, '--json');
+	const { tasks, violations } = loadTasks();
+	if (violations.length > 0 && !json) {
+		console.error(
+			'work export: task files have violations; output may be incomplete.',
+		);
+	}
+	const payload = tasks.map(taskToJson);
+	if (json) {
+		console.log(JSON.stringify(payload, null, 2));
+		return;
+	}
+	for (const t of tasks) {
+		console.log(`${t.id}\t${t.status}\t${t.title}`);
+	}
 }
 
 function runNew(rest: string[]): void {
@@ -811,6 +956,63 @@ function readGitLog(): string | undefined {
 function getFlag(rest: string[], flag: string): string | undefined {
 	const i = rest.indexOf(flag);
 	return i >= 0 ? rest[i + 1] : undefined;
+}
+
+function hasFlag(rest: string[], flag: string): boolean {
+	return rest.includes(flag);
+}
+
+function taskToJson(task: Task): Record<string, unknown> {
+	return {
+		id: task.id,
+		title: task.title,
+		type: task.type,
+		area: task.area,
+		phase: task.phase,
+		status: task.status,
+		priority: task.priority,
+		assignee: task.assignee ?? null,
+		created: task.created,
+		started: task.started ?? null,
+		completed: task.completed ?? null,
+		blockedBy: task.blockedBy,
+		acceptance: task.acceptance,
+		pr: task.pr ?? null,
+		links: task.links,
+		file: task.file,
+	};
+}
+
+function patchFrontmatter(
+	content: string,
+	fields: Record<string, string>,
+): string {
+	const split = splitFrontmatter(content);
+	if (!split.ok) {
+		throw new Error(split.error);
+	}
+	let yaml = split.value.yaml;
+	for (const [key, value] of Object.entries(fields)) {
+		const uncommented = new RegExp(`^#\\s*${key}:\\s*.*$`, 'm');
+		const existing = new RegExp(`^${key}:\\s*.*$`, 'm');
+		const line = `${key}: ${value}`;
+		if (existing.test(yaml)) {
+			yaml = yaml.replace(existing, line);
+		} else if (uncommented.test(yaml)) {
+			yaml = yaml.replace(uncommented, line);
+		} else {
+			yaml = `${yaml}\n${line}`;
+		}
+	}
+	return `---\n${yaml}\n---${split.value.body}`;
+}
+
+function appendLogLine(content: string, line: string): string {
+	const entry = `- ${line}`;
+	if (content.includes('## Log')) {
+		return content.replace(/(## Log\r?\n\r?\n)/, `$1${entry}\n`);
+	}
+	return `${content.trimEnd()}\n\n## Log\n\n${entry}\n`;
 }
 
 function slugify(title: string): string {
