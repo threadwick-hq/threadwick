@@ -76,7 +76,7 @@ export function followActionLabel(mode: FollowMode): string {
 		case 'granular':
 			return 'Cluster done';
 		case 'checklist':
-			return 'Step done';
+			return 'Round done';
 		default:
 			return 'Done';
 	}

@@ -17,6 +17,11 @@ import type {
 	UIState,
 } from './index';
 import {
+	advanceExternalProgress,
+	completeExternalProgress,
+	undoExternalProgress,
+} from './external-follow';
+import {
 	activeVersion,
 	buildStitchShapes,
 	chainOrder,
@@ -649,11 +654,17 @@ class Store {
 		const prj = this.currentProject();
 		if (!prj?.makePatterns) return false;
 		const ref = prj.makePatterns.find((r) => r.id === refId);
-		if (!ref || ref.source !== 'threadwick') return false;
-		const chart = this.resolveChartPattern(ref.patternId);
-		if (!chart) return false;
-		const mode = effectiveFollowMode(ref);
-		ref.progress = advancePatternProgress(ref.progress, chart, mode);
+		if (!ref) return false;
+
+		if (ref.source !== 'threadwick') {
+			ref.progress = advanceExternalProgress(ref.progress);
+		} else {
+			const chart = this.resolveChartPattern(ref.patternId);
+			if (!chart) return false;
+			const mode = effectiveFollowMode(ref);
+			ref.progress = advancePatternProgress(ref.progress, chart, mode);
+		}
+
 		if (ref.progress.unitsDone > 0 && prj.makerStatus === 'draft') {
 			prj.makerStatus = 'in-progress';
 		}
@@ -667,13 +678,32 @@ class Store {
 		const prj = this.currentProject();
 		if (!prj?.makePatterns) return false;
 		const ref = prj.makePatterns.find((r) => r.id === refId);
-		if (!ref || ref.source !== 'threadwick') return false;
-		const chart = this.resolveChartPattern(ref.patternId);
-		if (!chart) return false;
-		const mode = effectiveFollowMode(ref);
+		if (!ref) return false;
+
 		const before = ref.progress?.unitsDone ?? 0;
-		ref.progress = undoPatternProgress(ref.progress, chart, mode);
+
+		if (ref.source !== 'threadwick') {
+			ref.progress = undoExternalProgress(ref.progress);
+		} else {
+			const chart = this.resolveChartPattern(ref.patternId);
+			if (!chart) return false;
+			const mode = effectiveFollowMode(ref);
+			ref.progress = undoPatternProgress(ref.progress, chart, mode);
+		}
+
 		if ((ref.progress?.unitsDone ?? 0) === before) return false;
+		prj.updatedAt = nowISO();
+		this.emit();
+		this.saveLocal();
+		return true;
+	}
+
+	completeFollow(refId: string): boolean {
+		const prj = this.currentProject();
+		if (!prj?.makePatterns) return false;
+		const ref = prj.makePatterns.find((r) => r.id === refId);
+		if (!ref || ref.source === 'threadwick') return false;
+		ref.progress = completeExternalProgress(ref.progress);
 		prj.updatedAt = nowISO();
 		this.emit();
 		this.saveLocal();
