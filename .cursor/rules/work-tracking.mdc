@@ -1,0 +1,34 @@
+---
+description: Work tracking lifecycle for work/TW-NNN task files
+alwaysApply: true
+---
+
+# Work tracking
+
+Source of truth: `work/TW-NNN-*.md` files. Read `work/README.md` before claiming work.
+
+## Before coding
+
+1. `pnpm run work list --status active` — continue an active task if one exists.
+2. Else `pnpm run work next [--area A] [--phase N]` then `pnpm run work claim TW-NNN`.
+3. Branch `feat/TW-NNN-slug`. Read the full task file (Context, Scope, Acceptance).
+
+## While working
+
+- Tick acceptance checklist items in the task body as criteria pass.
+- Append decisions to `## Log` with ISO dates.
+- End every commit message with `Refs TW-NNN`.
+
+## Closing
+
+1. Set `status: review`, fill `pr`, open PR with `Closes TW-NNN` in the body.
+2. On merge: set `status: done`, `completed`, keep `pr`; run `pnpm run work index`.
+3. Squash commit message must include `Closes TW-NNN` (derivation gate).
+
+## After frontmatter edits
+
+Run `pnpm run work index`. Never hand-edit `work/INDEX.md`.
+
+## Before push
+
+Run `pnpm check` and `pnpm run work check`.

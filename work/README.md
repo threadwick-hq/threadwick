@@ -44,9 +44,9 @@ backlog -> active -> review -> done
 ## How an agent works a task
 
 1. **Pick up.** `pnpm run work next --area packages/core` prints the top claimable backlog task.
-   Edit its frontmatter to `status: active`, set `assignee` and `started`, branch
-   `feat/TW-NNN-slug`, commit `docs(work): claim TW-NNN`. Two agents racing the same id collide at
-   `git push`; the loser re-runs `next`.
+   Claim with `pnpm run work claim TW-NNN [--assignee agent]`, or edit frontmatter to `status: active`,
+   set `assignee` and `started`, branch `feat/TW-NNN-slug`, commit `docs(work): claim TW-NNN`. Two agents
+   racing the same id collide at `git push`; the loser re-runs `next`.
 2. **Record.** The file travels on the branch. Tick the body checklist and append to `## Log` as you
    go. End every commit with `Refs TW-NNN`.
 3. **Document.** The body is the durable record: context, scope, decisions, log. It is reviewed in
@@ -69,7 +69,12 @@ backlog -> active -> review -> done
 
 - `INDEX.md` (generated, committed) is the at-a-glance table. Never hand-edit it; run
   `pnpm run work index`.
-- A GitHub Projects board (read-only mirror) is upserted from merged frontmatter for roadmap and
-  mobile steering. Nothing writes back to git from it.
+- **GitHub Issues mirror** (read-only): [`.github/workflows/work-project-mirror.yml`](../.github/workflows/work-project-mirror.yml)
+  upserts one issue per `TW-NNN` from frontmatter on every push to `main` that touches `work/`.
+  Issues carry the `tw-tracker` label — do not edit them; change the `work/*.md` file instead.
+  Optional repo variable `WORK_PROJECT_NUMBER` (+ `WORK_PROJECT_OWNER`) adds new items to a GitHub
+  Project v2 board.
+- **Stale-active sweep**: [`.github/workflows/work-stale-sweep.yml`](../.github/workflows/work-stale-sweep.yml)
+  runs weekly and opens/updates an issue when `active` tasks exceed the `--days` threshold.
 
 The owner steers by editing `priority` / `phase` in a small PR, and by reviewing the PR queue.
