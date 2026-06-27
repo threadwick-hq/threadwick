@@ -14,6 +14,7 @@ export type FollowChartPaneProps = {
 	progress?: PatternProgress;
 	mode: FollowMode;
 	className?: string;
+	canvasClassName?: string;
 };
 
 type ViewBox = {
@@ -75,6 +76,7 @@ export function FollowChartPane({
 	progress,
 	mode,
 	className,
+	canvasClassName,
 }: FollowChartPaneProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const chartRef = useRef<HTMLDivElement>(null);
@@ -201,7 +203,10 @@ export function FollowChartPane({
 		<div className={cn('relative flex flex-col', className)}>
 			<div
 				ref={containerRef}
-				className="relative h-[220px] w-full touch-none overflow-hidden rounded-lg border border-border bg-muted/40"
+				className={cn(
+					'relative h-[220px] w-full touch-none overflow-hidden rounded-lg border border-border bg-muted/40 md:h-[280px] [@media(min-width:768px)_and_(orientation:landscape)]:h-full [@media(min-width:768px)_and_(orientation:landscape)]:min-h-[260px] lg:h-full lg:min-h-[260px]',
+					canvasClassName,
+				)}
 				onWheel={onWheel}
 				onPointerDown={onPointerDown}
 				onPointerMove={onPointerMove}
