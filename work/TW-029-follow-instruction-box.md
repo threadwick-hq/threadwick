@@ -6,15 +6,16 @@ area:
   - apps/web
   - packages/core
 phase: 6
-status: backlog
+status: active
 priority: p1
 created: 2026-06-23
 acceptance:
   - the instruction box renders Start/Round/Finish with the one big action driving the cursor
   - the mode selector switches granularity and is remembered per project
   - counter pills are display-only; Undo steps back once
+assignee: agent
+started: 2026-06-27
 ---
-
 ## Context
 
 The Follow view is the most important surface, designed phone-first. Instruction box split Start/Round/Finish, display-only counter pills, the Per-row/Pattern/Granular mode selector, one big action + Undo. Spec §6. (Phase 6 sub-phase 6d.) From the Studio redesign handoff at `apps/studio/docs/redesign/`.
@@ -29,10 +30,12 @@ Depends on: TW-028, TW-020.
 
 ## Acceptance
 
-- [ ] the instruction box renders Start/Round/Finish with the one big action driving the cursor
-- [ ] the mode selector switches granularity and is remembered per project
-- [ ] counter pills are display-only; Undo steps back once
+- [x] the instruction box renders Start/Round/Finish with the one big action driving the cursor
+- [x] the mode selector switches granularity and is remembered per project
+- [x] counter pills are display-only; Undo steps back once
 
 ## Log
 
+- 2026-06-28 implemented phone-baseline Follow UI: `follow-ui.ts` helpers, `@threadwick/core` Follow components (mode selector, counter pills, instruction box, footer), `/studio/follow/:projectId/:refId` route + editor entry link; sample seeds `makePatterns`.
+- 2026-06-27 claimed by agent.
 - 2026-06-23 created (Phase 6 re-scope from the studio redesign handoff).

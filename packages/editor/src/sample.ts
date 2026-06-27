@@ -171,5 +171,15 @@ export function sampleProject(): Project {
 		.map((s) => s.id);
 	r2.followMarks = { corners: r2Corners, repeats: [] };
 	activeVersion(prj).patterns.push(pat);
+	const refId = uid('ref');
+	prj.makePatterns = [
+		{
+			id: refId,
+			label: pat.name,
+			source: 'threadwick',
+			patternId: pat.id,
+			suggestedFollowMode: 'pattern',
+		},
+	];
 	return normalizeProject(prj);
 }
