@@ -6,15 +6,16 @@ area:
   - packages/editor
   - packages/types
 phase: 6
-status: backlog
+status: active
 priority: p1
 created: 2026-06-23
 acceptance:
   - progress advances/undoes over Units and aggregates per-pattern to project
   - FILE_VERSION is 4 with a migration covering both storage keys
   - the export -> import -> deep-equal round-trip stays green
+assignee: agent
+started: 2026-06-27
 ---
-
 ## Context
 
 The one-big-action cursor over Units, with one-step Undo and per-pattern to project aggregation. This is the first stored-shape change of the phase. Spec §5, §6. (Phase 6 sub-phase 6d.) From the Studio redesign handoff at `apps/studio/docs/redesign/`.
@@ -29,10 +30,12 @@ Depends on: TW-027.
 
 ## Acceptance
 
-- [ ] progress advances/undoes over Units and aggregates per-pattern to project
-- [ ] FILE_VERSION is 4 with a migration covering both storage keys
-- [ ] the export -> import -> deep-equal round-trip stays green
+- [x] progress advances/undoes over Units and aggregates per-pattern to project
+- [x] FILE_VERSION is 4 with a migration covering both storage keys
+- [x] the export -> import -> deep-equal round-trip stays green
 
 ## Log
 
+- 2026-06-28 implemented `progress.ts` state machine (advance/undo/aggregate), extended Project with maker-plane fields, FILE_VERSION 4 + normalizeProject migration (patternIds → makePatterns); store follow API; tests green.
+- 2026-06-27 claimed by agent.
 - 2026-06-23 created (Phase 6 re-scope from the studio redesign handoff).

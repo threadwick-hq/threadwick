@@ -5,8 +5,12 @@
 import { isStart } from './symbols';
 import type {
 	Base,
+	FollowMode,
+	MakerStatus,
 	Pattern,
 	PatternKind,
+	PatternProgress,
+	PatternReference,
 	Project,
 	ProjectFile,
 	ProjectVersion,
@@ -19,7 +23,7 @@ import type {
 import { deepClone, nowISO, uid } from './util';
 
 export const FILE_FORMAT = 'threadwick-studio';
-export const FILE_VERSION = 3; // v3: projects hold versions (draft/published/outdated)
+export const FILE_VERSION = 4; // v4: maker-plane makePatterns + follow progress (TW-028)
 
 export interface PatternTypeInfo {
 	id: PatternKind;
@@ -289,6 +293,136 @@ function enforceSinglePublished(versions: ProjectVersion[]): void {
 	for (let i = 0; i < pub.length - 1; i++) pub[i]!.status = 'outdated';
 }
 
+const MAKER_STATUSES = new Set<MakerStatus>([
+	'draft',
+	'in-progress',
+	'on-hold',
+	'done',
+	'frogged',
+]);
+const FOLLOW_MODES = new Set<FollowMode>([
+	'per-row',
+	'pattern',
+	'granular',
+	'checklist',
+]);
+
+function normalizeMakerStatus(s: unknown): MakerStatus | undefined {
+	return typeof s === 'string' && MAKER_STATUSES.has(s as MakerStatus)
+		? (s as MakerStatus)
+		: undefined;
+}
+
+function normalizeFollowMode(s: unknown): FollowMode | undefined {
+	return typeof s === 'string' && FOLLOW_MODES.has(s as FollowMode)
+		? (s as FollowMode)
+		: undefined;
+}
+
+function normalizePatternProgress(raw: any): PatternProgress | undefined {
+	if (!raw || typeof raw !== 'object') return undefined;
+	const unitsDone = Math.max(0, Math.floor(+(raw as any).unitsDone || 0));
+	const progress: PatternProgress = { unitsDone };
+	if ((raw as any).unitsTotal != null) {
+		progress.unitsTotal = Math.max(0, Math.floor(+(raw as any).unitsTotal));
+	}
+	if ((raw as any).completed === true) progress.completed = true;
+	if (typeof (raw as any).updatedAt === 'string')
+		progress.updatedAt = (raw as any).updatedAt;
+	const cur = (raw as any).cursor;
+	if (cur && typeof cur === 'object' && typeof cur.unitAddress === 'string') {
+		const mode = normalizeFollowMode(cur.followMode);
+		if (mode) {
+			progress.cursor = { unitAddress: String(cur.unitAddress), followMode: mode };
+		}
+	}
+	return progress;
+}
+
+function normalizePatternReference(
+	raw: any,
+	resolveLabel: (patternId: string) => string,
+): PatternReference | null {
+	if (!raw || typeof raw !== 'object') return null;
+	const id = raw.id ? String(raw.id) : uid('ref');
+	const label =
+		typeof raw.label === 'string'
+			? raw.label
+			: raw.source === 'threadwick' && raw.patternId
+				? resolveLabel(String(raw.patternId))
+				: '';
+	const followMode = normalizeFollowMode(raw.followMode);
+	const suggestedFollowMode = normalizeFollowMode(raw.suggestedFollowMode);
+	const progress = normalizePatternProgress(raw.progress);
+	const source = raw.source;
+	if (source === 'threadwick' && raw.patternId) {
+		const ref: PatternReference = {
+			id,
+			label,
+			source: 'threadwick',
+			patternId: String(raw.patternId),
+		};
+		if (followMode) ref.followMode = followMode;
+		if (suggestedFollowMode) ref.suggestedFollowMode = suggestedFollowMode;
+		if (progress) ref.progress = progress;
+		if (raw.patternVersionId)
+			ref.patternVersionId = String(raw.patternVersionId);
+		return ref;
+	}
+	if (source === 'ravelry' || source === 'blog' || source === 'pdf') {
+		const ref: PatternReference = { id, label, source };
+		if (followMode) ref.followMode = followMode;
+		if (suggestedFollowMode) ref.suggestedFollowMode = suggestedFollowMode;
+		if (progress) ref.progress = progress;
+		if (typeof raw.url === 'string') ref.url = raw.url;
+		if (typeof raw.designer === 'string') ref.designer = raw.designer;
+		if (typeof raw.ravelryId === 'string') ref.ravelryId = raw.ravelryId;
+		return ref;
+	}
+	return null;
+}
+
+function isPatternReferenceArray(arr: unknown[]): boolean {
+	return arr.some(
+		(x) =>
+			x &&
+			typeof x === 'object' &&
+			'source' in x &&
+			typeof (x as any).source === 'string',
+	);
+}
+
+function normalizeMakePatterns(
+	p: any,
+	versions: ProjectVersion[],
+): PatternReference[] | undefined {
+	const resolveLabel = (patternId: string) => {
+		for (const v of versions) {
+			const pat = v.patterns.find((x) => x.id === patternId);
+			if (pat) return pat.name;
+		}
+		return '';
+	};
+
+	let raw: unknown[] | undefined;
+	if (Array.isArray(p.makePatterns)) raw = p.makePatterns;
+	else if (Array.isArray(p.patterns) && isPatternReferenceArray(p.patterns))
+		raw = p.patterns;
+	else if (Array.isArray(p.patternIds)) {
+		return p.patternIds.map((pid: unknown) => ({
+			id: uid('ref'),
+			label: resolveLabel(String(pid)),
+			source: 'threadwick' as const,
+			patternId: String(pid),
+		}));
+	}
+	if (!raw) return undefined;
+	const refs = raw
+		.map((r) => normalizePatternReference(r, resolveLabel))
+		.filter(Boolean) as PatternReference[];
+	return refs.length ? refs : undefined;
+}
+
 export function normalizeProject(p: any = {}): Project {
 	const prj = newProject(p.name);
 	if (p.id) prj.id = p.id;
@@ -319,6 +453,17 @@ export function normalizeProject(p: any = {}): Project {
 	prj.activeVersionId = active.id;
 	prj.createdAt = p.createdAt || prj.createdAt;
 	prj.updatedAt = p.updatedAt || prj.updatedAt;
+
+	const makePatterns = normalizeMakePatterns(p, prj.versions);
+	if (makePatterns) prj.makePatterns = makePatterns;
+	const makerStatus = normalizeMakerStatus(p.makerStatus ?? p.status);
+	if (makerStatus) prj.makerStatus = makerStatus;
+	else if (makePatterns?.some((r) => r.progress?.unitsDone)) {
+		prj.makerStatus = 'in-progress';
+	} else if (makePatterns?.length) {
+		prj.makerStatus = 'draft';
+	}
+
 	return prj;
 }
 // biome-ignore-end lint/suspicious/noExplicitAny: end of the migration parse boundary.

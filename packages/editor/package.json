@@ -15,6 +15,7 @@
 		"test": "vitest run"
 	},
 	"dependencies": {
+		"@threadwick/types": "workspace:*",
 		"qrcode": "^1.5.4"
 	},
 	"devDependencies": {
