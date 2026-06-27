@@ -6,9 +6,10 @@ area:
   - packages/editor
   - packages/types
 phase: 6
-status: active
+status: review
 priority: p1
 created: 2026-06-23
+pr: 21
 acceptance:
   - progress advances/undoes over Units and aggregates per-pattern to project
   - FILE_VERSION is 4 with a migration covering both storage keys
