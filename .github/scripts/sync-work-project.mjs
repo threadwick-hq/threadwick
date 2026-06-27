@@ -33,6 +33,12 @@ const headers = {
 const api = (path, opts = {}) =>
 	fetch(`https://api.github.com${path}`, { ...opts, headers: { ...headers, ...(opts.headers ?? {}) } });
 
+const jsonApi = (path, opts = {}) =>
+	api(path, {
+		...opts,
+		headers: { 'Content-Type': 'application/json', ...(opts.headers ?? {}) },
+	});
+
 const graphql = (query, variables) =>
 	fetch('https://api.github.com/graphql', {
 		method: 'POST',
@@ -110,6 +116,39 @@ function issueLabels(task) {
 	];
 }
 
+async function ensureLabel(labelName) {
+	const res = await jsonApi(`/repos/${owner}/${name}/labels`, {
+		method: 'POST',
+		body: JSON.stringify({
+			name: labelName,
+			color: 'ededed',
+			description:
+				labelName === LABEL
+					? 'Mirrored from work/ — do not edit issues directly'
+					: 'Auto-managed by the work-project-mirror workflow',
+		}),
+	});
+	// 422 = label already exists
+	if (res.ok || res.status === 422) {
+		return;
+	}
+	throw new Error(
+		`create label ${labelName}: ${res.status} ${await res.text()}`,
+	);
+}
+
+async function ensureLabelsForTasks(tasks) {
+	const names = new Set([LABEL]);
+	for (const task of tasks) {
+		for (const label of issueLabels(task)) {
+			names.add(label);
+		}
+	}
+	for (const labelName of names) {
+		await ensureLabel(labelName);
+	}
+}
+
 async function upsertIssue(task, existing) {
 	const title = `${task.id}: ${task.title}`;
 	const body = issueBody(task);
@@ -117,7 +156,7 @@ async function upsertIssue(task, existing) {
 	const state = task.status === 'done' ? 'closed' : 'open';
 
 	if (existing) {
-		const res = await api(`/repos/${owner}/${name}/issues/${existing.number}`, {
+		const res = await jsonApi(`/repos/${owner}/${name}/issues/${existing.number}`, {
 			method: 'PATCH',
 			body: JSON.stringify({ title, body, state, labels }),
 		});
@@ -127,7 +166,7 @@ async function upsertIssue(task, existing) {
 		return res.json();
 	}
 
-	const res = await api(`/repos/${owner}/${name}/issues`, {
+	const res = await jsonApi(`/repos/${owner}/${name}/issues`, {
 		method: 'POST',
 		body: JSON.stringify({ title, body, labels }),
 	});
@@ -175,6 +214,7 @@ async function addIssueToProject(projectId, issueNodeId) {
 
 async function main() {
 	const tasks = await readTasks();
+	await ensureLabelsForTasks(tasks);
 	const existing = await listTrackedIssues();
 	const projectId = await resolveProjectId();
 	if (projectNumber && !projectId) {

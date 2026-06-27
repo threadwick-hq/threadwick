@@ -26,6 +26,9 @@ fi
 context+="\nSee \`AGENTS.md\`, \`work/README.md\`, and \`.cursor/rules/\`."
 
 # additional_context may be dropped by a known Cursor bug; env vars persist for hooks.
-printf '{"env":{"THREADWICK_WORK_ROOT":"%s"},"additional_context":%s}\n' \
-  "$ROOT" \
-  "$(node -e "process.stdout.write(JSON.stringify(process.argv[1]))" "$context")"
+node -e "
+console.log(JSON.stringify({
+  env: { THREADWICK_WORK_ROOT: process.argv[1] },
+  additional_context: process.argv[2],
+}));
+" "$ROOT" "$context"
