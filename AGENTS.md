@@ -42,13 +42,16 @@ Commands: `work check` · `work index` · `work next` · `work list` · `work ne
 
 ## Git workflow
 
+Code review is **Graphite Agent** on the open PR — not local Bugbot (`/review-bugbot`).
+
 Every change follows this loop:
 
-1. **Branch** — new branch from `main` before editing (`cursor/…` or `feat/TW-NNN-slug`).
-2. **Commit & push** — stage only related files; push the branch.
-3. **Independent review** — Bugbot or Security Review on the branch diff before merge.
-4. **Fix loop** — fix findings, commit, push, re-review until clean.
-5. **Merge & cleanup** — squash-merge the PR into `main`; delete the working branch.
+1. **Branch** — `gt sync`, then new branch from `main` (`cursor/…` or `feat/TW-NNN-slug`).
+2. **Commit** — stage only related files; run `pnpm check` (and `pnpm run work check` when touching `work/`).
+3. **Submit PR** — `gt submit`; set task `status: review` and fill `pr` with `Closes TW-NNN` in the PR body.
+4. **Graphite AI review** — wait for Graphite Agent comments on the PR; check GitHub or `gh pr view --comments`.
+5. **Fix loop** — resolve valid findings with `gt modify` / `gt submit`; do not merge while blocking comments remain.
+6. **Merge & cleanup** — squash-merge from Graphite, then `gt sync`.
 
 See [`.cursor/rules/git-workflow.mdc`](.cursor/rules/git-workflow.mdc).
 

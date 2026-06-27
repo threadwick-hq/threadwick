@@ -7,10 +7,11 @@ alwaysApply: true
 
 Every change follows this loop — do not skip steps.
 
-1. **Branch** — create a new branch from `main` before editing (`cursor/…` or `feat/TW-NNN-slug` for task work).
-2. **Commit & push** — stage only related files; run `pnpm check` and `pnpm run work check` when touching `work/`; push the branch.
-3. **Independent review** — run Bugbot (`/review-bugbot`) or Security Review on the branch diff before opening or merging a PR.
-4. **Fix loop** — if review finds issues, fix them, commit, push, and re-run review until clean.
-5. **Merge & cleanup** — open a PR, **squash-merge** into `main`, delete the working branch (local and remote).
+1. **Branch** — create a new branch from `main` before editing (`cursor/…` or `feat/TW-NNN-slug` for task work). Run `gt sync` at session start.
+2. **Commit** — stage only related files; run `pnpm check` and `pnpm run work check` when touching `work/`.
+3. **Submit PR** — `gt submit` (or `gt submit --stack` when stacked). Set task `status: review` and fill `pr`. Do not use `/review-bugbot` or local Bugbot.
+4. **Graphite AI review** — Graphite Agent reviews the PR automatically. Wait for comments on GitHub or [app.graphite.com](https://app.graphite.com); poll with `gh pr view --comments` if needed.
+5. **Fix loop** — address valid Graphite findings with `gt modify` (or commit + `gt submit`); push updates until blocking comments are resolved.
+6. **Merge & cleanup** — **squash-merge** from Graphite (or GitHub for single PRs), then `gt sync` to prune merged branches.
 
-Never commit directly to `main`. Never merge without a review pass on the final diff.
+Never commit directly to `main`. Never merge without Graphite AI review completing on the final diff and CI passing.
