@@ -6,7 +6,7 @@ area:
   - apps/web
   - packages/core
 phase: 6
-status: active
+status: review
 priority: p2
 created: 2026-06-23
 acceptance:
@@ -15,6 +15,7 @@ acceptance:
   - the pinned status tile shows the state selector + aggregated progress + Continue making
 assignee: agent
 started: 2026-06-27
+pr: 26
 ---
 ## Context
 
