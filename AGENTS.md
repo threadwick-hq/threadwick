@@ -40,10 +40,23 @@ Commands: `work check` · `work index` · `work next` · `work list` · `work ne
 - Never hand-edit `work/INDEX.md`; regenerate with `pnpm run work index`.
 - Follow package- or app-local `AGENTS.md` when working inside a workspace.
 
+## Git workflow
+
+Every change follows this loop:
+
+1. **Branch** — new branch from `main` before editing (`cursor/…` or `feat/TW-NNN-slug`).
+2. **Commit & push** — stage only related files; push the branch.
+3. **Independent review** — Bugbot or Security Review on the branch diff before merge.
+4. **Fix loop** — fix findings, commit, push, re-review until clean.
+5. **Merge & cleanup** — squash-merge the PR into `main`; delete the working branch.
+
+See [`.cursor/rules/git-workflow.mdc`](.cursor/rules/git-workflow.mdc).
+
 ## Cursor integration
 
 | Path | Purpose |
 | --- | --- |
+| [`.cursor/rules/git-workflow.mdc`](.cursor/rules/git-workflow.mdc) | Branch, review, squash-merge loop (always on) |
 | [`.cursor/rules/monorepo.mdc`](.cursor/rules/monorepo.mdc) | Stack, commands, migration (always on) |
 | [`.cursor/rules/work-tracking.mdc`](.cursor/rules/work-tracking.mdc) | Task lifecycle (always on) |
 | [`.cursor/rules/studio.mdc`](.cursor/rules/studio.mdc) | Studio app when editing `apps/studio/**` |

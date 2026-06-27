@@ -5,30 +5,44 @@ set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$ROOT"
 
-WORK="pnpm exec tsx scripts/work.ts"
+node <<'NODE'
+const { execSync } = require('node:child_process');
 
-context="## Work tracking\n\n"
+const root = process.cwd();
+const work = (args) => {
+	try {
+		return execSync(`pnpm exec tsx scripts/work.ts ${args}`, {
+			encoding: 'utf8',
+			cwd: root,
+			stdio: ['ignore', 'pipe', 'ignore'],
+		}).trim();
+	} catch {
+		return '';
+	}
+};
 
-active="$($WORK list --status active 2>/dev/null || true)"
-if echo "$active" | grep -q '^TW-'; then
-  context+="**Active task(s):**\n\`\`\`\n${active}\n\`\`\`\n\n"
-  context+="Continue the active task before claiming new work. Read the task file for Context/Scope/Acceptance.\n"
-else
-  next="$($WORK next 2>/dev/null || true)"
-  if echo "$next" | grep -q '^TW-'; then
-    context+="**No active task.** Next claimable:\n\`\`\`\n${next}\n\`\`\`\n\n"
-    context+="Claim with \`pnpm run work claim TW-NNN\` before implementing.\n"
-  else
-    context+="No claimable backlog task matches the default filter.\n"
-  fi
-fi
+const lines = ['## Work tracking', ''];
+const active = work('list --status active');
+if (/^TW-/m.test(active)) {
+	lines.push('**Active task(s):**', '```', active, '```', '');
+	lines.push(
+		'Continue the active task before claiming new work. Read the task file for Context, Scope, and Acceptance.',
+	);
+} else {
+	const next = work('next');
+	if (/^TW-/m.test(next)) {
+		lines.push('**No active task.** Next claimable:', '```', next, '```', '');
+		lines.push('Claim with `pnpm run work claim TW-NNN` before implementing.');
+	} else {
+		lines.push('No claimable backlog task matches the default filter.');
+	}
+}
+lines.push('', 'See `AGENTS.md`, `work/README.md`, and `.cursor/rules/`.');
 
-context+="\nSee \`AGENTS.md\`, \`work/README.md\`, and \`.cursor/rules/\`."
-
-# additional_context may be dropped by a known Cursor bug; env vars persist for hooks.
-node -e "
-console.log(JSON.stringify({
-  env: { THREADWICK_WORK_ROOT: process.argv[1] },
-  additional_context: process.argv[2],
-}));
-" "$ROOT" "$context"
+console.log(
+	JSON.stringify({
+		env: { THREADWICK_WORK_ROOT: root },
+		additional_context: lines.join('\n'),
+	}),
+);
+NODE
