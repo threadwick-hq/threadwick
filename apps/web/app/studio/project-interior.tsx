@@ -106,19 +106,20 @@ function ProjectInteriorChrome({
 	projectId: string;
 }) {
 	const store = useStudioStore();
-	if (!store) return null;
-
 	const status: MakerStatus = project.makerStatus ?? 'draft';
-	const patterns = project.makePatterns ?? [];
-	const resolvePattern = (patternId: string) => resolvePatternInProject(project, patternId);
-	const aggregate = aggregateProjectProgress(project, resolvePattern);
-	const continueRef = continueMakingRef(project);
-	const continueHref = continueRef
-		? `/studio/follow/${projectId}/${continueRef.id}`
-		: undefined;
+	const makePatterns = project.makePatterns ?? [];
 
-	const chrome = useMemo(
-		() => ({
+	const chrome = useMemo(() => {
+		if (!store) return null;
+
+		const resolvePattern = (patternId: string) => resolvePatternInProject(project, patternId);
+		const aggregate = aggregateProjectProgress(project, resolvePattern);
+		const continueRef = continueMakingRef(project);
+		const continueHref = continueRef
+			? `/studio/follow/${projectId}/${continueRef.id}`
+			: undefined;
+
+		return {
 			identityTile: (
 				<InteriorIdentityTile
 					title={project.name}
@@ -136,7 +137,7 @@ function ProjectInteriorChrome({
 						end
 					/>
 					<ProjectRailSectionLabel>Patterns</ProjectRailSectionLabel>
-					<PatternRailLinks projectId={projectId} patterns={patterns} />
+					<PatternRailLinks projectId={projectId} patterns={makePatterns} />
 					<div className="mt-2">
 						<ProjectRailLink
 							to={`/studio/projects/${projectId}/materials`}
@@ -191,19 +192,10 @@ function ProjectInteriorChrome({
 					}
 				/>
 			),
-		}),
-		[
-			aggregate.percent,
-			aggregate.unitsDone,
-			aggregate.unitsTotal,
-			continueHref,
-			patterns,
-			project.name,
-			projectId,
-			status,
-			store,
-		],
-	);
+		};
+	}, [makePatterns, project, projectId, status, store]);
+
+	if (!store || !chrome) return null;
 
 	return <InteriorChromeSlot chrome={chrome} />;
 }
