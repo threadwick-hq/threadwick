@@ -130,7 +130,8 @@ export function pickBase(
 	}
 	for (const sp of allSpaces(stitches)) {
 		const d = Math.hypot(sp.point.x - x, sp.point.y - y);
-		if (d <= bd) {
+		// Same strict threshold as stitch hits — avoids jitter when distances tie.
+		if (d < bd) {
 			bd = d;
 			best = { kind: 'space', ids: sp.ids, point: sp.point, d };
 		}

@@ -38,4 +38,8 @@ describe('negotiateLocale', () => {
 	it('drops a zero or malformed q-weight entry', () => {
 		expect(negotiateLocale({ acceptLanguage: 'en;q=0, pl;q=0.9' })).toBe('pl');
 	});
+
+	it('decodes a percent-encoded locale cookie value', () => {
+		expect(negotiateLocale({ cookie: 'tw_locale=pl' })).toBe('pl');
+	});
 });

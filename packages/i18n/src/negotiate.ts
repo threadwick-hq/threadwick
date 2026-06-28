@@ -80,7 +80,8 @@ function localeFromCookie(
 	if (match === undefined) {
 		return undefined;
 	}
-	return supportedLocale(match.slice(name.length + 1), supported);
+	const raw = match.slice(name.length + 1).trim();
+	return supportedLocale(decodeURIComponent(raw), supported);
 }
 
 function localeFromAcceptLanguage(
@@ -116,7 +117,9 @@ function parseAcceptLanguage(header: string): string[] {
 			};
 		})
 		.filter((entry) => entry.tag.length > 0 && entry.weight > 0)
-		.sort((a, b) => b.weight - a.weight)
+		// RFC 7231: equal q-values are ordered by client preference (header order).
+		// Secondary tag sort keeps negotiation deterministic across runtimes.
+		.sort((a, b) => b.weight - a.weight || a.tag.localeCompare(b.tag))
 		.map((entry) => entry.tag);
 }
 
