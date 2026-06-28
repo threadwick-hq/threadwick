@@ -15,6 +15,7 @@ acceptance:
   - a lint error in packages/* makes CI red
 assignee: agent
 started: 2026-06-28
+pr: 40
 ---
 ## Context
 
