@@ -7,6 +7,7 @@ export default defineConfig({
     'src/theme/index.ts',
     'src/brand/index.ts',
     'src/components/index.ts',
+    'src/capabilities.ts',
     'src/lib/utils.ts',
   ],
   format: ['esm'],

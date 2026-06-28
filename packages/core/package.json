@@ -40,6 +40,10 @@
     "./lib/utils": {
       "types": "./dist/lib/utils.d.ts",
       "import": "./dist/lib/utils.js"
+    },
+    "./capabilities": {
+      "types": "./dist/capabilities.d.ts",
+      "import": "./dist/capabilities.js"
     }
   },
   "scripts": {

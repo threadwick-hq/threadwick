@@ -1,3 +1,4 @@
+import { isRavelryEnabled } from '@threadwick/core/capabilities';
 import {
 	InteriorIdentityTile,
 	PinnedStatusContinueButton,
@@ -15,7 +16,7 @@ import {
 } from '@threadwick/editor';
 import type { MakerStatus, PatternReference } from '@threadwick/types';
 import { Icon } from '@threadwick/icons';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link, Outlet, useParams } from 'react-router';
 import { InteriorChromeSlot } from './interior-chrome';
 import {
@@ -27,6 +28,10 @@ import {
 } from './maker-status';
 import { ProjectInteriorBreadcrumb } from './project-breadcrumb';
 import { ProjectRailAddButton, ProjectRailLink, ProjectRailSectionLabel } from './project-rail';
+import {
+	pullProjectStatusFromRavelry,
+	pushProjectStatusToRavelry,
+} from './ravelry-sync';
 import { useStudioStore } from './studio-store';
 
 function resolvePatternInProject(project: Project, patternId: string) {
@@ -109,6 +114,24 @@ function ProjectInteriorChrome({
 	if (!store) return null;
 
 	const status: MakerStatus = project.makerStatus ?? 'draft';
+
+	const handleStatusChange = (next: MakerStatus) => {
+		store.updateProject(projectId, { makerStatus: next });
+		if (isRavelryEnabled() && project.ravelryProjectId) {
+			pushProjectStatusToRavelry(project.ravelryProjectId, next);
+		}
+		store.saveLocal();
+	};
+
+	useEffect(() => {
+		if (!isRavelryEnabled() || !project.ravelryProjectId) return;
+		const remote = pullProjectStatusFromRavelry(project.ravelryProjectId);
+		if (remote && remote !== (project.makerStatus ?? 'draft')) {
+			store.updateProject(projectId, { makerStatus: remote });
+			store.saveLocal();
+		}
+	}, [project.makerStatus, project.ravelryProjectId, projectId, store]);
+
 	const patterns = project.makePatterns ?? [];
 	const resolvePattern = (patternId: string) => resolvePatternInProject(project, patternId);
 	const aggregate = aggregateProjectProgress(project, resolvePattern);
@@ -160,10 +183,7 @@ function ProjectInteriorChrome({
 							<div className="min-w-0 flex-1">
 								<ProjectStatusSelector
 									status={status}
-									onStatusChange={(next) => {
-										store.updateProject(projectId, { makerStatus: next });
-										store.saveLocal();
-									}}
+									onStatusChange={handleStatusChange}
 								/>
 							</div>
 						</div>

@@ -43,6 +43,8 @@ export function useStudioStore(): StudioStore | null {
 
 async function loadStudioStore() {
 	const [core, browser] = await Promise.all([import('@threadwick/editor'), import('@threadwick/editor/browser')]);
+	const { initStudioCapabilities } = await import('./capabilities');
+	initStudioCapabilities();
 	const { store } = browser;
 	store.loadLocal();
 	if (store.state.library.projects.length === 0) {
