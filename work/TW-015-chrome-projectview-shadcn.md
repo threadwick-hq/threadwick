@@ -5,13 +5,9 @@ type: refactor
 area:
   - apps/studio
 phase: 6
-status: review
+status: backlog
 priority: p2
 created: 2026-06-23
-started: 2026-06-28
-assignee: agent
-branch: feat/TW-015-chrome-projectview-shadcn
-pr: 39
 acceptance:
   - ProjectView/ProjectsView/TopBar render with no AntD
   - the publish/discard version bar interaction is preserved
@@ -32,11 +28,10 @@ Depends on: TW-013.
 
 ## Acceptance
 
-- [x] ProjectView/ProjectsView/TopBar render with no AntD
-- [x] the publish/discard version bar interaction is preserved
-- [x] forms use react-hook-form
+- [ ] ProjectView/ProjectsView/TopBar render with no AntD
+- [ ] the publish/discard version bar interaction is preserved
+- [ ] forms use react-hook-form
 
 ## Log
 
 - 2026-06-23 created (Phase 6 re-scope from the studio redesign handoff).
-- 2026-06-28 claimed by agent; migrated ProjectView, ProjectsView, VersionTag to shadcn; three dialogs (new project, new pattern, resource) use react-hook-form; publish/discard/delete confirms use AlertDialog; TopBar was already AntD-free.

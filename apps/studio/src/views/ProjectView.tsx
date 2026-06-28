@@ -210,6 +210,7 @@ export function ProjectView() {
                             <DropdownMenuSeparator />
                             <DropdownMenuItem variant="destructive" onSelect={() => setConfirm({
                               title: `Delete pattern “${pat.name}”?`,
+                              description: 'Removes the pattern from this project. This can’t be undone.',
                               okText: 'Delete',
                               destructive: true,
                               onConfirm: () => s.deletePattern(prj.id, pat.id),
