@@ -5,7 +5,7 @@ type: chore
 area:
   - repo
 phase: 8
-status: active
+status: review
 priority: p3
 created: 2026-06-22
 acceptance:
