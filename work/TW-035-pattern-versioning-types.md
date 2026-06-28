@@ -5,11 +5,12 @@ type: feat
 area:
   - packages/types
 phase: 6
-status: active
+status: review
 priority: p2
 created: 2026-06-23
 assignee: agent
 started: 2026-06-28
+pr: 29
 acceptance:
   - @threadwick/types encodes whole-pattern versioning/publish/remix/lineage as a read contract
   - pattern.schema.json reflects it
@@ -61,5 +62,5 @@ editor's authoring `Project` onto `Pattern`, bumping `FILE_VERSION`, and migrati
 ## Log
 
 - 2026-06-28 claimed by agent; landed `PatternVersioning`, `PatternVersion`, `PatternLineage`,
-  `PatternOwnership`, and schema mirror.
+  `PatternOwnership`, and schema mirror. PR #29 published for review.
 - 2026-06-23 created (Phase 6 re-scope from the studio redesign handoff).
