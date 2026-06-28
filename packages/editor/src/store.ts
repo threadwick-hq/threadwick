@@ -4,7 +4,9 @@
 
 import type {
 	Base,
+	FollowMode,
 	Pattern,
+	PatternReference,
 	Project,
 	ProjectVersion,
 	ResourceKind,
@@ -20,6 +22,9 @@ import {
 	chainOrder,
 	deepClone,
 	draftVersion,
+	effectiveFollowMode,
+	advancePatternProgress,
+	undoPatternProgress,
 	FILE_FORMAT,
 	FILE_VERSION,
 	isRealStitch,
@@ -233,16 +238,29 @@ class Store {
 	}
 	// Fresh ids for every version + pattern (keeping the active pointer valid).
 	private reidVersions(prj: Project): void {
-		const map = new Map<string, string>();
+		const versionMap = new Map<string, string>();
+		const patternMap = new Map<string, string>();
 		for (const v of prj.versions) {
 			const nid = uid('ver');
-			map.set(v.id, nid);
+			versionMap.set(v.id, nid);
 			v.id = nid;
-			v.patterns.forEach((p) => {
+			for (const p of v.patterns) {
+				const oldId = p.id;
 				p.id = uid('pat');
-			});
+				patternMap.set(oldId, p.id);
+			}
 		}
-		prj.activeVersionId = map.get(prj.activeVersionId) ?? prj.versions[0]!.id;
+		prj.activeVersionId =
+			versionMap.get(prj.activeVersionId) ?? prj.versions[0]!.id;
+		if (prj.makePatterns) {
+			for (const ref of prj.makePatterns) {
+				ref.id = uid('ref');
+				if (ref.source === 'threadwick') {
+					const next = patternMap.get(ref.patternId);
+					if (next) ref.patternId = next;
+				}
+			}
+		}
 	}
 	private uniqueProjectName(name: string): string {
 		const names = new Set(this.state.library.projects.map((p) => p.name));
@@ -613,6 +631,86 @@ class Store {
 		if (!s) return false;
 		const round = pat.rounds.find((r) => r.id === s.round);
 		return !!round?.followMarks?.corners.includes(stitchId);
+	}
+
+	// ---- follow progress (TW-028) ------------------------------------------
+	resolveChartPattern(patternId: string): Pattern | undefined {
+		const prj = this.currentProject();
+		if (!prj) return undefined;
+		return activeVersion(prj).patterns.find((p) => p.id === patternId);
+	}
+
+	makePatternRef(refId: string): PatternReference | undefined {
+		const prj = this.currentProject();
+		return prj?.makePatterns?.find((r) => r.id === refId);
+	}
+
+	advanceFollow(refId: string): boolean {
+		const prj = this.currentProject();
+		if (!prj?.makePatterns) return false;
+		const ref = prj.makePatterns.find((r) => r.id === refId);
+		if (!ref || ref.source !== 'threadwick') return false;
+		const chart = this.resolveChartPattern(ref.patternId);
+		if (!chart) return false;
+		const mode = effectiveFollowMode(ref);
+		ref.progress = advancePatternProgress(ref.progress, chart, mode);
+		if (ref.progress.unitsDone > 0 && prj.makerStatus === 'draft') {
+			prj.makerStatus = 'in-progress';
+		}
+		prj.updatedAt = nowISO();
+		this.emit();
+		this.saveLocal();
+		return true;
+	}
+
+	undoFollow(refId: string): boolean {
+		const prj = this.currentProject();
+		if (!prj?.makePatterns) return false;
+		const ref = prj.makePatterns.find((r) => r.id === refId);
+		if (!ref || ref.source !== 'threadwick') return false;
+		const chart = this.resolveChartPattern(ref.patternId);
+		if (!chart) return false;
+		const mode = effectiveFollowMode(ref);
+		const before = ref.progress?.unitsDone ?? 0;
+		ref.progress = undoPatternProgress(ref.progress, chart, mode);
+		if ((ref.progress?.unitsDone ?? 0) === before) return false;
+		prj.updatedAt = nowISO();
+		this.emit();
+		this.saveLocal();
+		return true;
+	}
+
+	setFollowMode(refId: string, mode: FollowMode): boolean {
+		const prj = this.currentProject();
+		if (!prj?.makePatterns) return false;
+		const ref = prj.makePatterns.find((r) => r.id === refId);
+		if (!ref) return false;
+		if (ref.source !== 'threadwick' && mode !== 'checklist') return false;
+		ref.followMode = mode;
+		prj.updatedAt = nowISO();
+		this.emit();
+		this.saveLocal();
+		return true;
+	}
+
+	addMakePatternRef(patternId: string, label?: string): string | null {
+		const prj = this.currentProject();
+		if (!prj) return null;
+		const chart = activeVersion(prj).patterns.find((p) => p.id === patternId);
+		if (!chart) return null;
+		const ref: PatternReference = {
+			id: uid('ref'),
+			label: label ?? chart.name,
+			source: 'threadwick',
+			patternId,
+		};
+		if (!prj.makePatterns) prj.makePatterns = [];
+		prj.makePatterns.push(ref);
+		if (!prj.makerStatus) prj.makerStatus = 'draft';
+		prj.updatedAt = nowISO();
+		this.emit();
+		this.saveLocal();
+		return ref.id;
 	}
 
 	// ---- editor: start -------------------------------------------------------
