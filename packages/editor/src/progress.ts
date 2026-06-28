@@ -44,8 +44,8 @@ function isStructuredMode(mode: FollowMode): mode is DecomposeMode {
 export function effectiveFollowMode(ref: PatternReference): FollowMode {
 	if (ref.source !== 'threadwick') return 'checklist';
 	return (
-		ref.progress?.cursor?.followMode ??
 		ref.followMode ??
+		ref.progress?.cursor?.followMode ??
 		ref.suggestedFollowMode ??
 		'per-row'
 	);
