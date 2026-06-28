@@ -1,5 +1,15 @@
-import { useState } from 'react';
-import { App, Breadcrumb, Button, Card, Dropdown, Empty, Form, Input, Modal } from 'antd';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  Breadcrumb, BreadcrumbItem, BreadcrumbList,
+  Button,
+  Card, CardContent, CardDescription, CardTitle,
+  Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+  Input,
+  Label,
+} from '@threadwick/core/components';
 import {
   PlusIcon, ImportIcon, MoreIcon, DownloadIcon, CopyIcon, DeleteIcon,
 } from '../icons';
@@ -17,42 +27,61 @@ function fmtDate(iso: string): string {
   catch { return ''; }
 }
 
+type NewProjectForm = { name: string; description?: string };
+
+type ConfirmState = {
+  title: string;
+  description?: string;
+  okText: string;
+  destructive?: boolean;
+  onConfirm: () => void;
+};
+
 export function ProjectsView() {
   const s = useStore();
-  const { modal } = App.useApp();
   const [newOpen, setNewOpen] = useState(false);
-  const [form] = Form.useForm<{ name: string; description?: string }>();
+  const [confirm, setConfirm] = useState<ConfirmState | null>(null);
+  const { register, handleSubmit, reset } = useForm<NewProjectForm>();
   const projects = s.state.library.projects;
 
-  const create = () => {
-    form.validateFields().then((v) => {
-      const id = s.createProject(v.name?.trim() || 'Untitled project');
-      if (v.description?.trim()) s.updateProject(id, { description: v.description.trim() });
-      setNewOpen(false); form.resetFields(); s.openProject(id);
-    }).catch(() => { /* validation errors are shown inline by the form */ });
-  };
+  useEffect(() => {
+    if (newOpen) reset({ name: '', description: '' });
+  }, [newOpen, reset]);
+
+  const create = handleSubmit((v) => {
+    const id = s.createProject(v.name?.trim() || 'Untitled project');
+    if (v.description?.trim()) s.updateProject(id, { description: v.description.trim() });
+    setNewOpen(false);
+    reset();
+    s.openProject(id);
+  });
 
   const onImport = async () => {
     const obj = await importProjectFile();
     if (obj) s.openProject(s.importProject(obj));
   };
 
-  const confirmDelete = (p: Project) => modal.confirm({
+  const confirmDelete = (p: Project) => setConfirm({
     title: `Delete “${p.name}”?`,
-    content: 'This removes the project and all its patterns. This can’t be undone.',
-    okText: 'Delete', okButtonProps: { danger: true },
-    onOk: () => s.deleteProject(p.id),
+    description: 'This removes the project and all its patterns. This can’t be undone.',
+    okText: 'Delete',
+    destructive: true,
+    onConfirm: () => s.deleteProject(p.id),
   });
 
   return (
     <div className="home">
       <TopBarSlot>
-        <Breadcrumb className="crumbs" items={[
-          { title: <span className="crumb-here">All projects</span> },
-        ]} />
+        <Breadcrumb className="crumbs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <span className="crumb-here">All projects</span>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <div className="grow" />
-        <Button icon={<ImportIcon />} onClick={onImport}>Import…</Button>
-        <Button type="primary" icon={<PlusIcon />} onClick={() => setNewOpen(true)}>New project</Button>
+        <Button variant="outline" onClick={onImport}><ImportIcon /> Import…</Button>
+        <Button onClick={() => setNewOpen(true)}><PlusIcon /> New project</Button>
       </TopBarSlot>
 
       <div className="page">
@@ -63,65 +92,82 @@ export function ProjectsView() {
             {projects.map((p) => {
               const dv = displayVersion(p);
               return (
-              <Card
-                key={p.id}
-                hoverable
-                className="proj-card"
-                styles={{ body: { padding: 14 } }}
-                cover={<div className="card-cover" onClick={() => s.openProject(p.id)}>
-                  <Thumb pattern={dv.patterns[0]} />
-                  <span className="card-status"><VersionTag status={dv.status} /></span>
-                </div>}
-              >
-                <div className="card-row">
-                  <div className="card-main" role="button" tabIndex={0} onClick={() => s.openProject(p.id)}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); s.openProject(p.id); } }}>
-                    <Card.Meta title={<span className={isPlaceholderName(p.name) ? 'name-placeholder' : undefined}>{p.name}</span>} description={`${dv.label} · ${dv.patterns.length} pattern${dv.patterns.length === 1 ? '' : 's'} · ${fmtDate(p.updatedAt)}`} />
+                <Card key={p.id} className="proj-card">
+                  <div className="card-cover" onClick={() => s.openProject(p.id)}>
+                    <Thumb pattern={dv.patterns[0]} />
+                    <span className="card-status"><VersionTag status={dv.status} /></span>
                   </div>
-                  <Dropdown
-                    trigger={['click']}
-                    menu={{
-                      items: [
-                        { key: 'export', icon: <DownloadIcon />, label: 'Export to file' },
-                        { key: 'dup', icon: <CopyIcon />, label: 'Duplicate' },
-                        { type: 'divider' },
-                        { key: 'del', icon: <DeleteIcon />, label: 'Delete', danger: true },
-                      ],
-                      onClick: ({ key, domEvent }) => {
-                        domEvent.stopPropagation();
-                        if (key === 'export') exportProjectFile(p);
-                        else if (key === 'dup') s.duplicateProject(p.id);
-                        else if (key === 'del') confirmDelete(p);
-                      },
-                    }}
-                  >
-                    <Button type="text" size="small" aria-label="Project actions" icon={<MoreIcon />} onClick={(e) => e.stopPropagation()} />
-                  </Dropdown>
-                </div>
-              </Card>
+                  <CardContent className="p-[14px]">
+                    <div className="card-row">
+                      <div className="card-main" role="button" tabIndex={0} onClick={() => s.openProject(p.id)}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); s.openProject(p.id); } }}>
+                        <CardTitle className="text-base font-semibold leading-snug">
+                          <span className={isPlaceholderName(p.name) ? 'name-placeholder' : undefined}>{p.name}</span>
+                        </CardTitle>
+                        <CardDescription>{`${dv.label} · ${dv.patterns.length} pattern${dv.patterns.length === 1 ? '' : 's'} · ${fmtDate(p.updatedAt)}`}</CardDescription>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="iconSm" aria-label="Project actions" onClick={(e) => e.stopPropagation()}><MoreIcon /></Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem onSelect={() => exportProjectFile(p)}><DownloadIcon /> Export to file</DropdownMenuItem>
+                          <DropdownMenuItem onSelect={() => s.duplicateProject(p.id)}><CopyIcon /> Duplicate</DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem variant="destructive" onSelect={() => confirmDelete(p)}><DeleteIcon /> Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </CardContent>
+                </Card>
               );
             })}
           </div>
         ) : (
           <div className="empty-wrap">
-            <Empty
-              image={<div className="empty-art"><Glyph type="dc" size={56} /><Glyph type="mr" size={56} /><Glyph type="tr" size={56} /></div>}
-              description={<><h2>Start your first project</h2><p className="muted">A project is your folder for everything: patterns, the yarns you used, video links and notes.</p></>}
-            >
-              <Button type="primary" size="large" icon={<PlusIcon />} onClick={() => setNewOpen(true)}>New project</Button>
-            </Empty>
+            <div className="empty-art"><Glyph type="dc" size={56} /><Glyph type="mr" size={56} /><Glyph type="tr" size={56} /></div>
+            <h2>Start your first project</h2>
+            <p className="muted">A project is your folder for everything: patterns, the yarns you used, video links and notes.</p>
+            <Button size="lg" className="mt-4" onClick={() => setNewOpen(true)}><PlusIcon /> New project</Button>
           </div>
         )}
       </div>
 
       <footer className="home-foot">Saved in your browser · export any project to a file to back it up or share it</footer>
 
-      <Modal title="New project" open={newOpen} onOk={create} okText="Create" onCancel={() => setNewOpen(false)} destroyOnHidden>
-        <Form form={form} layout="vertical" requiredMark={false} onFinish={create}>
-          <Form.Item name="name" label="Name"><Input placeholder="e.g. Spring blanket" autoFocus /></Form.Item>
-          <Form.Item name="description" label="Description"><Input.TextArea rows={2} placeholder="Optional" /></Form.Item>
-        </Form>
-      </Modal>
+      <Dialog open={newOpen} onOpenChange={setNewOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>New project</DialogTitle></DialogHeader>
+          <form id="new-project-form" className="form-stack" onSubmit={create}>
+            <div className="form-field">
+              <Label htmlFor="project-name">Name</Label>
+              <Input id="project-name" placeholder="e.g. Spring blanket" autoFocus {...register('name')} />
+            </div>
+            <div className="form-field">
+              <Label htmlFor="project-desc">Description</Label>
+              <textarea id="project-desc" className="form-textarea" rows={2} placeholder="Optional" {...register('description')} />
+            </div>
+          </form>
+          <DialogFooter>
+            <DialogClose asChild><Button variant="outline" type="button">Cancel</Button></DialogClose>
+            <Button type="submit" form="new-project-form">Create</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={!!confirm} onOpenChange={(o) => { if (!o) setConfirm(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{confirm?.title}</AlertDialogTitle>
+            {confirm?.description && <AlertDialogDescription>{confirm.description}</AlertDialogDescription>}
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction variant={confirm?.destructive ? 'destructive' : 'default'}
+              onClick={() => { confirm?.onConfirm(); setConfirm(null); }}>{confirm?.okText ?? 'OK'}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
