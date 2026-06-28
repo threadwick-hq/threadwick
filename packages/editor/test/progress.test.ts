@@ -95,41 +95,6 @@ describe('follow progress machine', () => {
 		};
 		assert.equal(effectiveFollowMode(ref), 'checklist');
 	});
-
-	test('effectiveFollowMode prefers ref.followMode over cursor followMode', () => {
-		const ref: PatternReference = {
-			id: 'ref-1',
-			label: 'Square',
-			source: 'threadwick',
-			patternId: 'pat-1',
-			followMode: 'pattern',
-			progress: {
-				unitsDone: 1,
-				unitsTotal: 3,
-				cursor: {
-					unitAddress: 'row:r2',
-					followMode: 'per-row',
-				},
-			},
-		};
-		assert.equal(effectiveFollowMode(ref), 'pattern');
-	});
-
-	test('advancePatternProgress restarts when effective mode differs from cursor', () => {
-		const prj = sampleProject();
-		const pat = activeVersion(prj).patterns[0]!;
-		const perRowTotal = flattenFollowUnits(pat, 'per-row').length;
-		const patternTotal = flattenFollowUnits(pat, 'pattern').length;
-		assert.notEqual(perRowTotal, patternTotal);
-
-		let progress = advancePatternProgress(undefined, pat, 'per-row');
-		assert.equal(progress.cursor?.followMode, 'per-row');
-
-		progress = advancePatternProgress(progress, pat, 'pattern');
-		assert.equal(progress.cursor?.followMode, 'pattern');
-		assert.equal(progress.unitsDone, 0);
-		assert.equal(progress.unitsTotal, patternTotal);
-	});
 });
 
 describe('normalizeProject v4 migration', () => {

@@ -6,9 +6,9 @@ import type { IconGlyph } from './Logo';
  * runtime icon system), brand marks are fixed identity assets, so their geometry is
  * committed here.
  *
- * All three marks (`REEL`, `COMPASS_DRAFTING`, `STORE`) are original artwork — freely
- * committable. Use `scripts/gen-brand-glyphs.ts` only as an optional FA reference utility;
- * it never runs during build and never overwrites this file.
+ * `REEL` (the primary Threadwick mark) is ORIGINAL artwork — freely committable. The
+ * Studio and Marketplace marks are still Font Awesome Regular geometry pending custom
+ * replacements.
  */
 /** Threadwick — an original thread-spool mark: two slim flanges over three wound coils. */
 export const REEL: IconGlyph = {
@@ -16,14 +16,12 @@ export const REEL: IconGlyph = {
 	path: 'M3.5,0 H42.5 A3.5,3.5 0 0 1 42.5,7 H3.5 A3.5,3.5 0 0 1 3.5,0 Z M3.5,53 H42.5 A3.5,3.5 0 0 1 42.5,60 H3.5 A3.5,3.5 0 0 1 3.5,53 Z M8.5,14 H37.5 A3.5,3.5 0 0 1 37.5,21 H8.5 A3.5,3.5 0 0 1 8.5,14 Z M8.5,26 H37.5 A3.5,3.5 0 0 1 37.5,33 H8.5 A3.5,3.5 0 0 1 8.5,26 Z M8.5,38 H37.5 A3.5,3.5 0 0 1 37.5,45 H8.5 A3.5,3.5 0 0 1 8.5,38 Z',
 };
 
-/** Threadwick Studio — an original drafting-compass mark: hinge, needle leg, pencil leg. */
 export const COMPASS_DRAFTING: IconGlyph = {
-	viewBox: '0 0 48 56',
-	path: 'M14,0 H34 A3.5,3.5 0 0 1 34,7 H14 A3.5,3.5 0 0 1 14,0 Z M21,2 H27 A2,2 0 0 1 27,6 H21 A2,2 0 0 1 21,2 Z M20,7 L11,49 A2.5,2.5 0 0 0 7,51 L16,9 A2,2 0 0 0 20,7 Z M28,7 L37,49 A2.5,2.5 0 0 1 41,51 L32,9 A2,2 0 0 1 28,7 Z M29,36 H35 A1.5,1.5 0 0 1 35,39 H29 A1.5,1.5 0 0 1 29,36 Z',
+	viewBox: '0 0 512 512',
+	path: 'M304 96a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm-19.6 91.7c-9 2.8-18.5 4.3-28.4 4.3s-19.4-1.5-28.4-4.3L158.1 306.4c29.7 13.9 62.9 21.6 97.9 21.6 85.8 0 160.8-46.6 201-116 6.6-11.5 21.3-15.4 32.8-8.8s15.4 21.3 8.8 32.8c-48.4 83.6-138.9 140-242.5 140-43.8 0-85.3-10.1-122.2-28L44.7 500.1c-6.7 11.4-21.4 15.3-32.8 8.6s-15.3-21.4-8.6-32.8L92.6 323.4c-32.1-23.1-59.2-52.9-79.1-87.4-6.6-11.5-2.7-26.2 8.8-32.8S48.4 200.5 55 212c15.8 27.2 36.9 51 61.9 69.7l69.8-119.2C170.2 145.2 160 121.8 160 96 160 43 203 0 256 0s96 43 96 96c0 25.8-10.2 49.2-26.7 66.5L370.6 240c-12.5 10-26.3 18.3-41.1 24.8l-45.1-77zM508.7 475.9c6.7 11.4 2.9 26.1-8.6 32.8s-26.1 2.9-32.8-8.6L402.5 389.5c14.4-7.2 28.2-15.4 41.2-24.6l64.9 110.9z',
 };
 
-/** Threadwick Marketplace — an original storefront mark: awning scallops over a shop body. */
 export const STORE: IconGlyph = {
-	viewBox: '0 0 48 52',
-	path: 'M4,0 H44 A3.5,3.5 0 0 1 44,7 H4 A3.5,3.5 0 0 1 4,0 Z M6,10 H18 A3.5,3.5 0 0 1 18,17 H6 A3.5,3.5 0 0 1 6,10 Z M18,10 H30 A3.5,3.5 0 0 1 30,17 H18 A3.5,3.5 0 0 1 18,10 Z M30,10 H42 A3.5,3.5 0 0 1 42,17 H30 A3.5,3.5 0 0 1 30,10 Z M8,22 H40 A3.5,3.5 0 0 1 40,48 H8 A3.5,3.5 0 0 1 8,22 Z M22,34 H26 A2,2 0 0 1 26,48 H22 A2,2 0 0 1 22,34 Z',
+	viewBox: '0 0 512 512',
+	path: 'M29.9 81.9C40.4 52 68.6 32 100.3 32l312.2 0c31.7 0 59.9 20 70.4 49.9l18.4 52.6c11 31.5 1 63.9-20.9 84.4l0 189.2c0 39.8-32.2 72-72 72l-304 0c-39.8 0-72-32.2-72-72l0-189.2C10.5 198.4 .5 166 11.5 134.5L29.9 81.9zM80.4 239.8l0 80.2 352 0 0-80.2c-2 .1-3.9 .2-5.9 .2-21.8 0-41.8-8.9-56.2-23.3-14.6 14.4-34.6 23.3-56.9 23.3-22.2 0-42.4-9-57-23.5-14.6 14.5-34.8 23.5-57 23.5-22.3 0-42.3-8.9-56.9-23.3-14.4 14.5-34.3 23.3-56.2 23.3-2 0-4-.1-6-.2zM174.1 80l-7.6 75.7c-1.9 19.4 13.3 36.3 32.8 36.3 18.2 0 33-14.8 33-33l0-79-58.3 0zm106.3 79c0 18.2 14.8 33 33 33 19.5 0 34.8-16.9 32.8-36.3l-7.6-75.7-58.3 0 0 79zm114.9 4.8c1.6 16 15.1 28.2 31.1 28.2 21.6 0 36.7-21.3 29.5-41.6L437.6 97.8C433.9 87.1 423.8 80 412.5 80l-25.6 0 8.4 83.8zM86.4 192c16.1 0 29.5-12.2 31.1-28.2l8.4-83.8-25.6 0C89 80 79 87.1 75.2 97.8L56.8 150.4c-7.1 20.4 8 41.6 29.5 41.6zm-6 216c0 13.3 10.7 24 24 24l304 0c13.3 0 24-10.7 24-24l0-40-352 0 0 40z',
 };

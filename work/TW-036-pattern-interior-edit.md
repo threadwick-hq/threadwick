@@ -7,8 +7,11 @@ area:
   - packages/core
   - packages/icons
 phase: 6
-status: backlog
+status: review
 priority: p2
+assignee: agent
+started: 2026-06-28
+pr: 31
 created: 2026-06-23
 acceptance:
   - the edit-mode rail renders details tile + Overview + Components/artifacts + Materials + version tile
@@ -30,10 +33,11 @@ Depends on: TW-035, TW-025.
 
 ## Acceptance
 
-- [ ] the edit-mode rail renders details tile + Overview + Components/artifacts + Materials + version tile
-- [ ] the Overview shows description, photos, key-facts tiles, and a navigable what-is-inside
-- [ ] no layout shift entering the interior
+- [x] the edit-mode rail renders details tile + Overview + Components/artifacts + Materials + version tile
+- [x] the Overview shows description, photos, key-facts tiles, and a navigable what-is-inside
+- [x] no layout shift entering the interior
 
 ## Log
 
 - 2026-06-23 created (Phase 6 re-scope from the studio redesign handoff).
+- 2026-06-28 claimed by agent; stacked on TW-034 + TW-035; pattern interior shell, rail, overview, and workbench pattern store.
