@@ -5,9 +5,10 @@ type: chore
 area:
   - packages/core
 phase: 8
-status: active
+status: review
 priority: p1
 created: 2026-06-23
+pr: 28
 acceptance:
   - COMPASS_DRAFTING + STORE in packages/core/src/brand/glyphs.ts are original artwork, not Font Awesome geometry
   - no Font-Awesome-derived path data remains in committed brand marks
