@@ -14,6 +14,10 @@ export default [
 			index('routes/studio/project/overview.tsx'),
 			route('materials', 'routes/studio/project/materials.tsx'),
 		]),
+		route('patterns', 'routes/studio/patterns-index.tsx'),
+		route('patterns/:patternId', 'routes/studio/pattern.tsx', [
+			index('routes/studio/pattern/overview.tsx'),
+		]),
 		// Every other destination (Workbench, Library, Marketplace, …) is a placeholder for now.
 		route('*', 'routes/studio/section.tsx'),
 	]),

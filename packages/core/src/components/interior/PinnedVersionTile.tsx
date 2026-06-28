@@ -23,6 +23,8 @@ export type PinnedVersionTileProps = {
 	onVersionChange?: (versionId: string) => void;
 	primaryAction?: ReactNode;
 	secondaryAction?: ReactNode;
+	/** When false, hide the publish/remix action row (view-mode version switcher only). */
+	showActions?: boolean;
 	className?: string;
 };
 
@@ -101,6 +103,7 @@ export function PinnedVersionTile({
 	onVersionChange,
 	primaryAction,
 	secondaryAction,
+	showActions = true,
 	className,
 }: PinnedVersionTileProps) {
 	return (
@@ -114,18 +117,20 @@ export function PinnedVersionTile({
 					onVersionChange={onVersionChange}
 				/>
 			</div>
-			<div className="mt-2 flex gap-2">
-				{primaryAction ?? (
-					<Button type="button" className="h-8 flex-1 text-[11.5px]" disabled>
-						Publish version
-					</Button>
-				)}
-				{secondaryAction ?? (
-					<Button type="button" variant="outline" className="h-8 px-3 text-[11.5px]" disabled>
-						Remix
-					</Button>
-				)}
-			</div>
+			{showActions ? (
+				<div className="mt-2 flex gap-2">
+					{primaryAction ?? (
+						<Button type="button" className="h-8 flex-1 text-[11.5px]" disabled>
+							Publish version
+						</Button>
+					)}
+					{secondaryAction ?? (
+						<Button type="button" variant="outline" className="h-8 px-3 text-[11.5px]" disabled>
+							Remix
+						</Button>
+					)}
+				</div>
+			) : null}
 		</div>
 	);
 }

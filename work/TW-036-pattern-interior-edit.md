@@ -7,12 +7,13 @@ area:
   - packages/core
   - packages/icons
 phase: 6
-status: review
+status: done
 priority: p2
 assignee: agent
 started: 2026-06-28
-pr: 31
+pr: 32
 created: 2026-06-23
+completed: 2026-06-28
 acceptance:
   - the edit-mode rail renders details tile + Overview + Components/artifacts + Materials + version tile
   - the Overview shows description, photos, key-facts tiles, and a navigable what-is-inside
@@ -41,3 +42,4 @@ Depends on: TW-035, TW-025.
 
 - 2026-06-23 created (Phase 6 re-scope from the studio redesign handoff).
 - 2026-06-28 claimed by agent; stacked on TW-034 + TW-035; pattern interior shell, rail, overview, and workbench pattern store.
+- 2026-06-28 merged via PR #32 (squash).
