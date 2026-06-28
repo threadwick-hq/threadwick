@@ -205,7 +205,7 @@ export function undoPatternProgress(
 
 function refUnitsDone(
 	ref: PatternReference,
-	resolvePattern: (patternId: string) => Pattern | undefined,
+	_resolvePattern: (patternId: string) => Pattern | undefined,
 ): number {
 	if (ref.progress?.completed) {
 		return ref.progress.unitsTotal ?? ref.progress.unitsDone;

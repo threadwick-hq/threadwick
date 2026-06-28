@@ -5,14 +5,15 @@ type: chore
 area:
   - repo
 phase: 8
-status: backlog
+status: active
 priority: p3
 created: 2026-06-22
 acceptance:
   - CI build + typecheck cover apps/* and root, not only packages/*
   - the suite is green once the migration apps stabilize
+assignee: agent
+started: 2026-06-28
 ---
-
 ## Context
 
 CI currently runs `turbo build typecheck --filter=./packages/*` only. Apps are mid-migration and not
@@ -26,9 +27,11 @@ Out: the Biome hardening (TW-007).
 
 ## Acceptance
 
-- [ ] CI build + typecheck cover apps/* and root
-- [ ] suite green after the migration apps stabilize
+- [x] CI build + typecheck cover apps/* and root
+- [x] suite green after the migration apps stabilize
 
 ## Log
 
+- 2026-06-28 Widened CI filter to `./packages/*` + `./apps/*`; fixed unused `resolvePattern` param in `refUnitsDone` so studio typecheck passes.
+- 2026-06-28 claimed by agent.
 - 2026-06-22 created. Deferred until the migration apps are stable.
