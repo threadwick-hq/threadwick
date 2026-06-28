@@ -13,11 +13,14 @@ import type {
 	PatternReference,
 	Project,
 	ProjectFile,
+	ProjectPhoto,
 	ProjectVersion,
 	Resources,
 	Round,
 	Stitch,
 	StitchType,
+	UsedTool,
+	UsedYarn,
 	VersionStatus,
 } from './types';
 import { deepClone, nowISO, uid } from './util';
@@ -423,6 +426,62 @@ function normalizeMakePatterns(
 	return refs.length ? refs : undefined;
 }
 
+function normalizeUsedYarns(raw: unknown): UsedYarn[] | undefined {
+	if (!Array.isArray(raw)) return undefined;
+	const yarns = raw
+		.map((item) => {
+			if (!item || typeof item !== 'object') return null;
+			const y = item as Record<string, unknown>;
+			if (typeof y.id !== 'string' || typeof y.label !== 'string') return null;
+			const yarn: UsedYarn = { id: y.id, label: y.label };
+			if (typeof y.stashId === 'string') yarn.stashId = y.stashId;
+			if (typeof y.colorway === 'string') yarn.colorway = y.colorway;
+			if (typeof y.quantity === 'string') yarn.quantity = y.quantity;
+			if (typeof y.acquired === 'boolean') yarn.acquired = y.acquired;
+			return yarn;
+		})
+		.filter(Boolean) as UsedYarn[];
+	return yarns.length ? yarns : undefined;
+}
+
+function normalizeUsedTools(raw: unknown): UsedTool[] | undefined {
+	if (!Array.isArray(raw)) return undefined;
+	const tools = raw
+		.map((item) => {
+			if (!item || typeof item !== 'object') return null;
+			const t = item as Record<string, unknown>;
+			if (typeof t.id !== 'string' || typeof t.label !== 'string') return null;
+			const tool: UsedTool = { id: t.id, label: t.label };
+			if (typeof t.stashId === 'string') tool.stashId = t.stashId;
+			if (typeof t.acquired === 'boolean') tool.acquired = t.acquired;
+			return tool;
+		})
+		.filter(Boolean) as UsedTool[];
+	return tools.length ? tools : undefined;
+}
+
+function normalizeProjectPhotos(raw: unknown): ProjectPhoto[] | undefined {
+	if (!Array.isArray(raw)) return undefined;
+	const photos = raw
+		.map((item) => {
+			if (!item || typeof item !== 'object') return null;
+			const p = item as Record<string, unknown>;
+			if (typeof p.id !== 'string') return null;
+			const image = p.image as Record<string, unknown> | undefined;
+			if (!image || typeof image.src !== 'string') return null;
+			const photo: ProjectPhoto = {
+				id: p.id,
+				image: { src: image.src },
+			};
+			if (typeof image.alt === 'string') photo.image.alt = image.alt;
+			if (typeof image.caption === 'string') photo.image.caption = image.caption;
+			if (typeof p.patternRefId === 'string') photo.patternRefId = p.patternRefId;
+			return photo;
+		})
+		.filter(Boolean) as ProjectPhoto[];
+	return photos.length ? photos : undefined;
+}
+
 export function normalizeProject(p: any = {}): Project {
 	const prj = newProject(p.name);
 	if (p.id) prj.id = p.id;
@@ -460,9 +519,21 @@ export function normalizeProject(p: any = {}): Project {
 	if (makerStatus) prj.makerStatus = makerStatus;
 	else if (makePatterns?.some((r) => r.progress?.unitsDone)) {
 		prj.makerStatus = 'in-progress';
-	} else if (makePatterns?.length) {
+	} 	else if (makePatterns?.length) {
 		prj.makerStatus = 'draft';
 	}
+
+	const photos = normalizeProjectPhotos(p.photos);
+	if (photos) prj.photos = photos;
+	const yarns = normalizeUsedYarns(p.yarns);
+	if (yarns) prj.yarns = yarns;
+	const tools = normalizeUsedTools(p.tools);
+	if (tools) prj.tools = tools;
+	if (typeof p.timeLoggedMs === 'number' && p.timeLoggedMs >= 0) {
+		prj.timeLoggedMs = p.timeLoggedMs;
+	}
+	if (typeof p.lastWorkedAt === 'string') prj.lastWorkedAt = p.lastWorkedAt;
+	if (typeof p.ravelryProjectId === 'string') prj.ravelryProjectId = p.ravelryProjectId;
 
 	return prj;
 }

@@ -6,7 +6,10 @@ import type {
 	PatternProgress,
 	PatternReference,
 	ProgressCursor,
+	ProjectPhoto,
 	UnitAddress,
+	UsedTool,
+	UsedYarn,
 } from '@threadwick/types';
 
 export type {
@@ -15,7 +18,10 @@ export type {
 	PatternProgress,
 	PatternReference,
 	ProgressCursor,
+	ProjectPhoto,
 	UnitAddress,
+	UsedTool,
+	UsedYarn,
 };
 
 export type StitchType =
@@ -154,6 +160,13 @@ export interface Project {
 	makerStatus?: MakerStatus;
 	/** Source-tagged pattern refs for Follow (§5/§6); converges with @threadwick/types Project.patterns in Phase 7. */
 	makePatterns?: PatternReference[];
+	/** Maker-plane overview fields (§5) — converge with @threadwick/types Project in Phase 7. */
+	photos?: ProjectPhoto[];
+	yarns?: UsedYarn[];
+	tools?: UsedTool[];
+	timeLoggedMs?: number;
+	lastWorkedAt?: string;
+	ravelryProjectId?: string;
 }
 
 export interface Point {

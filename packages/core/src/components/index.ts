@@ -5,6 +5,7 @@
 export * from './Stack';
 export * from './follow';
 export * from './interior';
+export * from './overview';
 export * from './ui/accordion';
 export * from './ui/alert';
 export * from './ui/alert-dialog';

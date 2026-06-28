@@ -172,6 +172,7 @@ export function sampleProject(): Project {
 	r2.followMarks = { corners: r2Corners, repeats: [] };
 	activeVersion(prj).patterns.push(pat);
 	const refId = uid('ref');
+	const lastWorkedAt = new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString();
 	prj.makePatterns = [
 		{
 			id: refId,
@@ -179,7 +180,32 @@ export function sampleProject(): Project {
 			source: 'threadwick',
 			patternId: pat.id,
 			suggestedFollowMode: 'pattern',
+			progress: {
+				unitsDone: 5,
+				unitsTotal: 11,
+				updatedAt: lastWorkedAt,
+			},
 		},
 	];
+	prj.makerStatus = 'in-progress';
+	prj.ravelryProjectId = 'rvl-fixture-1';
+	prj.timeLoggedMs = (14 * 3600 + 20 * 60) * 1000;
+	prj.lastWorkedAt = lastWorkedAt;
+	prj.photos = [{ id: uid('photo'), image: { src: '', alt: 'Progress photo' } }];
+	prj.yarns = [
+		{
+			id: uid('yarn'),
+			label: 'Cotton DK · sage green',
+			stashId: 'stash-1',
+			acquired: true,
+		},
+		{
+			id: uid('yarn'),
+			label: 'Cotton DK · cream',
+			stashId: 'stash-2',
+			acquired: true,
+		},
+	];
+	prj.tools = [{ id: uid('tool'), label: 'Hook 4.0 mm', acquired: false }];
 	return normalizeProject(prj);
 }

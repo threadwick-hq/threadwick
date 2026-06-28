@@ -47,7 +47,7 @@ describe('follow UI helpers', () => {
 	test('resolveFollowContext uses suggested follow mode from ref', () => {
 		const prj = sampleProject();
 		const pat = activeVersion(prj).patterns[0]!;
-		const ref = prj.makePatterns![0]!;
+		const ref = { ...prj.makePatterns![0]!, progress: undefined };
 		const ctx = resolveFollowContext(ref, pat);
 		assert.equal(ctx.mode, 'pattern');
 		assert.equal(ctx.actionLabel, 'Next repeat');
