@@ -33,9 +33,26 @@ export interface Stitch {
 	auto?: boolean; // chains: auto-align between neighbours (default true)
 }
 
+/** Explicit repeat region for follow decomposition (TW-027). */
+export interface RepeatMark {
+	id: string;
+	fromStitchId: string;
+	toStitchId: string;
+	/** Times the template is worked; default 1. */
+	times?: number;
+}
+
+/** Authoring marks that drive per-row / pattern / granular decomposition (TW-027). */
+export interface RoundFollowMarks {
+	/** Stitch ids flagged as corner positions (chain order). */
+	corners: string[];
+	repeats: RepeatMark[];
+}
+
 export interface Round {
 	id: string;
 	name: string;
+	followMarks?: RoundFollowMarks;
 }
 export interface PatternView {
 	scale: number;

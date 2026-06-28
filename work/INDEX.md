@@ -2,7 +2,7 @@
 
 Generated from `work/*.md` frontmatter by `scripts/work.ts`. Do not edit by hand; run `pnpm run work index`.
 
-Totals: backlog 33 · active 0 · review 0 · done 12 · blocked 0 · abandoned 5
+Totals: backlog 32 · active 0 · review 0 · done 13 · blocked 0 · abandoned 5
 
 | ID | Title | Type | Area | Phase | Status | Priority | Assignee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -14,7 +14,6 @@ Totals: backlog 33 · active 0 · review 0 · done 12 · blocked 0 · abandoned 
 | TW-023 | Implement the craft picker as a studio-wide persisted scope with inclusion semantics | feat | apps/web, packages/core, packages/types | 6 | backlog | p2 | - |
 | TW-024 | Build the mobile bottom tab bar and responsive sidebar collapse | feat | apps/web, packages/core | 6 | backlog | p2 | - |
 | TW-025 | Define the identity-tile slot-swap and breadcrumb contract for interiors (no layout shift) | feat | apps/web, packages/core | 6 | backlog | p2 | - |
-| TW-027 | Build the instruction-decomposition engine (round to follow Units per granularity) | feat | packages/editor, packages/types | 6 | backlog | p1 | - |
 | TW-028 | Build the Follow progress state machine, Undo and aggregation (FILE_VERSION 3 to 4) | feat | packages/editor, packages/types | 6 | backlog | p1 | - |
 | TW-029 | Build the Follow instruction box, counter pills and mode selector (phone baseline) | feat | apps/web, packages/core | 6 | backlog | p1 | - |
 | TW-030 | Build the Follow chart pane (state styling, follow-position, zoom, tap-to-inspect) | feat | apps/web, packages/editor | 6 | backlog | p1 | - |
@@ -49,6 +48,7 @@ Totals: backlog 33 · active 0 · review 0 · done 12 · blocked 0 · abandoned 
 | TW-020 | Build the StudioShell layout route with the UWD cap-and-centre rule | feat | apps/web, packages/core | 6 | done | p1 | agent |
 | TW-021 | Build the always-expanded sidebar nav with sections, counts and active state | feat | apps/web, packages/core, packages/icons | 6 | done | p1 | agent |
 | TW-026 | Land the maker-plane Project model (references, progress, status, follow-mode) in @threadwick/types | feat | packages/types | 6 | done | p1 | agent |
+| TW-027 | Build the instruction-decomposition engine (round to follow Units per granularity) | feat | packages/editor, packages/types | 6 | done | p1 | agent |
 | TW-002 | Factor the editor/viewer out of apps/studio into packages/editor | refactor | apps/studio, packages/editor | 6 | abandoned | p1 | - |
 | TW-003 | Migrate the editor chrome from AntD to shadcn | refactor | packages/editor, apps/studio | 6 | abandoned | p1 | - |
 | TW-004 | Mount @threadwick/editor in apps/web as a client-only /studio route | feat | apps/web, packages/editor | 6 | abandoned | p1 | - |

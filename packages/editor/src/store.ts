@@ -33,6 +33,7 @@ import {
 	normalizeProject,
 	nowISO,
 	PATTERN_TYPES,
+	pruneFollowMarks,
 	publishedVersion,
 	startRowId,
 	topOfStitch,
@@ -556,6 +557,64 @@ class Store {
 		});
 	}
 
+	// ---- editor: follow marks (TW-027) -------------------------------------
+	toggleCornerMark(stitchId: string): void {
+		this.editTransact((pat) => {
+			const s = pat.stitches.find((x) => x.id === stitchId);
+			if (!s || isStartRow(pat, s.round) || isStart(s.type)) return;
+			const round = pat.rounds.find((r) => r.id === s.round);
+			if (!round) return;
+			if (!round.followMarks) round.followMarks = { corners: [], repeats: [] };
+			const corners = round.followMarks.corners;
+			const i = corners.indexOf(stitchId);
+			if (i >= 0) corners.splice(i, 1);
+			else corners.push(stitchId);
+			if (!round.followMarks.corners.length && !round.followMarks.repeats.length)
+				round.followMarks = undefined;
+		});
+	}
+	setRepeatOnSelection(times = 1): void {
+		if (this.selection.size < 2 || !this.isDraftActive()) return;
+		const pat = this.currentPattern();
+		if (!pat) return;
+		const roundId = pat.activeRound;
+		if (isStartRow(pat, roundId)) return;
+		const order = chainOrder(pat.stitches, roundId).filter(
+			(s) => !isStart(s.type),
+		);
+		const selected = order.filter((s) => this.selection.has(s.id));
+		if (selected.length < 2) return;
+		const fromStitchId = selected[0]!.id;
+		const toStitchId = selected[selected.length - 1]!.id;
+		this.editTransact((p) => {
+			const round = p.rounds.find((r) => r.id === roundId);
+			if (!round) return;
+			if (!round.followMarks) round.followMarks = { corners: [], repeats: [] };
+			round.followMarks.repeats.push({
+				id: uid('rep'),
+				fromStitchId,
+				toStitchId,
+				times: Math.max(1, Math.floor(times)),
+			});
+		});
+	}
+	clearFollowMarks(roundId?: string): void {
+		this.editTransact((pat) => {
+			for (const round of pat.rounds) {
+				if (roundId && round.id !== roundId) continue;
+				round.followMarks = undefined;
+			}
+		});
+	}
+	isCornerMarked(stitchId: string): boolean {
+		const pat = this.currentPattern();
+		if (!pat) return false;
+		const s = pat.stitches.find((x) => x.id === stitchId);
+		if (!s) return false;
+		const round = pat.rounds.find((r) => r.id === s.round);
+		return !!round?.followMarks?.corners.includes(stitchId);
+	}
+
 	// ---- editor: start -------------------------------------------------------
 	// The start marker goes (alone) into the existing Start row (row 0). After it's
 	// chosen we hop to the first working row so you can crochet straight away.
@@ -782,6 +841,7 @@ class Store {
 				return cur;
 			};
 			pat.stitches = pat.stitches.filter((s) => !set.has(s.id));
+			pruneFollowMarks(pat, set);
 			for (const s of pat.stitches) {
 				if (s.origin && set.has(s.origin)) s.origin = resolve(s.origin);
 				if (s.base && s.base.kind === 'stitch' && set.has(s.base.id))

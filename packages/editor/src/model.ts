@@ -142,6 +142,27 @@ export function nextVersionLabel(prj: Project): string {
 
 // ---- normalisation / migration --------------------------------------------
 // biome-ignore-start lint/suspicious/noExplicitAny: the normalize* functions parse untrusted legacy project JSON at the migration boundary; `any` is the deliberate input type here.
+function normalizeFollowMarks(m: any) {
+	if (!m) return undefined;
+	const corners = Array.isArray(m.corners) ? m.corners.map(String) : [];
+	const repeats = Array.isArray(m.repeats)
+		? m.repeats
+				.map((rep: any) => {
+					if (!rep?.fromStitchId || !rep?.toStitchId) return null;
+					return {
+						id: rep.id || uid('rep'),
+						fromStitchId: String(rep.fromStitchId),
+						toStitchId: String(rep.toStitchId),
+						times:
+							rep.times != null ? Math.max(1, Math.floor(+rep.times)) : undefined,
+					};
+				})
+				.filter(Boolean)
+		: [];
+	if (!corners.length && !repeats.length) return undefined;
+	return { corners, repeats };
+}
+
 function normalizeStitch(s: any): Stitch | null {
 	if (!s || !s.type) return null;
 	let base: Base = null;
@@ -180,6 +201,7 @@ export function normalizePattern(p: any = {}): Pattern {
 		pat.rounds = p.rounds.map((r: any, i: number) => ({
 			id: r.id || uid('rnd'),
 			name: r.name || 'Round ' + (i + 1),
+			followMarks: normalizeFollowMarks(r.followMarks),
 		}));
 	}
 	pat.start = (p.start ?? null) as StitchType | null;
