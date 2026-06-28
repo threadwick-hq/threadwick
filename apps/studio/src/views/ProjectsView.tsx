@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
   Breadcrumb, BreadcrumbItem, BreadcrumbList,
   Button,
   Card, CardContent, CardDescription, CardTitle,
@@ -9,6 +8,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
   Input,
   Label,
+  confirm,
 } from '@threadwick/core/components';
 import {
   PlusIcon, ImportIcon, MoreIcon, DownloadIcon, CopyIcon, DeleteIcon,
@@ -29,18 +29,9 @@ function fmtDate(iso: string): string {
 
 type NewProjectForm = { name: string; description?: string };
 
-type ConfirmState = {
-  title: string;
-  description?: string;
-  okText: string;
-  destructive?: boolean;
-  onConfirm: () => void;
-};
-
 export function ProjectsView() {
   const s = useStore();
   const [newOpen, setNewOpen] = useState(false);
-  const [confirm, setConfirm] = useState<ConfirmState | null>(null);
   const { register, handleSubmit, reset } = useForm<NewProjectForm>();
   const projects = s.state.library.projects;
 
@@ -61,7 +52,7 @@ export function ProjectsView() {
     if (obj) s.openProject(s.importProject(obj));
   };
 
-  const confirmDelete = (p: Project) => setConfirm({
+  const confirmDelete = (p: Project) => confirm({
     title: `Delete “${p.name}”?`,
     description: 'This removes the project and all its patterns. This can’t be undone.',
     okText: 'Delete',
@@ -154,20 +145,6 @@ export function ProjectsView() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <AlertDialog open={!!confirm} onOpenChange={(o) => { if (!o) setConfirm(null); }}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{confirm?.title}</AlertDialogTitle>
-            {confirm?.description && <AlertDialogDescription>{confirm.description}</AlertDialogDescription>}
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction variant={confirm?.destructive ? 'destructive' : 'default'}
-              onClick={() => { confirm?.onConfirm(); setConfirm(null); }}>{confirm?.okText ?? 'OK'}</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
