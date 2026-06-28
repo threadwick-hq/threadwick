@@ -16,7 +16,7 @@ import {
 } from '@threadwick/editor';
 import type { MakerStatus, PatternReference } from '@threadwick/types';
 import { Icon } from '@threadwick/icons';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link, Outlet, useParams } from 'react-router';
 import { InteriorChromeSlot } from './interior-chrome';
 import {
@@ -111,43 +111,37 @@ function ProjectInteriorChrome({
 	projectId: string;
 }) {
 	const store = useStudioStore();
+	if (!store) return null;
+
 	const status: MakerStatus = project.makerStatus ?? 'draft';
-	const makePatterns = project.makePatterns ?? [];
 
-	const handleStatusChange = useCallback(
-		(next: MakerStatus) => {
-			if (!store) return;
-			store.updateProject(projectId, { makerStatus: next });
-			if (isRavelryEnabled() && project.ravelryProjectId) {
-				pushProjectStatusToRavelry(project.ravelryProjectId, next);
-			}
-			store.saveLocal();
-		},
-		[project.ravelryProjectId, projectId, store],
-	);
+	const handleStatusChange = (next: MakerStatus) => {
+		store.updateProject(projectId, { makerStatus: next });
+		if (isRavelryEnabled() && project.ravelryProjectId) {
+			pushProjectStatusToRavelry(project.ravelryProjectId, next);
+		}
+		store.saveLocal();
+	};
 
-	// Pull remote status only when entering the project or when the Ravelry link
-	// changes — not after every local status edit (lossy draft↔hibernating round-trip).
 	useEffect(() => {
-		if (!store || !isRavelryEnabled() || !project.ravelryProjectId) return;
+		if (!isRavelryEnabled() || !project.ravelryProjectId) return;
 		const remote = pullProjectStatusFromRavelry(project.ravelryProjectId);
 		if (remote && remote !== (project.makerStatus ?? 'draft')) {
 			store.updateProject(projectId, { makerStatus: remote });
 			store.saveLocal();
 		}
-	}, [project.ravelryProjectId, projectId, store]);
+	}, [project.makerStatus, project.ravelryProjectId, projectId, store]);
 
-	const chrome = useMemo(() => {
-		if (!store) return null;
+	const patterns = project.makePatterns ?? [];
+	const resolvePattern = (patternId: string) => resolvePatternInProject(project, patternId);
+	const aggregate = aggregateProjectProgress(project, resolvePattern);
+	const continueRef = continueMakingRef(project);
+	const continueHref = continueRef
+		? `/studio/follow/${projectId}/${continueRef.id}`
+		: undefined;
 
-		const resolvePattern = (patternId: string) => resolvePatternInProject(project, patternId);
-		const aggregate = aggregateProjectProgress(project, resolvePattern);
-		const continueRef = continueMakingRef(project);
-		const continueHref = continueRef
-			? `/studio/follow/${projectId}/${continueRef.id}`
-			: undefined;
-
-		return {
+	const chrome = useMemo(
+		() => ({
 			identityTile: (
 				<InteriorIdentityTile
 					title={project.name}
@@ -165,7 +159,7 @@ function ProjectInteriorChrome({
 						end
 					/>
 					<ProjectRailSectionLabel>Patterns</ProjectRailSectionLabel>
-					<PatternRailLinks projectId={projectId} patterns={makePatterns} />
+					<PatternRailLinks projectId={projectId} patterns={patterns} />
 					<div className="mt-2">
 						<ProjectRailLink
 							to={`/studio/projects/${projectId}/materials`}
@@ -217,10 +211,19 @@ function ProjectInteriorChrome({
 					}
 				/>
 			),
-		};
-	}, [handleStatusChange, makePatterns, project, projectId, status, store]);
-
-	if (!store || !chrome) return null;
+		}),
+		[
+			aggregate.percent,
+			aggregate.unitsDone,
+			aggregate.unitsTotal,
+			continueHref,
+			patterns,
+			project.name,
+			projectId,
+			status,
+			store,
+		],
+	);
 
 	return <InteriorChromeSlot chrome={chrome} />;
 }
