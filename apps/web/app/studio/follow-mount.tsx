@@ -2,8 +2,12 @@ import { Link, useParams } from 'react-router';
 import {
 	CounterPillRow,
 	FollowFooter,
+	FollowHeader,
 	FollowModeSelector,
+	FollowShell,
 	InstructionBox,
+	useFollowSplitLayout,
+	useWakeLock,
 } from '@threadwick/core/components';
 import { FollowChartPane } from './follow-chart-pane';
 import {
@@ -15,11 +19,13 @@ import { Icon } from '@threadwick/icons';
 import { useStudioStore } from './studio-store';
 
 /**
- * Phone-baseline Follow surface: chart pane, mode selector, counter pills,
- * instruction box, and the one-big-action footer (TW-029 / TW-030).
+ * Responsive Follow surface across five breakpoints (TW-031): chart pane, mode
+ * selector, counter pills, instruction box, footer, and keep-awake Wake Lock.
  */
 export function FollowMount() {
 	const store = useStudioStore();
+	const splitLayout = useFollowSplitLayout();
+	const wakeLock = useWakeLock(true);
 	const { projectId, refId } = useParams<{
 		projectId: string;
 		refId: string;
@@ -108,55 +114,65 @@ export function FollowMount() {
 			: [],
 	}));
 
-	return (
-		<div className="mx-auto w-full max-w-[380px] bg-background">
-			<div className="flex items-center gap-2.5 px-4 pt-3.5 pb-2.5">
-				<Link
-					to="/studio/editor"
-					className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground"
-					aria-label="Back"
-				>
-					<Icon name="close" label="" className="size-4" />
-				</Link>
-				<div className="min-w-0 flex-1">
-					<p className="truncate text-sm font-medium">{ref.label}</p>
-					<p className="text-xs text-muted-foreground">
-						{modeSubtitle} mode · {unitLabel}
-					</p>
-				</div>
-			</div>
+	const backLink = (
+		<Link
+			to="/studio/editor"
+			className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground"
+			aria-label="Back to project"
+		>
+			<Icon name="close" label="" className="size-4" />
+		</Link>
+	);
 
-			<div className="px-4 pb-3">
+	return (
+		<FollowShell
+			header={
+				<FollowHeader
+					title={ref.label}
+					subtitle={`${modeSubtitle} mode · ${unitLabel}`}
+					backSlot={backLink}
+					keepAwake={wakeLock.enabled}
+					onKeepAwakeChange={(enabled) => {
+						void wakeLock.setEnabled(enabled);
+					}}
+					keepAwakeSupported={wakeLock.supported}
+				/>
+			}
+			modeSelector={
 				<FollowModeSelector
 					value={ctx.mode}
 					onValueChange={(mode) => {
 						store.setFollowMode(ref.id, mode);
 					}}
 				/>
-			</div>
-
-			<div className="px-4 pb-3">
+			}
+			chart={
 				<FollowChartPane
 					pattern={chart}
 					progress={ref.progress}
 					mode={ctx.mode}
+					className="[@media(min-width:768px)_and_(orientation:landscape)]:h-full lg:h-full"
+					canvasClassName="[@media(min-width:768px)_and_(orientation:landscape)]:border-0 [@media(min-width:768px)_and_(orientation:landscape)]:rounded-none lg:border-0 lg:rounded-none"
 				/>
-			</div>
-
-			<CounterPillRow pills={ctx.pills} className="px-4 pb-3" />
-
-			<div className="px-4">
-				<InstructionBox sections={sections} />
-			</div>
-
-			<FollowFooter
-				percent={ctx.percent}
-				actionLabel={ctx.actionLabel}
-				canUndo={ctx.canUndo}
-				actionDisabled={ref.progress?.completed === true}
-				onAction={() => store.advanceFollow(ref.id)}
-				onUndo={() => store.undoFollow(ref.id)}
-			/>
-		</div>
+			}
+			pills={<CounterPillRow pills={ctx.pills} />}
+			instructions={<InstructionBox sections={sections} />}
+			footer={
+				<FollowFooter
+					percent={ctx.percent}
+					actionLabel={ctx.actionLabel}
+					canUndo={ctx.canUndo}
+					actionDisabled={ref.progress?.completed === true}
+					layout={splitLayout ? 'inline' : 'stacked'}
+					onAction={() => store.advanceFollow(ref.id)}
+					onUndo={() => store.undoFollow(ref.id)}
+					className={
+						splitLayout
+							? 'px-4 pb-4 pt-0 md:px-0 md:pb-0'
+							: undefined
+					}
+				/>
+			}
+		/>
 	);
 }
