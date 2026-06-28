@@ -89,8 +89,8 @@ The UI is **React 18 + Ant Design v5** in **strict TypeScript**, built with Vite
 
 Because the UI is built on **Ant Design**, the repo ships Ant Design's
 [**official MCP server**](https://ant.design/docs/react/mcp) in
-[`.mcp.json`](.mcp.json) (studio-local) and [`.cursor/mcp.json`](../../.cursor/mcp.json) (repo root).
-Any MCP-aware assistant (Cursor, Claude Code, …) that
+[`.mcp.json`](.mcp.json) (studio-local) and [`.mcp.json`](../../.mcp.json) (repo root).
+Any MCP-aware assistant (Claude Code, …) that
 opens this repo can query live antd component docs, props, demos, design tokens
 and changelogs while it writes code — so generated UI stays idiomatic to the
 design system. It exposes seven tools (`antd_list`, `antd_info`, `antd_doc`,
@@ -110,8 +110,8 @@ It's the official server from [`@ant-design/cli`](https://www.npmjs.com/package/
 run over stdio. We invoke it with `npx` so no global install is needed; the docs'
 equivalent is `npm install -g @ant-design/cli` then `{ "command": "antd", "args":
 ["mcp"] }`. Pin a version with an extra arg (e.g. `"mcp", "--version", "5.20.0"`).
-In Cursor, enable the project MCP server in **Settings → MCP** (or edit `.cursor/mcp.json`).
-In Claude Code, enable when prompted (or run `claude mcp list`).
+In Claude Code, enable the project MCP server when prompted (or run `claude mcp list`); it is
+defined in the repo-root [`.mcp.json`](../../.mcp.json).
 
 ## Exporting
 

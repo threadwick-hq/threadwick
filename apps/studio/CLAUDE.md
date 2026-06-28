@@ -1,9 +1,6 @@
-# Migrated to Cursor
+# CLAUDE.md — Threadwick Studio
 
-Studio agent guidance now lives in:
+The studio rules are tool-agnostic and live in `apps/studio/AGENTS.md`. Claude Code reads them via
+the import below; this file loads automatically when you work under `apps/studio/`.
 
-- **[apps/studio/AGENTS.md](AGENTS.md)** — entry point
-- **[`.cursor/rules/studio.mdc`](../../.cursor/rules/studio.mdc)** — full rules (auto-loaded for `apps/studio/**`)
-- Root **[AGENTS.md](../../AGENTS.md)** and **[MIGRATION.md](../../MIGRATION.md)**
-
-This file is kept only as a redirect for tools that still look for `CLAUDE.md`.
+@AGENTS.md
