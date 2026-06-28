@@ -23,7 +23,11 @@ export function sampleWorkbenchPattern(): Pattern {
 				name: 'Flower square',
 				kind: 'motif',
 				artifacts: [
-					{ type: 'chart', id: 'art-flower-chart', data: { id: 'chart-flower' } },
+					{
+						type: 'chart',
+						id: 'art-flower-chart',
+						data: { id: 'chart-flower' },
+					},
 					{
 						type: 'written',
 						id: 'art-flower-written',
@@ -36,7 +40,11 @@ export function sampleWorkbenchPattern(): Pattern {
 				name: 'Leaves square',
 				kind: 'motif',
 				artifacts: [
-					{ type: 'chart', id: 'art-leaves-chart', data: { id: 'chart-leaves' } },
+					{
+						type: 'chart',
+						id: 'art-leaves-chart',
+						data: { id: 'chart-leaves' },
+					},
 					{
 						type: 'written',
 						id: 'art-leaves-written',
@@ -87,7 +95,8 @@ export function sampleWorkbenchPattern(): Pattern {
 				kind: 'special',
 				abbr: 'puff',
 				name: 'Puff stitch',
-				definition: 'Yarn over, pull up a loop three times in the same stitch, yarn over and pull through all loops.',
+				definition:
+					'Yarn over, pull up a loop three times in the same stitch, yarn over and pull through all loops.',
 			},
 		],
 		notes: [

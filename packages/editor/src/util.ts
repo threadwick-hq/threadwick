@@ -2,7 +2,7 @@
 
 export function uid(prefix = 'id'): string {
 	// A collision-resistant id, unique across devices/users once projects sync.
-	return prefix + '_' + uuid();
+	return `${prefix}_${uuid()}`;
 }
 
 // crypto.randomUUID is only defined in a secure context (HTTPS/localhost). Fall

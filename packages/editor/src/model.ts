@@ -144,7 +144,7 @@ export function nextVersionLabel(prj: Project): string {
 		const m = /^v(\d+)$/.exec(v.label);
 		if (m) max = Math.max(max, +m[1]!);
 	}
-	return 'v' + (max + 1);
+	return `v${max + 1}`;
 }
 
 // ---- normalisation / migration --------------------------------------------
@@ -161,7 +161,9 @@ function normalizeFollowMarks(m: any) {
 						fromStitchId: String(rep.fromStitchId),
 						toStitchId: String(rep.toStitchId),
 						times:
-							rep.times != null ? Math.max(1, Math.floor(+rep.times)) : undefined,
+							rep.times != null
+								? Math.max(1, Math.floor(+rep.times))
+								: undefined,
 					};
 				})
 				.filter(Boolean)
@@ -171,7 +173,7 @@ function normalizeFollowMarks(m: any) {
 }
 
 function normalizeStitch(s: any): Stitch | null {
-	if (!s || !s.type) return null;
+	if (!s?.type) return null;
 	let base: Base = null;
 	if (s.base && (s.base.kind === 'stitch' || s.base.kind === 'space')) {
 		base =
@@ -207,7 +209,7 @@ export function normalizePattern(p: any = {}): Pattern {
 	if (Array.isArray(p.rounds) && p.rounds.length) {
 		pat.rounds = p.rounds.map((r: any, i: number) => ({
 			id: r.id || uid('rnd'),
-			name: r.name || 'Round ' + (i + 1),
+			name: r.name || `Round ${i + 1}`,
 			followMarks: normalizeFollowMarks(r.followMarks),
 		}));
 	}
@@ -336,7 +338,10 @@ function normalizePatternProgress(raw: any): PatternProgress | undefined {
 	if (cur && typeof cur === 'object' && typeof cur.unitAddress === 'string') {
 		const mode = normalizeFollowMode(cur.followMode);
 		if (mode) {
-			progress.cursor = { unitAddress: String(cur.unitAddress), followMode: mode };
+			progress.cursor = {
+				unitAddress: String(cur.unitAddress),
+				followMode: mode,
+			};
 		}
 	}
 	return progress;
@@ -474,8 +479,10 @@ function normalizeProjectPhotos(raw: unknown): ProjectPhoto[] | undefined {
 				image: { src: image.src },
 			};
 			if (typeof image.alt === 'string') photo.image.alt = image.alt;
-			if (typeof image.caption === 'string') photo.image.caption = image.caption;
-			if (typeof p.patternRefId === 'string') photo.patternRefId = p.patternRefId;
+			if (typeof image.caption === 'string')
+				photo.image.caption = image.caption;
+			if (typeof p.patternRefId === 'string')
+				photo.patternRefId = p.patternRefId;
 			return photo;
 		})
 		.filter(Boolean) as ProjectPhoto[];
@@ -488,7 +495,7 @@ export function normalizeProject(p: any = {}): Project {
 	prj.description = p.description || '';
 	if (Array.isArray(p.versions) && p.versions.length) {
 		prj.versions = p.versions.map((v: any, i: number) =>
-			normalizeVersion(v, 'v' + (i + 1)),
+			normalizeVersion(v, `v${i + 1}`),
 		);
 	} else {
 		// Migrate a legacy project ({ patterns, resources }) into a single draft version.
@@ -519,7 +526,7 @@ export function normalizeProject(p: any = {}): Project {
 	if (makerStatus) prj.makerStatus = makerStatus;
 	else if (makePatterns?.some((r) => r.progress?.unitsDone)) {
 		prj.makerStatus = 'in-progress';
-	} 	else if (makePatterns?.length) {
+	} else if (makePatterns?.length) {
 		prj.makerStatus = 'draft';
 	}
 
@@ -533,7 +540,8 @@ export function normalizeProject(p: any = {}): Project {
 		prj.timeLoggedMs = p.timeLoggedMs;
 	}
 	if (typeof p.lastWorkedAt === 'string') prj.lastWorkedAt = p.lastWorkedAt;
-	if (typeof p.ravelryProjectId === 'string') prj.ravelryProjectId = p.ravelryProjectId;
+	if (typeof p.ravelryProjectId === 'string')
+		prj.ravelryProjectId = p.ravelryProjectId;
 
 	return prj;
 }

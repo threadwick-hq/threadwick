@@ -26,8 +26,8 @@ describe('decomposition engine', () => {
 		for (const d of decs) {
 			assert.equal(d.effectiveMode, 'per-row');
 			assert.equal(d.units.length, 1);
-			assert.ok(d.units[0]!.stitchIds.length > 0);
-			assert.match(d.units[0]!.address, /@row$/);
+			assert.ok(d.units[0]?.stitchIds.length > 0);
+			assert.match(d.units[0]?.address, /@row$/);
 		}
 	});
 
@@ -63,8 +63,8 @@ describe('decomposition engine', () => {
 		assert.equal(d.effectiveMode, 'pattern');
 		// four corners → eight bites (corner + side alternating)
 		assert.equal(d.units.length, 8);
-		assert.equal(d.units[0]!.index, 1);
-		assert.equal(d.units[0]!.total, 8);
+		assert.equal(d.units[0]?.index, 1);
+		assert.equal(d.units[0]?.total, 8);
 		const covered = new Set(d.units.flatMap((u) => u.stitchIds));
 		const order = roundStitchOrder(pat, r2.id);
 		assert.equal(covered.size, order.length);
@@ -111,8 +111,8 @@ describe('decomposition engine', () => {
 		const d = decomposeRound(pat, r.id, 'pattern');
 		assert.equal(d.effectiveMode, 'pattern');
 		assert.equal(d.units.length, 4);
-		assert.equal(d.units[3]!.repeatIndex, 4);
-		assert.equal(d.units[3]!.repeatTotal, 4);
+		assert.equal(d.units[3]?.repeatIndex, 4);
+		assert.equal(d.units[3]?.repeatTotal, 4);
 	});
 
 	test('stitchClusters groups consecutive same-type stitches', () => {
@@ -124,7 +124,7 @@ describe('decomposition engine', () => {
 		] as Stitch[];
 		const clusters = stitchClusters(stitches);
 		assert.equal(clusters.length, 3);
-		assert.equal(clusters[0]!.length, 2);
+		assert.equal(clusters[0]?.length, 2);
 	});
 
 	test('totalUnits aggregates across working rounds', () => {

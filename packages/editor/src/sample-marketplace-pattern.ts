@@ -1,5 +1,5 @@
-import type { PatternListing } from './pattern-view-mode';
 import type { Pattern } from '@threadwick/types';
+import type { PatternListing } from './pattern-view-mode';
 
 /** Marketplace demo pattern for view-mode smoke tests (§4.4 mockup). */
 export function sampleMarketplaceViewPattern(): Pattern {

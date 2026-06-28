@@ -17,7 +17,9 @@ export function getCapabilities(): Readonly<ThreadwickCapabilities> {
 }
 
 /** Merge partial overrides (e.g. from env at app boot). */
-export function setCapabilities(partial: Partial<ThreadwickCapabilities>): void {
+export function setCapabilities(
+	partial: Partial<ThreadwickCapabilities>,
+): void {
 	runtime = { ...runtime, ...partial };
 }
 

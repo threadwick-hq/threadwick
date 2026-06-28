@@ -17,21 +17,22 @@ export function InstructionLine({
 	return (
 		<p className={cn('text-[15px] leading-relaxed text-foreground', className)}>
 			{segments.map((seg, i) => {
+				const key = `${seg.kind}-${seg.text}-${i}`;
 				if (seg.kind === 'stitch') {
 					return (
-						<b key={i} className="font-medium text-primary">
+						<b key={key} className="font-medium text-primary">
 							{seg.text}
 						</b>
 					);
 				}
 				if (seg.kind === 'connector') {
 					return (
-						<i key={i} className="not-italic text-muted-foreground">
+						<i key={key} className="not-italic text-muted-foreground">
 							{seg.text}
 						</i>
 					);
 				}
-				return <span key={i}>{seg.text}</span>;
+				return <span key={key}>{seg.text}</span>;
 			})}
 		</p>
 	);
@@ -87,11 +88,7 @@ export function InstructionSection({
 								: 'bg-muted text-muted-foreground',
 					)}
 				>
-					{done ? (
-						<Icon name="confirm" label="" className="size-3" />
-					) : (
-						step
-					)}
+					{done ? <Icon name="confirm" label="" className="size-3" /> : step}
 				</span>
 				<span className="flex-1 min-w-0">
 					<span className={cn(open && 'font-medium')}>{title}</span>

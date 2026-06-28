@@ -1,6 +1,6 @@
 import { Icon } from '@threadwick/icons';
-import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
+import { Button } from '../ui/button';
 
 export type FollowFooterProps = {
 	percent: number;

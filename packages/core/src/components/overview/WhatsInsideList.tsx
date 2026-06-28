@@ -48,7 +48,9 @@ export function WhatsInsideList({
 									className="size-[18px] shrink-0 text-muted-foreground"
 								/>
 								<span className="min-w-0 flex-1">
-									<span className="block text-[13px] font-medium">{item.title}</span>
+									<span className="block text-[13px] font-medium">
+										{item.title}
+									</span>
 									<span className="block text-[11.5px] text-muted-foreground">
 										{item.subtitle}
 									</span>
@@ -66,12 +68,18 @@ export function WhatsInsideList({
 											className="size-[18px] shrink-0 text-muted-foreground"
 										/>
 										<span className="min-w-0 flex-1">
-											<span className="block text-[13px] font-medium">{item.title}</span>
+											<span className="block text-[13px] font-medium">
+												{item.title}
+											</span>
 											<span className="block text-[11.5px] text-muted-foreground">
 												{item.subtitle}
 											</span>
 										</span>
-										<Icon name="next" label="" className="size-4 shrink-0 text-muted-foreground" />
+										<Icon
+											name="next"
+											label=""
+											className="size-4 shrink-0 text-muted-foreground"
+										/>
 									</>
 								),
 							})

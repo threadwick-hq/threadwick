@@ -191,7 +191,9 @@ export function sampleProject(): Project {
 	prj.ravelryProjectId = 'rvl-fixture-1';
 	prj.timeLoggedMs = (14 * 3600 + 20 * 60) * 1000;
 	prj.lastWorkedAt = lastWorkedAt;
-	prj.photos = [{ id: uid('photo'), image: { src: '', alt: 'Progress photo' } }];
+	prj.photos = [
+		{ id: uid('photo'), image: { src: '', alt: 'Progress photo' } },
+	];
 	prj.yarns = [
 		{
 			id: uid('yarn'),

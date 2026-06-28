@@ -1,5 +1,5 @@
-import type { Project, Pattern } from './types';
 import { aggregateProjectProgress } from './progress';
+import type { Pattern, Project } from './types';
 
 export type OverviewMaterialItem = {
 	id: string;
@@ -42,7 +42,9 @@ export function formatRelativeAgo(iso: string, now = Date.now()): string {
 	return `${days} day${days === 1 ? '' : 's'} ago`;
 }
 
-export function projectOverviewMaterials(project: Project): OverviewMaterialItem[] {
+export function projectOverviewMaterials(
+	project: Project,
+): OverviewMaterialItem[] {
 	const items: OverviewMaterialItem[] = [];
 	for (const yarn of project.yarns ?? []) {
 		items.push({
@@ -74,7 +76,10 @@ export function projectOverviewKeyFacts(
 		facts.push({ label: 'Last worked on', value: formatRelativeAgo(last) });
 	}
 	if (project.timeLoggedMs != null && project.timeLoggedMs > 0) {
-		facts.push({ label: 'Time logged', value: formatDurationMs(project.timeLoggedMs) });
+		facts.push({
+			label: 'Time logged',
+			value: formatDurationMs(project.timeLoggedMs),
+		});
 	}
 	const left = Math.max(0, aggregate.unitsTotal - aggregate.unitsDone);
 	if (aggregate.unitsTotal > 0) {
@@ -86,7 +91,9 @@ export function projectOverviewKeyFacts(
 export function projectOverviewSubtitle(project: Project): string | undefined {
 	const ref = project.makePatterns?.[0];
 	if (!ref) return undefined;
-	const started = project.createdAt ? formatRelativeAgo(project.createdAt) : undefined;
+	const started = project.createdAt
+		? formatRelativeAgo(project.createdAt)
+		: undefined;
 	const designer =
 		ref.source !== 'threadwick' && 'designer' in ref && ref.designer
 			? ` by ${ref.designer}`

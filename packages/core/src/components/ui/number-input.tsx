@@ -23,7 +23,16 @@ export type NumberInputProps = {
 	label?: string;
 };
 
-export function NumberInput({ value, onChange, min, max, step = 1, disabled, className, label }: NumberInputProps) {
+export function NumberInput({
+	value,
+	onChange,
+	min,
+	max,
+	step = 1,
+	disabled,
+	className,
+	label,
+}: NumberInputProps) {
 	const inputId = useId();
 	const [text, setText] = useState(() => fmt(value));
 
@@ -33,7 +42,11 @@ export function NumberInput({ value, onChange, min, max, step = 1, disabled, cla
 		setText(fmt(value));
 	}, [value]);
 
-	const clamp = (n: number) => Math.min(max ?? Number.POSITIVE_INFINITY, Math.max(min ?? Number.NEGATIVE_INFINITY, n));
+	const clamp = (n: number) =>
+		Math.min(
+			max ?? Number.POSITIVE_INFINITY,
+			Math.max(min ?? Number.NEGATIVE_INFINITY, n),
+		);
 	const base = parseNum(text) ?? value ?? 0;
 	const atMin = min !== undefined && base <= min;
 	const atMax = max !== undefined && base >= max;

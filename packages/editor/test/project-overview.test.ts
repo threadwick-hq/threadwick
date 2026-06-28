@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'vitest';
-
+import { activeVersion } from '../src/model';
 import {
 	formatDurationMs,
 	formatRelativeAgo,
@@ -8,12 +8,16 @@ import {
 	projectOverviewMaterials,
 } from '../src/project-overview';
 import { sampleProject } from '../src/sample';
-import { activeVersion } from '../src/model';
 
 describe('project overview helpers', () => {
 	test('formats duration and relative time', () => {
-		assert.equal(formatDurationMs(14 * 3600 * 1000 + 20 * 60 * 1000), '14 h 20 m');
-		const fiveHoursAgo = new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString();
+		assert.equal(
+			formatDurationMs(14 * 3600 * 1000 + 20 * 60 * 1000),
+			'14 h 20 m',
+		);
+		const fiveHoursAgo = new Date(
+			Date.now() - 5 * 60 * 60 * 1000,
+		).toISOString();
 		assert.match(formatRelativeAgo(fiveHoursAgo), /5 hours ago/);
 	});
 
@@ -21,7 +25,9 @@ describe('project overview helpers', () => {
 		const prj = sampleProject();
 		const materials = projectOverviewMaterials(prj);
 		assert.ok(materials.length >= 3);
-		assert.ok(materials.some((m) => m.fromStash && m.label.includes('Cotton DK')));
+		assert.ok(
+			materials.some((m) => m.fromStash && m.label.includes('Cotton DK')),
+		);
 		assert.ok(materials.some((m) => m.acquired === false));
 	});
 

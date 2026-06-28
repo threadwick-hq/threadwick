@@ -21,14 +21,18 @@ const SKILL_LABEL: Record<SkillLevel, string> = {
 	advanced: 'Advanced',
 };
 
-export function activePatternVersion(pattern: Pattern): PatternVersion | undefined {
+export function activePatternVersion(
+	pattern: Pattern,
+): PatternVersion | undefined {
 	const versioning = pattern.versioning;
 	if (!versioning) return undefined;
 	return versioning.versions.find((v) => v.id === versioning.activeVersionId);
 }
 
 export function patternVisibilityLabel(pattern: Pattern): string {
-	return pattern.versioning?.visibility === 'published' ? 'Published' : 'Private';
+	return pattern.versioning?.visibility === 'published'
+		? 'Published'
+		: 'Private';
 }
 
 /** Overview state pill — e.g. "Published · editing v4" (§4.2). */
@@ -37,7 +41,9 @@ export function patternOverviewStatusLabel(pattern: Pattern): string {
 	const version = activePatternVersion(pattern);
 	if (!version) return visibility;
 	const editing =
-		version.status === 'draft' ? ` · editing ${version.label}` : ` · ${version.label}`;
+		version.status === 'draft'
+			? ` · editing ${version.label}`
+			: ` · ${version.label}`;
 	return `${visibility}${editing}`;
 }
 
@@ -52,14 +58,17 @@ function yarnSummary(materials: Material[]): string | undefined {
 }
 
 function hookSummary(materials: Material[]): string | undefined {
-	const hooks = materials.filter((m) => m.kind === 'hook' || m.kind === 'needle');
+	const hooks = materials.filter(
+		(m) => m.kind === 'hook' || m.kind === 'needle',
+	);
 	if (hooks.length === 0) return undefined;
 	return hooks.map((h) => h.weight ?? h.label).join(' · ');
 }
 
 function gaugeSummary(pattern: Pattern): string | undefined {
 	const gaugeNote = pattern.notes.find((n) => n.kind === 'gauge');
-	if (gaugeNote?.body) return gaugeNote.body.replace(/\s+/g, ' ').trim().slice(0, 40);
+	if (gaugeNote?.body)
+		return gaugeNote.body.replace(/\s+/g, ' ').trim().slice(0, 40);
 	return undefined;
 }
 
@@ -94,7 +103,10 @@ export function patternOverviewKeyFacts(
 	const facts: Array<{ label: string; value: string }> = [];
 	const { overview, components, materials } = pattern;
 	if (overview.skillLevel) {
-		facts.push({ label: 'Difficulty', value: SKILL_LABEL[overview.skillLevel] });
+		facts.push({
+			label: 'Difficulty',
+			value: SKILL_LABEL[overview.skillLevel],
+		});
 	}
 	const counts = countArtifacts(components);
 	if (counts.components > 0) {
@@ -140,8 +152,10 @@ export function patternWhatsInsideItems(
 		(m) => m.kind === 'hook' || m.kind === 'needle',
 	).length;
 	const materialParts: string[] = [];
-	if (yarnCount > 0) materialParts.push(`${yarnCount} yarn${yarnCount === 1 ? '' : 's'}`);
-	if (hookCount > 0) materialParts.push(`${hookCount} hook${hookCount === 1 ? '' : 's'}`);
+	if (yarnCount > 0)
+		materialParts.push(`${yarnCount} yarn${yarnCount === 1 ? '' : 's'}`);
+	if (hookCount > 0)
+		materialParts.push(`${hookCount} hook${hookCount === 1 ? '' : 's'}`);
 	items.push({
 		id: 'materials',
 		icon: 'yarn',
@@ -155,7 +169,12 @@ export function patternWhatsInsideItems(
 export function componentArtifactLinks(
 	patternId: string,
 	component: Component,
-): Array<{ id: string; label: string; href: string; icon: 'patterns' | 'notes' }> {
+): Array<{
+	id: string;
+	label: string;
+	href: string;
+	icon: 'patterns' | 'notes';
+}> {
 	return component.artifacts.map((artifact) => ({
 		id: artifact.id,
 		label: artifactLabel(artifact),

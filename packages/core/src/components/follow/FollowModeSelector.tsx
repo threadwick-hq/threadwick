@@ -22,8 +22,7 @@ export function FollowModeSelector({
 	disabled,
 	className,
 }: FollowModeSelectorProps) {
-	const active =
-		value === 'checklist' ? 'per-row' : value;
+	const active = value === 'checklist' ? 'per-row' : value;
 	return (
 		<Segmented
 			value={active}

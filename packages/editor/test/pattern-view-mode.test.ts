@@ -26,11 +26,15 @@ describe('patternMakerPrimaryAction', () => {
 	const paid = samplePaidMarketplaceListing();
 
 	it('returns start-making for free patterns', () => {
-		expect(patternMakerPrimaryAction(free, { owned: false })).toBe('start-making');
+		expect(patternMakerPrimaryAction(free, { owned: false })).toBe(
+			'start-making',
+		);
 	});
 
 	it('returns start-making when owned regardless of price', () => {
-		expect(patternMakerPrimaryAction(paid, { owned: true })).toBe('start-making');
+		expect(patternMakerPrimaryAction(paid, { owned: true })).toBe(
+			'start-making',
+		);
 	});
 
 	it('returns buy for paid patterns that are not owned', () => {
@@ -40,12 +44,15 @@ describe('patternMakerPrimaryAction', () => {
 
 describe('patternMakerPrimaryActionLabel', () => {
 	it('labels start-making and buy actions', () => {
-		expect(patternMakerPrimaryActionLabel('start-making', sampleMarketplaceListing())).toBe(
-			'Start making',
-		);
-		expect(patternMakerPrimaryActionLabel('buy', samplePaidMarketplaceListing())).toBe(
-			'Buy · $5.99',
-		);
+		expect(
+			patternMakerPrimaryActionLabel(
+				'start-making',
+				sampleMarketplaceListing(),
+			),
+		).toBe('Start making');
+		expect(
+			patternMakerPrimaryActionLabel('buy', samplePaidMarketplaceListing()),
+		).toBe('Buy · $5.99');
 	});
 });
 

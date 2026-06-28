@@ -9,7 +9,7 @@ import {
 	flattenFollowUnits,
 	undoPatternProgress,
 } from '../src/index';
-import { activeVersion, newProject, normalizeProject } from '../src/model';
+import { activeVersion, normalizeProject } from '../src/model';
 import { sampleProject } from '../src/sample';
 import type { PatternReference } from '../src/types';
 
@@ -105,15 +105,23 @@ describe('normalizeProject v4 migration', () => {
 				{
 					label: 'v1',
 					status: 'draft',
-					patterns: [{ id: 'pat-a', name: 'Square', type: 'granny', rounds: [], stitches: [] }],
+					patterns: [
+						{
+							id: 'pat-a',
+							name: 'Square',
+							type: 'granny',
+							rounds: [],
+							stitches: [],
+						},
+					],
 				},
 			],
 			patternIds: ['pat-a'],
 		});
 		assert.equal(prj.makePatterns?.length, 1);
-		assert.equal(prj.makePatterns![0]!.source, 'threadwick');
-		assert.equal(prj.makePatterns![0]!.patternId, 'pat-a');
-		assert.equal(prj.makePatterns![0]!.label, 'Square');
+		assert.equal(prj.makePatterns?.[0]?.source, 'threadwick');
+		assert.equal(prj.makePatterns?.[0]?.patternId, 'pat-a');
+		assert.equal(prj.makePatterns?.[0]?.label, 'Square');
 		assert.equal(prj.makerStatus, 'draft');
 	});
 

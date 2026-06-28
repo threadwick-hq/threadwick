@@ -3,11 +3,12 @@ import { cn } from '../../lib/utils';
 
 export type CounterPillIcon = 'round' | 'repeat' | 'stitch';
 
-const PILL_ICONS: Record<CounterPillIcon, 'patterns' | 'refresh' | 'symbols'> = {
-	round: 'patterns',
-	repeat: 'refresh',
-	stitch: 'symbols',
-};
+const PILL_ICONS: Record<CounterPillIcon, 'patterns' | 'refresh' | 'symbols'> =
+	{
+		round: 'patterns',
+		repeat: 'refresh',
+		stitch: 'symbols',
+	};
 
 export type CounterPillProps = {
 	icon: CounterPillIcon;
@@ -17,7 +18,12 @@ export type CounterPillProps = {
 };
 
 /** Display-only informative counter pill (Round, Rep, St). */
-export function CounterPill({ icon, label, value, className }: CounterPillProps) {
+export function CounterPill({
+	icon,
+	label,
+	value,
+	className,
+}: CounterPillProps) {
 	return (
 		<span
 			className={cn(
@@ -27,8 +33,7 @@ export function CounterPill({ icon, label, value, className }: CounterPillProps)
 		>
 			<Icon name={PILL_ICONS[icon]} label="" className="size-3.5 shrink-0" />
 			<span>
-				{label}{' '}
-				<b className="font-medium text-foreground">{value}</b>
+				{label} <b className="font-medium text-foreground">{value}</b>
 			</span>
 		</span>
 	);

@@ -41,7 +41,9 @@ export function InteriorIdentityTile({
 				</span>
 			)}
 			<span className="min-w-0 flex-1">
-				<span className="block truncate text-[13px] font-medium leading-tight">{title}</span>
+				<span className="block truncate text-[13px] font-medium leading-tight">
+					{title}
+				</span>
 				<Badge
 					variant="secondary"
 					className="mt-0.5 h-5 gap-1 border-transparent px-1.5 py-0 text-[10.5px] font-normal"

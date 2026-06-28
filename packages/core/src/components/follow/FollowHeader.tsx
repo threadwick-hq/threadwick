@@ -38,7 +38,7 @@ export function FollowHeader({
 				</p>
 			</div>
 			{keepAwakeSupported && onKeepAwakeChange ? (
-				<label className="flex shrink-0 items-center gap-1.5">
+				<div className="flex shrink-0 items-center gap-1.5">
 					<Switch
 						checked={keepAwake}
 						onCheckedChange={onKeepAwakeChange}
@@ -47,7 +47,7 @@ export function FollowHeader({
 					<span className="hidden text-xs text-muted-foreground sm:inline">
 						Awake
 					</span>
-				</label>
+				</div>
 			) : null}
 			<button
 				type="button"

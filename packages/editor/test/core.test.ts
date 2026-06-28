@@ -14,11 +14,10 @@ import {
 	contentBounds,
 	defaultLen,
 	defaultOriginId,
+	FILE_VERSION,
 	fromPolar,
 	isRealStitch,
 	isStart,
-	FILE_FORMAT,
-	FILE_VERSION,
 	newPattern,
 	newProject,
 	normalizeProject,
@@ -149,7 +148,7 @@ test('spacesForRound = real-1 between consecutive real stitches', () => {
 	];
 	const sp = spacesForRound(s, 'R');
 	assert.equal(sp.length, 2);
-	assert.ok(near(sp[0]!.point.x, 15) && near(sp[0]!.point.y, -60));
+	assert.ok(near(sp[0]?.point.x, 15) && near(sp[0]?.point.y, -60));
 });
 test('pickBase prefers the nearest space/stitch', () => {
 	const s = [
@@ -157,7 +156,7 @@ test('pickBase prefers the nearest space/stitch', () => {
 		dc('a', 'R', 'ring', 0, -30),
 		dc('b', 'R', 'a', 40, -30),
 	];
-	assert.equal(pickBase(s, 20, -60)!.kind, 'space');
+	assert.equal(pickBase(s, 20, -60)?.kind, 'space');
 	const atHead = pickBase(s, 0, -60)!;
 	assert.equal(atHead.kind, 'stitch');
 	assert.equal(atHead.kind === 'stitch' && atHead.id, 'a');
@@ -170,7 +169,7 @@ test('successorInRound + chainFrom', () => {
 		dc('b', 'R', 'a', 0, 0),
 		dc('c', 'R', 'b', 0, 0),
 	];
-	assert.equal(successorInRound(s, 'a', 'R')!.id, 'b');
+	assert.equal(successorInRound(s, 'a', 'R')?.id, 'b');
 	assert.deepEqual(
 		chainFrom(s, 'b', 'R').map((x) => x.id),
 		['b', 'c'],
@@ -195,8 +194,10 @@ test('stitchWithinRect needs head AND base inside', () => {
 test('basePoint resolves stitch + space', () => {
 	const s = [dc('a', 'R', null, 0, -30), dc('b', 'R', 'a', 40, -30)];
 	const byId = new Map(s.map((x) => [x.id, x]));
-	assert.ok(near(basePoint(byId, { kind: 'stitch', id: 'a' })!.y, -60));
-	assert.ok(near(basePoint(byId, { kind: 'space', ids: ['a', 'b'] })!.x, 20));
+	const stitchBase = basePoint(byId, { kind: 'stitch', id: 'a' });
+	const spaceBase = basePoint(byId, { kind: 'space', ids: ['a', 'b'] });
+	assert.ok(stitchBase && near(stitchBase.y, -60));
+	assert.ok(spaceBase && near(spaceBase.x, 20));
 });
 
 // ---- model -----------------------------------------------------------------
@@ -204,8 +205,8 @@ test('newProject / newPattern shape', () => {
 	const p = newProject('X');
 	assert.equal(p.name, 'X');
 	assert.equal(p.versions.length, 1);
-	assert.equal(p.versions[0]!.status, 'draft');
-	assert.equal(p.activeVersionId, p.versions[0]!.id);
+	assert.equal(p.versions[0]?.status, 'draft');
+	assert.equal(p.activeVersionId, p.versions[0]?.id);
 	assert.deepEqual(Object.keys(activeVersion(p).resources).sort(), [
 		'links',
 		'notes',
@@ -215,8 +216,8 @@ test('newProject / newPattern shape', () => {
 	const pat = newPattern('Sq');
 	assert.equal(pat.type, 'granny');
 	assert.equal(pat.rounds.length, 2); // Start row + Round 1 from the outset
-	assert.equal(pat.rounds[0]!.name, 'Start');
-	assert.equal(pat.activeRound, pat.rounds[0]!.id); // opens on the Start row
+	assert.equal(pat.rounds[0]?.name, 'Start');
+	assert.equal(pat.activeRound, pat.rounds[0]?.id); // opens on the Start row
 });
 test('normalizeProject tolerates junk + drops orphan stitches', () => {
 	const p = normalizeProject({
@@ -233,7 +234,7 @@ test('normalizeProject tolerates junk + drops orphan stitches', () => {
 			},
 		],
 	});
-	assert.equal(activeVersion(p).patterns[0]!.stitches.length, 1);
+	assert.equal(activeVersion(p).patterns[0]?.stitches.length, 1);
 });
 test('normalizeProject migrates a legacy project into one draft version', () => {
 	const p = normalizeProject({
@@ -244,9 +245,9 @@ test('normalizeProject migrates a legacy project into one draft version', () => 
 		resources: { yarns: [{ name: 'Cotton' }] },
 	});
 	assert.equal(p.versions.length, 1);
-	assert.equal(p.versions[0]!.status, 'draft');
+	assert.equal(p.versions[0]?.status, 'draft');
 	assert.equal(activeVersion(p).patterns.length, 1);
-	assert.equal(activeVersion(p).resources.yarns[0]!.name, 'Cotton');
+	assert.equal(activeVersion(p).resources.yarns[0]?.name, 'Cotton');
 });
 test('projectToFile / projectFromFile round-trip', () => {
 	const p = sampleProject();
@@ -255,8 +256,8 @@ test('projectToFile / projectFromFile round-trip', () => {
 	assert.equal(file.version, FILE_VERSION);
 	const back = projectFromFile(JSON.parse(JSON.stringify(file)))!;
 	assert.equal(
-		activeVersion(back).patterns[0]!.stitches.length,
-		activeVersion(p).patterns[0]!.stitches.length,
+		activeVersion(back).patterns[0]?.stitches.length,
+		activeVersion(p).patterns[0]?.stitches.length,
 	);
 	assert.deepEqual(
 		JSON.parse(JSON.stringify(back)),
@@ -282,9 +283,9 @@ test('normalizeProject migrates a start that shared a working row', () => {
 	const pat = activeVersion(p).patterns[0]!;
 	assert.equal(pat.rounds.length, 2);
 	const r = pat.stitches.find((s) => s.type === 'mr')!;
-	assert.equal(r.round, pat.rounds[0]!.id);
+	assert.equal(r.round, pat.rounds[0]?.id);
 	assert.equal(
-		pat.stitches.filter((s) => s.round === pat.rounds[0]!.id).length,
+		pat.stitches.filter((s) => s.round === pat.rounds[0]?.id).length,
 		1,
 	);
 });
@@ -292,7 +293,7 @@ test('normalizeProject migrates a start that shared a working row', () => {
 // ---- instructions + render -------------------------------------------------
 test('summarizeRound collapses runs', () => {
 	const pat = newPattern('S');
-	const rid = pat.rounds[0]!.id;
+	const rid = pat.rounds[0]?.id;
 	const s = (id: string, type: StitchType, origin: string | null): Stitch => ({
 		id,
 		round: rid,

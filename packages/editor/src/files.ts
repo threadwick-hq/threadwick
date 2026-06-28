@@ -40,7 +40,7 @@ export function importProjectFile(): Promise<Project | null> {
 		input.type = 'file';
 		input.accept = '.json,application/json';
 		input.onchange = () => {
-			const file = input.files && input.files[0];
+			const file = input.files?.[0];
 			if (!file) return resolve(null);
 			const reader = new FileReader();
 			reader.onload = () => {
@@ -261,7 +261,7 @@ export async function printProject(project: Project): Promise<void> {
 			(y) =>
 				`<li>${y.hex ? `<span class="swatch" style="background:${escapeXML(y.hex)}"></span>` : ''}` +
 				`${escapeXML([y.name, y.brand, y.weight, y.color].filter(Boolean).join(' · ')) || 'Yarn'}` +
-				`${y.notes ? ' — ' + escapeXML(y.notes) : ''}</li>`,
+				`${y.notes ? ` — ${escapeXML(y.notes)}` : ''}</li>`,
 		),
 	);
 	const notes = block(

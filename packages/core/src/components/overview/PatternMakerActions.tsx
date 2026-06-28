@@ -21,7 +21,11 @@ export function PatternMakerActions({
 	return (
 		<div className={cn('flex flex-wrap items-center gap-3', className)}>
 			<span className="text-lg font-medium tabular-nums">{priceLabel}</span>
-			<Button type="button" className="h-9 gap-1.5 px-4 text-[13px]" onClick={onPrimary}>
+			<Button
+				type="button"
+				className="h-9 gap-1.5 px-4 text-[13px]"
+				onClick={onPrimary}
+			>
 				<Icon name="make-it" label="" className="size-4" />
 				{primaryLabel}
 			</Button>

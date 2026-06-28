@@ -657,8 +657,7 @@ export function initCanvas(
 	}
 
 	function endGesture(e: PointerEvent): void {
-		const wasDrag =
-			!!(drag && drag.moved) || !!(endpointDrag && endpointDrag.moved);
+		const wasDrag = !!drag?.moved || !!endpointDrag?.moved;
 		if (drag && !drag.moved && !drag.shift) store.setSelection([drag.leadId]);
 		if (marquee && !marquee.moved && !marquee.additive) store.clearSelection();
 		if (marquee || drag) clearCursor();
