@@ -85,7 +85,7 @@ export function FollowMount() {
 
 	const backLink = (
 		<Link
-			to="/studio/editor"
+			to={`/studio/projects/${projectId}`}
 			className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground"
 			aria-label="Back to project"
 		>

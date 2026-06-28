@@ -9,6 +9,11 @@ export default [
 		index('routes/studio/home.tsx'),
 		route('editor', 'routes/studio/editor.tsx'),
 		route('follow/:projectId/:refId', 'routes/studio/follow.tsx'),
+		route('projects', 'routes/studio/projects-index.tsx'),
+		route('projects/:projectId', 'routes/studio/project.tsx', [
+			index('routes/studio/project/overview.tsx'),
+			route('materials', 'routes/studio/project/materials.tsx'),
+		]),
 		// Every other destination (Workbench, Library, Marketplace, …) is a placeholder for now.
 		route('*', 'routes/studio/section.tsx'),
 	]),
