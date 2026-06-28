@@ -5,15 +5,17 @@ type: chore
 area:
   - packages/core
 phase: 8
-status: backlog
+status: review
 priority: p1
 created: 2026-06-23
+pr: 28
 acceptance:
   - COMPASS_DRAFTING + STORE in packages/core/src/brand/glyphs.ts are original artwork, not Font Awesome geometry
   - no Font-Awesome-derived path data remains in committed brand marks
   - the brand-glyph generator (scripts/gen-brand-glyphs.ts) is still optional and never runs during build
+assignee: agent
+started: 2026-06-28
 ---
-
 ## Context
 
 `packages/core/src/brand/glyphs.ts` bakes the brand marks as static SVG path data. `REEL` (the
@@ -38,11 +40,13 @@ Depends on: nothing (can be done any time before going public).
 
 ## Acceptance
 
-- [ ] COMPASS_DRAFTING + STORE are original artwork, not Font Awesome geometry
-- [ ] no Font-Awesome-derived path data remains in committed brand marks
-- [ ] the brand-glyph generator stays optional and never runs during build
+- [x] COMPASS_DRAFTING + STORE are original artwork, not Font Awesome geometry
+- [x] no Font-Awesome-derived path data remains in committed brand marks
+- [x] the brand-glyph generator stays optional and never runs during build
 
 ## Log
 
+- 2026-06-28 claimed by agent.
+- 2026-06-28 replaced COMPASS_DRAFTING + STORE with original geometry in REEL's 3.5-radius rounded-rect vocabulary; compact viewBoxes (48×56, 48×52); header comment updated.
 - 2026-06-23 created. Folded in from a hand-off pass — the FA provenance was only a `glyphs.ts`
   code comment + agent memory; tracked here so the public-launch gate is not forgotten.
