@@ -7,7 +7,7 @@ area:
   - packages/editor
 phase: 6
 status: review
-pr: 23
+pr: 35
 priority: p1
 created: 2026-06-23
 acceptance:
