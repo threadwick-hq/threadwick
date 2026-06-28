@@ -13,6 +13,7 @@ acceptance:
   - the suite is green once the migration apps stabilize
 assignee: agent
 started: 2026-06-28
+pr: 41
 ---
 ## Context
 
