@@ -39,8 +39,10 @@ mode and a stored progress cursor (`unitAddress` is opaque — TW-027 owns its g
 advance/undo machine; overall progress is **derived**, never stored), plus the Materials & notes rail
 (`yarns · tools · notes · photos`, each yarn/tool optionally linked _from stash_ via `stashId` →
 TW-044) and a lightweight `customSections` escape hatch. This is the first **Phase-7** increment: the
-maker plane references patterns, it never re-models pattern content; whole-pattern versioning/lineage
-(TW-035) lives on the `Pattern`.
+maker plane references patterns, it never re-models pattern content. Whole-pattern
+versioning/publish/remix/lineage (§4.3, TW-035) is anchored on `Pattern.versioning` /
+`Pattern.lineage`; per-viewer buy-once entitlement is the standalone `PatternOwnership` read
+contract. The data-layer re-seating (`publishVersion` / `createDraft` / migration) is Phase 7.
 
 ## License
 

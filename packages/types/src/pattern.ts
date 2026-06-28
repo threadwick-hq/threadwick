@@ -39,7 +39,9 @@ export interface Pattern {
   stitches: Stitch[]; // MATERIALS & REFERENCE › Special stitches
   notes: Note[]; // MATERIALS & REFERENCE › Notes & tips
   variations: Variation[]; // MATERIALS & REFERENCE › Variations
-  workingCopy: WorkingCopyRef; // version/branch state — not content
+  workingCopy: WorkingCopyRef; // legacy branch/dirty placeholder — Phase 7 re-seats onto versioning
+  versioning?: PatternVersioning; // §4.3 whole-pattern publish + linear versions (TW-035 anchor)
+  lineage?: PatternLineage; // present when this pattern was Remixed from another (§4.3)
 }
 
 // ── Overview: pattern identity + specs (fields, not sidebar nodes) ───────────
@@ -148,9 +150,67 @@ export interface Variation {
 }
 
 // ── Working copy (version control) ───────────────────────────────────────────
+// Legacy placeholder — Phase 7 re-seats publish/draft onto Pattern.versioning.
 export interface WorkingCopyRef {
   branch: string;
   dirty: boolean;
+}
+
+// ── Pattern versioning & publishing (§4.3 — read contract; Phase 7 re-seats data) ──
+// A pattern is **published or private — whole-pattern**, never a mix. **Versions**
+// are a **linear history**; at most **one working draft** sits atop the published
+// history. Creating a new version on a published pattern → draft (yours only) →
+// **Publish version** releases it. **Buy once = yours forever** — updates included,
+// never re-charged; makers stay on their last-viewed version with a "newer version
+// available" banner until they switch. **Unpublish** removes a pattern from the
+// marketplace (no longer buyable/listed) but **keeps it in the library of everyone
+// who already owns it.** **Remix** duplicates into a **new, private, editable**
+// pattern carrying **lineage** ("remixed from {pattern} · {designer}").
+//
+// INVARIANTS (enforced at runtime in Phase 7, not by JSON Schema):
+//   • `versions` is strictly linear (oldest → newest); no branches.
+//   • At most one `status === 'draft'` and at most one `status === 'published'`.
+//   • Superseded published versions become `outdated` when a newer version publishes.
+//   • `visibility` is whole-pattern — never per-version public/private mix.
+//   • `PatternOwnership` is viewer-specific read state, never stored on Pattern.
+
+export type PatternVisibility = 'private' | 'published';
+
+// Deliberately aligned with @threadwick/editor's VersionStatus so Phase 7 can
+// migrate ProjectVersion → PatternVersion without a rename.
+export type PatternVersionStatus = 'draft' | 'published' | 'outdated';
+
+export interface PatternVersion {
+  id: string;
+  label: string; // "v1", "v4" — the version-switcher label (spec §4.1 rail tile)
+  status: PatternVersionStatus;
+  createdAt: string; // ISO 8601
+  updatedAt: string;
+  publishedAt?: string; // ISO 8601 — absent until this version is published
+}
+
+export interface PatternVersioning {
+  visibility: PatternVisibility; // whole-pattern Private/Public pill (§4.1)
+  versions: PatternVersion[]; // linear history, oldest → newest
+  activeVersionId: string; // version the interior is viewing/editing
+  unpublishedAt?: string; // ISO 8601 — set when a published pattern is Unpublished (§4.3)
+}
+
+export interface PatternLineage {
+  remixedFromPatternId: string; // → Pattern.id of the source
+  remixedFromVersionId?: string; // → PatternVersion.id when the remix pins a source version
+  remixedFromLabel: string; // denormalised title for "remixed from {pattern}"
+  remixedFromDesigner?: string; // denormalised attribution for "· {designer}"
+}
+
+// Per-viewer entitlement read contract (§4.3 buy-once + §4.4 view-mode actions).
+// NOT stored on Pattern — Phase 7 owns the write-side entitlement store.
+export interface PatternOwnership {
+  owned: boolean; // true when free or purchased — drives Start making vs Buy
+  purchasedAt?: string; // ISO 8601 — buy-once; absent for free patterns (owned=true, no charge)
+  lastViewedVersionId?: string; // maker's pinned version for the "newer version available" banner
+  // INVARIANT: buy-once-yours-forever — once owned, entitlement persists across version
+  // bumps; ownership is never re-charged when the designer publishes a new version.
 }
 
 // ── Maker plane: a Project is a MAKE that references one or more patterns ─────

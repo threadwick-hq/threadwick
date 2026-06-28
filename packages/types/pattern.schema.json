@@ -22,7 +22,9 @@
         "stitches": { "type": "array", "items": { "$ref": "#/definitions/Stitch" } },
         "notes": { "type": "array", "items": { "$ref": "#/definitions/Note" } },
         "variations": { "type": "array", "items": { "$ref": "#/definitions/Variation" } },
-        "workingCopy": { "$ref": "#/definitions/WorkingCopyRef" }
+        "workingCopy": { "$ref": "#/definitions/WorkingCopyRef" },
+        "versioning": { "$ref": "#/definitions/PatternVersioning" },
+        "lineage": { "$ref": "#/definitions/PatternLineage" }
       }
     },
     "ImageRef": {
@@ -195,6 +197,53 @@
       "properties": {
         "branch": { "type": "string" },
         "dirty": { "type": "boolean" }
+      }
+    },
+    "PatternVisibility": { "enum": ["private", "published"] },
+    "PatternVersionStatus": { "enum": ["draft", "published", "outdated"] },
+    "PatternVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "status", "createdAt", "updatedAt"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "status": { "$ref": "#/definitions/PatternVersionStatus" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "publishedAt": { "type": "string" }
+      }
+    },
+    "PatternVersioning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["visibility", "versions", "activeVersionId"],
+      "properties": {
+        "visibility": { "$ref": "#/definitions/PatternVisibility" },
+        "versions": { "type": "array", "items": { "$ref": "#/definitions/PatternVersion" } },
+        "activeVersionId": { "type": "string" },
+        "unpublishedAt": { "type": "string" }
+      }
+    },
+    "PatternLineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["remixedFromPatternId", "remixedFromLabel"],
+      "properties": {
+        "remixedFromPatternId": { "type": "string" },
+        "remixedFromVersionId": { "type": "string" },
+        "remixedFromLabel": { "type": "string" },
+        "remixedFromDesigner": { "type": "string" }
+      }
+    },
+    "PatternOwnership": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owned"],
+      "properties": {
+        "owned": { "type": "boolean" },
+        "purchasedAt": { "type": "string" },
+        "lastViewedVersionId": { "type": "string" }
       }
     },
     "FollowMode": { "enum": ["per-row", "pattern", "granular", "checklist"] },
