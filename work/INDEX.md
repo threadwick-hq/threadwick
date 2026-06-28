@@ -2,11 +2,11 @@
 
 Generated from `work/*.md` frontmatter by `scripts/work.ts`. Do not edit by hand; run `pnpm run work index`.
 
-Totals: backlog 19 · active 0 · review 7 · done 19 · blocked 0 · abandoned 5
+Totals: backlog 19 · active 0 · review 6 · done 20 · blocked 0 · abandoned 5
 
 | ID | Title | Type | Area | Phase | Status | Priority | Assignee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| TW-007 | Promote Biome from report-only to a hard CI gate | chore | repo, packages/config | 3 | review | p2 | agent |
+| TW-007 | Promote Biome from report-only to a hard CI gate | chore | repo, packages/config | 3 | done | p2 | agent |
 | TW-030 | Build the Follow chart pane (state styling, follow-position, zoom, tap-to-inspect) | feat | apps/web, packages/editor | 6 | review | p1 | agent |
 | TW-031 | Wire the locked-responsive Follow shell across all five breakpoints plus Wake Lock | feat | apps/web, packages/core | 6 | review | p1 | agent |
 | TW-032 | Add the external-pattern Follow fallback (Ravelry/PDF to checklist or open source) | feat | apps/web, packages/editor | 6 | review | p2 | agent |
