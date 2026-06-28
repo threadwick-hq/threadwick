@@ -2,7 +2,7 @@
 
 Generated from `work/*.md` frontmatter by `scripts/work.ts`. Do not edit by hand; run `pnpm run work index`.
 
-Totals: backlog 19 · active 0 · review 6 · done 20 · blocked 0 · abandoned 5
+Totals: backlog 18 · active 0 · review 6 · done 21 · blocked 0 · abandoned 5
 
 | ID | Title | Type | Area | Phase | Status | Priority | Assignee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -13,7 +13,6 @@ Totals: backlog 19 · active 0 · review 6 · done 20 · blocked 0 · abandoned 
 | TW-033 | Build the Project interior shell, rail and pinned status tile | feat | apps/web, packages/core | 6 | review | p2 | agent |
 | TW-034 | Build the Project Overview screen and Ravelry status mapping (capability-flagged) | feat | apps/web, packages/core, packages/types | 6 | review | p2 | agent |
 | TW-035 | Add whole-pattern versioning, publish, remix and lineage types to @threadwick/types (Phase-7 anchor) | feat | packages/types | 6 | review | p2 | agent |
-| TW-015 | Migrate ProjectView, ProjectsView and TopBar/VersionTag from AntD to shadcn | refactor | apps/studio | 6 | backlog | p2 | - |
 | TW-016 | Replace App.useApp() with a shadcn toast and confirm layer and migrate AuthMenu | refactor | apps/studio, packages/core | 6 | backlog | p2 | - |
 | TW-017 | Drop AntD from apps/studio and remove the theme and provider wiring | chore | apps/studio | 6 | backlog | p2 | - |
 | TW-022 | Build the topbar with search/Cmd+K trigger, notifications bell and Import/New | feat | apps/web, packages/core, packages/icons | 6 | backlog | p2 | - |
@@ -38,6 +37,7 @@ Totals: backlog 19 · active 0 · review 6 · done 20 · blocked 0 · abandoned 
 | TW-012 | Move files.ts (import/export, SVG/PNG, print-PDF) into the editor browser-only entry | refactor | packages/editor, apps/studio | 6 | done | p2 | agent |
 | TW-013 | Add the editor's action glyphs to @threadwick/icons and swap iconoir out of studio | feat | packages/icons, apps/studio | 6 | done | p1 | agent |
 | TW-014 | Migrate the EditorView toolbar and inspector chrome from AntD to shadcn | refactor | apps/studio, packages/editor | 6 | done | p1 | agent |
+| TW-015 | Migrate ProjectView, ProjectsView and TopBar/VersionTag from AntD to shadcn | refactor | apps/studio | 6 | done | p2 | - |
 | TW-018 | Bring the moved packages/editor code to Biome-clean | chore | packages/editor, packages/config, repo | 6 | done | p2 | agent |
 | TW-019 | Mount /studio as a client-only RR7 route with isolated browser bootstrap | feat | apps/web, packages/editor | 6 | done | p1 | agent |
 | TW-020 | Build the StudioShell layout route with the UWD cap-and-centre rule | feat | apps/web, packages/core | 6 | done | p1 | agent |
