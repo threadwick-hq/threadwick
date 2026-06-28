@@ -6,10 +6,11 @@ area:
   - apps/web
   - packages/core
 phase: 6
-status: review
+status: done
+completed: 2026-06-28
 priority: p1
 created: 2026-06-23
-pr: 24
+pr: 36
 acceptance:
   - the Follow layout matches the locked design at all five breakpoints
   - desktop is immersive (nav recedes) and the stage caps + centers on ultra-wide

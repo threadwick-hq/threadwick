@@ -5,7 +5,8 @@ type: feat
 area:
   - packages/types
 phase: 6
-status: review
+status: done
+completed: 2026-06-28
 priority: p2
 created: 2026-06-23
 assignee: agent

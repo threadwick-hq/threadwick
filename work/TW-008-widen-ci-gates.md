@@ -5,9 +5,10 @@ type: chore
 area:
   - repo
 phase: 8
-status: backlog
+status: review
 priority: p3
 created: 2026-06-22
+pr: 41
 acceptance:
   - CI build + typecheck cover apps/* and root, not only packages/*
   - the suite is green once the migration apps stabilize
@@ -26,8 +27,8 @@ Out: the Biome hardening (TW-007).
 
 ## Acceptance
 
-- [ ] CI build + typecheck cover apps/* and root
-- [ ] suite green after the migration apps stabilize
+- [x] CI build + typecheck cover apps/* and root
+- [x] suite green after the migration apps stabilize
 
 ## Log
 

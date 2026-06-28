@@ -6,9 +6,10 @@ area:
   - repo
   - packages/config
 phase: 3
-status: backlog
+status: review
 priority: p2
 created: 2026-06-22
+pr: 40
 acceptance:
   - pnpm biome check packages passes with no errors
   - the `|| true` is removed from the Biome CI step

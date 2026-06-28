@@ -6,7 +6,8 @@ area:
   - apps/web
   - packages/editor
 phase: 6
-status: review
+status: done
+completed: 2026-06-28
 pr: 35
 priority: p1
 created: 2026-06-23
