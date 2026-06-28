@@ -2,6 +2,7 @@ export * from './CounterPill';
 export * from './FollowFooter';
 export * from './FollowHeader';
 export * from './FollowModeSelector';
+export * from './ExternalSourcePane';
 export * from './FollowShell';
 export * from './InstructionBox';
 export * from './useFollowSplitLayout';

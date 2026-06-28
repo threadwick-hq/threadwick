@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router';
 import {
 	CounterPillRow,
+	ExternalSourcePane,
 	FollowFooter,
 	FollowHeader,
 	FollowModeSelector,
@@ -12,6 +13,9 @@ import {
 import { FollowChartPane } from './follow-chart-pane';
 import {
 	activeVersion,
+	hasStructuredChartData,
+	isExternalRef,
+	resolveExternalFollowContext,
 	resolveFollowContext,
 	segmentsFromInstructionLine,
 } from '@threadwick/editor';
@@ -19,8 +23,8 @@ import { Icon } from '@threadwick/icons';
 import { useStudioStore } from './studio-store';
 
 /**
- * Responsive Follow surface across five breakpoints (TW-031): chart pane, mode
- * selector, counter pills, instruction box, footer, and keep-awake Wake Lock.
+ * Responsive Follow surface (TW-029–031): structured chart path for Threadwick
+ * patterns; external fallback checklist + open source for Ravelry/PDF (TW-032).
  */
 export function FollowMount() {
 	const store = useStudioStore();
@@ -63,7 +67,7 @@ export function FollowMount() {
 	}
 
 	const ref = prj.makePatterns?.find((r) => r.id === refId);
-	if (!ref || ref.source !== 'threadwick') {
+	if (!ref) {
 		return (
 			<div className="px-4 py-8">
 				<p className="text-sm text-muted-foreground">
@@ -75,6 +79,104 @@ export function FollowMount() {
 				>
 					Back to editor
 				</Link>
+			</div>
+		);
+	}
+
+	const backLink = (
+		<Link
+			to="/studio/editor"
+			className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground"
+			aria-label="Back to project"
+		>
+			<Icon name="close" label="" className="size-4" />
+		</Link>
+	);
+
+	if (isExternalRef(ref)) {
+		const ctx = resolveExternalFollowContext(ref);
+		const sections = ctx.sections.map((section) => ({
+			...section,
+			segments: section.instructionLine
+				? segmentsFromInstructionLine(section.instructionLine)
+				: [],
+		}));
+		const unitLabel =
+			ref.progress?.completed === true
+				? 'Done'
+				: `Round ${(ref.progress?.unitsDone ?? 0) + 1}`;
+
+		return (
+			<FollowShell
+				header={
+					<FollowHeader
+						title={ref.label}
+						subtitle={`Checklist · ${unitLabel}`}
+						backSlot={backLink}
+						keepAwake={wakeLock.enabled}
+						onKeepAwakeChange={(enabled) => {
+							void wakeLock.setEnabled(enabled);
+						}}
+						keepAwakeSupported={wakeLock.supported}
+					/>
+				}
+				chart={
+					<ExternalSourcePane
+						label={ref.label}
+						sourceLabel={ctx.sourceLabel}
+						sourceHref={ctx.sourceHref}
+						designer={
+							ref.designer ? `by ${ref.designer}` : undefined
+						}
+						className="[@media(min-width:768px)_and_(orientation:landscape)]:h-full lg:h-full"
+					/>
+				}
+				pills={<CounterPillRow pills={ctx.pills} />}
+				instructions={<InstructionBox sections={sections} />}
+				footer={
+					<div>
+						<FollowFooter
+							percent={ctx.percent}
+							actionLabel={ctx.actionLabel}
+							canUndo={ctx.canUndo}
+							actionDisabled={ref.progress?.completed === true}
+							layout={splitLayout ? 'inline' : 'stacked'}
+							onAction={() => store.advanceFollow(ref.id)}
+							onUndo={() => store.undoFollow(ref.id)}
+							className={
+								splitLayout
+									? 'px-4 pb-2 pt-0 md:px-0 md:pb-0'
+									: undefined
+							}
+						/>
+						{(ref.progress?.unitsDone ?? 0) > 0 &&
+						ref.progress?.completed !== true ? (
+							<div
+								className={
+									splitLayout
+										? 'px-4 pb-4 text-center md:px-0 md:pb-0'
+										: 'px-4 pb-4 text-center'
+								}
+							>
+								<button
+									type="button"
+									className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+									onClick={() => store.completeFollow(ref.id)}
+								>
+									Mark pattern finished
+								</button>
+							</div>
+						) : null}
+					</div>
+				}
+			/>
+		);
+	}
+
+	if (!hasStructuredChartData(ref)) {
+		return (
+			<div className="px-4 py-8 text-sm text-muted-foreground">
+				Unsupported pattern reference.
 			</div>
 		);
 	}
@@ -113,16 +215,6 @@ export function FollowMount() {
 			? segmentsFromInstructionLine(section.instructionLine)
 			: [],
 	}));
-
-	const backLink = (
-		<Link
-			to="/studio/editor"
-			className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground"
-			aria-label="Back to project"
-		>
-			<Icon name="close" label="" className="size-4" />
-		</Link>
-	);
 
 	return (
 		<FollowShell

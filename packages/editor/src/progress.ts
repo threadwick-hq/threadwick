@@ -218,7 +218,12 @@ function refUnitsTotal(
 	resolvePattern: (patternId: string) => Pattern | undefined,
 ): number {
 	if (ref.progress?.unitsTotal != null) return ref.progress.unitsTotal;
-	if (ref.source !== 'threadwick') return 0;
+	if (ref.source !== 'threadwick') {
+		if (ref.progress?.completed) {
+			return ref.progress.unitsDone ?? 0;
+		}
+		return Math.max(ref.progress?.unitsDone ?? 0, 1);
+	}
 	const chart = resolvePattern(ref.patternId);
 	if (!chart) return 0;
 	const mode = effectiveFollowMode(ref);
