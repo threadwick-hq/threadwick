@@ -2,11 +2,12 @@
 
 Generated from `work/*.md` frontmatter by `scripts/work.ts`. Do not edit by hand; run `pnpm run work index`.
 
-Totals: backlog 24 · active 0 · review 5 · done 16 · blocked 0 · abandoned 5
+Totals: backlog 23 · active 1 · review 5 · done 16 · blocked 0 · abandoned 5
 
 | ID | Title | Type | Area | Phase | Status | Priority | Assignee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | TW-007 | Promote Biome from report-only to a hard CI gate | chore | repo, packages/config | 3 | backlog | p2 | - |
+| TW-034 | Build the Project Overview screen and Ravelry status mapping (capability-flagged) | feat | apps/web, packages/core, packages/types | 6 | active | p2 | agent |
 | TW-030 | Build the Follow chart pane (state styling, follow-position, zoom, tap-to-inspect) | feat | apps/web, packages/editor | 6 | review | p1 | agent |
 | TW-031 | Wire the locked-responsive Follow shell across all five breakpoints plus Wake Lock | feat | apps/web, packages/core | 6 | review | p1 | agent |
 | TW-032 | Add the external-pattern Follow fallback (Ravelry/PDF to checklist or open source) | feat | apps/web, packages/editor | 6 | review | p2 | agent |
@@ -19,7 +20,6 @@ Totals: backlog 24 · active 0 · review 5 · done 16 · blocked 0 · abandoned 
 | TW-023 | Implement the craft picker as a studio-wide persisted scope with inclusion semantics | feat | apps/web, packages/core, packages/types | 6 | backlog | p2 | - |
 | TW-024 | Build the mobile bottom tab bar and responsive sidebar collapse | feat | apps/web, packages/core | 6 | backlog | p2 | - |
 | TW-025 | Define the identity-tile slot-swap and breadcrumb contract for interiors (no layout shift) | feat | apps/web, packages/core | 6 | backlog | p2 | - |
-| TW-034 | Build the Project Overview screen and Ravelry status mapping (capability-flagged) | feat | apps/web, packages/core, packages/types | 6 | backlog | p2 | - |
 | TW-036 | Build the Pattern interior shell, rail and Overview (edit mode) in shadcn | feat | apps/web, packages/core, packages/icons | 6 | backlog | p2 | - |
 | TW-037 | Build the pinned version tile, publishing controls and reward-never-penalize quality checks | feat | apps/web, packages/core | 6 | backlog | p2 | - |
 | TW-038 | Build the Pattern view-mode decision surface and Start-making/Buy/Remix actions | feat | apps/web, packages/core | 6 | backlog | p2 | - |

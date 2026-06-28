@@ -10,6 +10,7 @@ export * from './geometry';
 export * from './instructions';
 export * from './model';
 export * from './progress';
+export * from './project-overview';
 export * from './follow-ui';
 export * from './follow-chart';
 export * from './external-follow';

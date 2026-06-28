@@ -7,15 +7,17 @@ area:
   - packages/core
   - packages/types
 phase: 6
-status: backlog
+status: active
 priority: p2
 created: 2026-06-23
 acceptance:
   - Overview shows state, progress photos, patterns-in-this-make, key facts, and from-stash tags
   - status states map to/from Ravelry behind the capability flag
   - offline (flag off) the screen stays complete
+assignee: agent
+started: 2026-06-28
+pr:
 ---
-
 ## Context
 
 Overview: title + state, progress photos, patterns-in-this-make (per-pattern progress + Continue/Open), key facts, yarns & tools used with from-stash tags. States sync to Ravelry. Spec §5. (Phase 6 sub-phase 6e.) From the Studio redesign handoff at `apps/studio/docs/redesign/`.
@@ -30,10 +32,12 @@ Depends on: TW-033, TW-028.
 
 ## Acceptance
 
-- [ ] Overview shows state, progress photos, patterns-in-this-make, key facts, and from-stash tags
-- [ ] status states map to/from Ravelry behind the capability flag
-- [ ] offline (flag off) the screen stays complete
+- [x] Overview shows state, progress photos, patterns-in-this-make, key facts, and from-stash tags
+- [x] status states map to/from Ravelry behind the capability flag
+- [x] offline (flag off) the screen stays complete
 
 ## Log
 
+- 2026-06-28 Built Project Overview screen (`ProjectOverviewHeader`, progress photos, patterns-in-make, key facts, materials checklist with from-stash tags). Added `@threadwick/types` Ravelry mapping helpers, `@threadwick/core/capabilities` + overview components, editor maker-plane fields + sample seed. Status selector pushes/pulls via fixture when `VITE_RAVELRY_ENABLED=true`; flag off keeps full offline overview.
+- 2026-06-28 claimed by agent.
 - 2026-06-23 created (Phase 6 re-scope from the studio redesign handoff).
