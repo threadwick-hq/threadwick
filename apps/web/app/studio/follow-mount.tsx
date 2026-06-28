@@ -5,6 +5,7 @@ import {
 	FollowModeSelector,
 	InstructionBox,
 } from '@threadwick/core/components';
+import { FollowChartPane } from './follow-chart-pane';
 import {
 	activeVersion,
 	resolveFollowContext,
@@ -14,8 +15,8 @@ import { Icon } from '@threadwick/icons';
 import { useStudioStore } from './studio-store';
 
 /**
- * Phone-baseline Follow surface: mode selector, counter pills, instruction box,
- * and the one-big-action footer (TW-029). Chart pane is TW-030.
+ * Phone-baseline Follow surface: chart pane, mode selector, counter pills,
+ * instruction box, and the one-big-action footer (TW-029 / TW-030).
  */
 export function FollowMount() {
 	const store = useStudioStore();
@@ -131,6 +132,14 @@ export function FollowMount() {
 					onValueChange={(mode) => {
 						store.setFollowMode(ref.id, mode);
 					}}
+				/>
+			</div>
+
+			<div className="px-4 pb-3">
+				<FollowChartPane
+					pattern={chart}
+					progress={ref.progress}
+					mode={ctx.mode}
 				/>
 			</div>
 
