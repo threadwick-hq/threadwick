@@ -6,9 +6,10 @@ area:
   - packages/editor
   - packages/types
 phase: 6
-status: review
+status: done
 priority: p1
 created: 2026-06-23
+completed: 2026-06-28
 acceptance:
   - the engine decomposes a round into per-row / pattern / granular Units from explicit marks
   - an unmarked round falls back to per-row cleanly
