@@ -21,7 +21,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Work tracking (validate + gates)
         run: pnpm run work check
-      - name: Build + typecheck (packages)
-        run: pnpm turbo run build typecheck --filter=./packages/*
+      - name: Build + typecheck (packages, apps)
+        run: pnpm turbo run build typecheck --filter=./packages/* --filter=./apps/*
       - name: Biome (packages)
         run: pnpm biome check packages
