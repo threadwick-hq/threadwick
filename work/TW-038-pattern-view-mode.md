@@ -6,8 +6,11 @@ area:
   - apps/web
   - packages/core
 phase: 6
-status: backlog
+status: review
 priority: p2
+assignee: agent
+started: 2026-06-28
+pr: 33
 created: 2026-06-23
 acceptance:
   - view mode shows gallery, creator attribution, price + actions, and read-only previews
@@ -29,10 +32,11 @@ Depends on: TW-037, TW-033.
 
 ## Acceptance
 
-- [ ] view mode shows gallery, creator attribution, price + actions, and read-only previews
-- [ ] Start making creates a Project in the background (no orphaned sessions)
-- [ ] Buy and Remix are wired (buy-then-start for paid)
+- [x] view mode shows gallery, creator attribution, price + actions, and read-only previews
+- [x] Start making creates a Project in the background (no orphaned sessions)
+- [x] Buy and Remix are wired (buy-then-start for paid)
 
 ## Log
 
 - 2026-06-23 created (Phase 6 re-scope from the studio redesign handoff).
+- 2026-06-28 implemented view-mode chrome, marketplace demo catalog, Start making / Buy / Remix wiring, and overview branching on `?view=1`.

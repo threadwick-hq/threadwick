@@ -10,18 +10,47 @@ export default function PatternsIndex() {
 			<p className="mt-1 text-sm text-muted-foreground">
 				Your authored designs — the full Workbench list lands in TW-041.
 			</p>
-			<ul className="mt-6 space-y-2">
-				{patterns.map((pattern) => (
-					<li key={pattern.id}>
+
+			<section className="mt-8">
+				<h2 className="text-sm font-medium">Marketplace demos</h2>
+				<p className="mt-1 text-sm text-muted-foreground">
+					Open view mode for the wildflower granny square — free or paid demo.
+				</p>
+				<ul className="mt-3 space-y-2">
+					<li>
 						<Link
-							to={`/studio/patterns/${pattern.id}`}
+							to="/studio/patterns/pat-wildflower-granny?view=1"
 							className="block rounded-md border border-border px-4 py-3 text-sm font-medium hover:bg-muted/50"
 						>
-							{pattern.overview.name}
+							Wildflower granny square — free
 						</Link>
 					</li>
-				))}
-			</ul>
+					<li>
+						<Link
+							to="/studio/patterns/pat-wildflower-granny?view=1&paid=1"
+							className="block rounded-md border border-border px-4 py-3 text-sm font-medium hover:bg-muted/50"
+						>
+							Wildflower granny square — $5.99 demo
+						</Link>
+					</li>
+				</ul>
+			</section>
+
+			<section className="mt-8">
+				<h2 className="text-sm font-medium">Your patterns</h2>
+				<ul className="mt-3 space-y-2">
+					{patterns.map((pattern) => (
+						<li key={pattern.id}>
+							<Link
+								to={`/studio/patterns/${pattern.id}`}
+								className="block rounded-md border border-border px-4 py-3 text-sm font-medium hover:bg-muted/50"
+							>
+								{pattern.overview.name}
+							</Link>
+						</li>
+					))}
+				</ul>
+			</section>
 		</div>
 	);
 }

@@ -6,9 +6,10 @@ area:
   - apps/web
   - packages/core
 phase: 6
-status: review
+status: done
 priority: p2
 created: 2026-06-23
+completed: 2026-06-28
 assignee: agent
 started: 2026-06-28
 pr: 32
@@ -40,3 +41,4 @@ Depends on: TW-036.
 
 - 2026-06-28 claimed by agent; version tile switcher + publish/remix controls, quality audit on overview, publish floor gating. PR #32.
 - 2026-06-23 created (Phase 6 re-scope from the studio redesign handoff).
+- 2026-06-28 merged via PR #32 (squash).

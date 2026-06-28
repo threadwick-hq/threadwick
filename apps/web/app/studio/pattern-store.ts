@@ -86,14 +86,21 @@ export function startPatternDraft(id: string) {
 	updatePattern(id, createPatternDraft(pattern));
 }
 
-export function remixWorkbenchPattern(id: string): Pattern | undefined {
-	const pattern = getPattern(id);
-	if (!pattern) return undefined;
-	const remixed = remixPattern(pattern);
+function addRemixedPattern(remixed: Pattern): Pattern {
 	library = { patterns: [...library.patterns, remixed] };
 	savePatterns(library);
 	notify();
 	return remixed;
+}
+
+export function remixWorkbenchPattern(id: string): Pattern | undefined {
+	const pattern = getPattern(id);
+	if (!pattern) return undefined;
+	return addRemixedPattern(remixPattern(pattern));
+}
+
+export function remixCatalogPattern(catalogPattern: Pattern): Pattern {
+	return addRemixedPattern(remixPattern(catalogPattern));
 }
 
 /** Subscribe to workbench pattern library changes. */

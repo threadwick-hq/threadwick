@@ -12,6 +12,8 @@ export * from './model';
 export * from './progress';
 export * from './pattern-overview';
 export * from './pattern-versioning';
+export * from './pattern-view-mode';
+export * from './sample-marketplace-pattern';
 export * from './project-overview';
 export * from './sample-workbench-pattern';
 export * from './follow-ui';
