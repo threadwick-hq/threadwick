@@ -2,18 +2,18 @@
 
 Generated from `work/*.md` frontmatter by `scripts/work.ts`. Do not edit by hand; run `pnpm run work index`.
 
-Totals: backlog 19 · active 1 · review 6 · done 19 · blocked 0 · abandoned 5
+Totals: backlog 17 · active 0 · review 9 · done 19 · blocked 0 · abandoned 5
 
 | ID | Title | Type | Area | Phase | Status | Priority | Assignee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| TW-007 | Promote Biome from report-only to a hard CI gate | chore | repo, packages/config | 3 | backlog | p2 | - |
+| TW-007 | Promote Biome from report-only to a hard CI gate | chore | repo, packages/config | 3 | review | p2 | agent |
+| TW-015 | Migrate ProjectView, ProjectsView and TopBar/VersionTag from AntD to shadcn | refactor | apps/studio | 6 | review | p2 | agent |
 | TW-030 | Build the Follow chart pane (state styling, follow-position, zoom, tap-to-inspect) | feat | apps/web, packages/editor | 6 | review | p1 | agent |
 | TW-031 | Wire the locked-responsive Follow shell across all five breakpoints plus Wake Lock | feat | apps/web, packages/core | 6 | review | p1 | agent |
 | TW-032 | Add the external-pattern Follow fallback (Ravelry/PDF to checklist or open source) | feat | apps/web, packages/editor | 6 | review | p2 | agent |
 | TW-033 | Build the Project interior shell, rail and pinned status tile | feat | apps/web, packages/core | 6 | review | p2 | agent |
 | TW-034 | Build the Project Overview screen and Ravelry status mapping (capability-flagged) | feat | apps/web, packages/core, packages/types | 6 | review | p2 | agent |
 | TW-035 | Add whole-pattern versioning, publish, remix and lineage types to @threadwick/types (Phase-7 anchor) | feat | packages/types | 6 | review | p2 | agent |
-| TW-015 | Migrate ProjectView, ProjectsView and TopBar/VersionTag from AntD to shadcn | refactor | apps/studio | 6 | backlog | p2 | - |
 | TW-016 | Replace App.useApp() with a shadcn toast and confirm layer and migrate AuthMenu | refactor | apps/studio, packages/core | 6 | backlog | p2 | - |
 | TW-017 | Drop AntD from apps/studio and remove the theme and provider wiring | chore | apps/studio | 6 | backlog | p2 | - |
 | TW-022 | Build the topbar with search/Cmd+K trigger, notifications bell and Import/New | feat | apps/web, packages/core, packages/icons | 6 | backlog | p2 | - |
@@ -54,5 +54,5 @@ Totals: backlog 19 · active 1 · review 6 · done 19 · blocked 0 · abandoned 
 | TW-004 | Mount @threadwick/editor in apps/web as a client-only /studio route | feat | apps/web, packages/editor | 6 | abandoned | p1 | - |
 | TW-005 | Pin Supabase redirectTo to a fixed /studio/auth/callback | fix | apps/web, apps/studio | 6 | abandoned | p2 | - |
 | TW-006 | Audit studio source for hardcoded /studio/ absolute asset paths | chore | apps/studio | 6 | abandoned | p3 | - |
-| TW-008 | Widen CI build/typecheck beyond packages/* to apps and root | chore | repo | 8 | active | p3 | agent |
+| TW-008 | Widen CI build/typecheck beyond packages/* to apps and root | chore | repo | 8 | review | p3 | agent |
 | TW-050 | Replace the Font-Awesome-derived Studio/Marketplace brand glyphs with originals (pre-public gate) | chore | packages/core | 8 | done | p1 | agent |

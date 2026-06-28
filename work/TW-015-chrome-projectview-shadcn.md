@@ -5,9 +5,12 @@ type: refactor
 area:
   - apps/studio
 phase: 6
-status: backlog
+status: review
 priority: p2
 created: 2026-06-23
+pr: 39
+assignee: agent
+started: 2026-06-28
 acceptance:
   - ProjectView/ProjectsView/TopBar render with no AntD
   - the publish/discard version bar interaction is preserved
