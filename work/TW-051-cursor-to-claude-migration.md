@@ -5,11 +5,12 @@ type: chore
 area:
   - repo
 phase: 0
-status: active
+status: review
 priority: p2
 created: 2026-06-29
 assignee: claude
 started: 2026-06-29
+pr: 44
 acceptance:
   - AGENTS.md is the tool-agnostic source of truth with no Cursor-specific framing
   - CLAUDE.md (root and apps/studio) imports the matching AGENTS.md via @import instead of being a redirect stub
@@ -40,14 +41,16 @@ Out: the work-tracking system itself, app/package source behaviour, the AntD→s
 
 ## Acceptance
 
-- [ ] AGENTS.md is the tool-agnostic source of truth with no Cursor-specific framing
-- [ ] CLAUDE.md (root and apps/studio) imports the matching AGENTS.md via @import instead of being a redirect stub
-- [ ] .mcp.json at repo root provides the antd MCP server (replacing .cursor/mcp.json)
-- [ ] .claude/settings.json wires SessionStart and PostToolUse hooks with Claude Code's JSON schema
-- [ ] .claude/hooks/ scripts are executable and emit hookSpecificOutput.additionalContext
-- [ ] .cursor/ is removed and no .cursor references remain outside historical/domain text
+- [x] AGENTS.md is the tool-agnostic source of truth with no Cursor-specific framing
+- [x] CLAUDE.md (root and apps/studio) imports the matching AGENTS.md via @import instead of being a redirect stub
+- [x] .mcp.json at repo root provides the antd MCP server (replacing .cursor/mcp.json)
+- [x] .claude/settings.json wires SessionStart and PostToolUse hooks with Claude Code's JSON schema
+- [x] .claude/hooks/ scripts are executable and emit hookSpecificOutput.additionalContext
+- [x] .cursor/ is removed and no .cursor references remain outside historical/domain text
 
 ## Log
 
 - 2026-06-29 created. Repaired broken git worktrees (renamed repo dir had orphaned the worktree
   admin metadata) before branching. Implementing the migration on `feat/TW-051`.
+- 2026-06-29 implemented; verified hooks (bash -n + simulated SessionStart/PostToolUse), `work check`
+  ok, `turbo typecheck test` 13/13 green. Opened draft PR #44 → ready for review.
