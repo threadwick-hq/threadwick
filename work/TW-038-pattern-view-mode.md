@@ -6,10 +6,11 @@ area:
   - apps/web
   - packages/core
 phase: 6
-status: review
+status: done
 priority: p2
 assignee: agent
 started: 2026-06-28
+completed: 2026-06-28
 pr: 33
 created: 2026-06-23
 acceptance:
@@ -40,3 +41,4 @@ Depends on: TW-037, TW-033.
 
 - 2026-06-23 created (Phase 6 re-scope from the studio redesign handoff).
 - 2026-06-28 implemented view-mode chrome, marketplace demo catalog, Start making / Buy / Remix wiring, and overview branching on `?view=1`.
+- 2026-06-28 merged via PR #33 (squash).
