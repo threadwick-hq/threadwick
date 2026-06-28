@@ -65,7 +65,7 @@ export function buildStitchShapes(
 ): Built {
 	// round len into the key: the ghost preview feeds sub-pixel floats on every
 	// pointer move, and an unrounded key would grow the cache without bound.
-	const key = type + '|' + (len == null ? '' : Math.round(len));
+	const key = `${type}|${len == null ? '' : Math.round(len)}`;
 	let built = builtCache.get(key);
 	if (!built) {
 		const def = STITCHES[type] ?? STITCHES.dc;
@@ -109,7 +109,7 @@ export function stitchToSVG(st: Stitch, opts: StitchSVGOpts = {}): string {
 			: height > 4
 				? `<rect class="hit" x="-9" y="${round(-height - 7)}" width="18" height="${round(height + 14)}" rx="9" fill="transparent" pointer-events="all"/>`
 				: `<circle class="hit" cx="0" cy="0" r="13" fill="transparent" pointer-events="all"/>`;
-	const cls = 'stitch' + (opts.klass ? ' ' + opts.klass : '');
+	const cls = `stitch${opts.klass ? ` ${opts.klass}` : ''}`;
 	return `<g data-id="${st.id}" class="${cls}" transform="${tf}"${op}>${hit}${inner}</g>`;
 }
 
@@ -260,7 +260,7 @@ function legendSVG(
 		out += `<svg x="0" y="${ry}" width="30" height="30" viewBox="${glyphViewBox(shapes, height)}">${shapesMarkup(shapes, color)}</svg>`;
 		out += `<text x="40" y="${ry + 20}" font-family="system-ui,Segoe UI,Arial" font-size="14" fill="${color}">${escapeXML(text)}</text>`;
 	});
-	return { markup: out + '</g>', height: types.length * rowH + 12 };
+	return { markup: `${out}</g>`, height: types.length * rowH + 12 };
 }
 
 function legendWidth(stitches: Stitch[]): number {

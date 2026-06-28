@@ -21,8 +21,7 @@ export function useWakeLock(defaultEnabled = true) {
 		() =>
 			typeof navigator !== 'undefined' &&
 			'wakeLock' in navigator &&
-			typeof (navigator as WakeLockNavigator).wakeLock?.request ===
-				'function',
+			typeof (navigator as WakeLockNavigator).wakeLock?.request === 'function',
 	);
 	const [enabled, setEnabled] = useState(defaultEnabled && supported);
 	const [active, setActive] = useState(false);

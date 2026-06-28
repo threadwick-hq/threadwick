@@ -14,7 +14,10 @@ export type MaterialsChecklistProps = {
 	className?: string;
 };
 
-function stashTag(fromStash: boolean | undefined, acquired: boolean | undefined): string {
+function stashTag(
+	fromStash: boolean | undefined,
+	acquired: boolean | undefined,
+): string {
 	if (fromStash) return 'From stash';
 	if (acquired === true) return 'In my stash';
 	if (acquired === false) return 'Need to buy';
@@ -39,7 +42,10 @@ export function MaterialsChecklist({
 					const checked = item.acquired === true;
 					const tag = stashTag(item.fromStash, item.acquired);
 					return (
-						<li key={item.id} className="flex items-center gap-2.5 py-2 text-[12.5px]">
+						<li
+							key={item.id}
+							className="flex items-center gap-2.5 py-2 text-[12.5px]"
+						>
 							<span
 								className={cn(
 									'flex size-4 shrink-0 items-center justify-center rounded border',
@@ -55,7 +61,9 @@ export function MaterialsChecklist({
 							</span>
 							<span className="min-w-0 flex-1">{item.label}</span>
 							{tag ? (
-								<span className="shrink-0 text-xs text-muted-foreground">{tag}</span>
+								<span className="shrink-0 text-xs text-muted-foreground">
+									{tag}
+								</span>
 							) : null}
 						</li>
 					);

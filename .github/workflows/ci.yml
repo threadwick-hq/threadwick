@@ -24,6 +24,4 @@ jobs:
       - name: Build + typecheck (packages)
         run: pnpm turbo run build typecheck --filter=./packages/*
       - name: Biome (packages)
-        # Report-only during the staged style migration; promote to a hard gate once the
-        # format pass + safe autofixes have landed (tracked as work/ TW-007).
-        run: pnpm biome check packages || true
+        run: pnpm biome check packages

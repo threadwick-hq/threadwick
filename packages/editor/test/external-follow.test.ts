@@ -11,8 +11,8 @@ import {
 	resolveExternalFollowContext,
 	undoExternalProgress,
 } from '../src/external-follow';
-import { aggregateProjectProgress, effectiveFollowMode } from '../src/progress';
 import { newProject } from '../src/model';
+import { aggregateProjectProgress, effectiveFollowMode } from '../src/progress';
 import type { PatternReference } from '../src/types';
 
 const ravelryRef = {
@@ -32,7 +32,10 @@ describe('external follow fallback', () => {
 			'https://www.ravelry.com/patterns/library/wildflower-square',
 		);
 		assert.equal(externalSourceLabel(ravelryRef), 'Open on Ravelry');
-		assert.equal(externalSourceLabel({ ...ravelryRef, source: 'pdf' }), 'Open PDF');
+		assert.equal(
+			externalSourceLabel({ ...ravelryRef, source: 'pdf' }),
+			'Open PDF',
+		);
 	});
 
 	test('advance and undo checklist rounds', () => {

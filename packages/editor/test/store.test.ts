@@ -64,15 +64,15 @@ test('store: create, start, chain, splice, repair, undo/redo', () => {
 		len: 30,
 		originId: ringId,
 	})!;
-	assert.equal(pat().stitches.find((s) => s.id === a)!.origin, x);
-	assert.equal(pat().stitches.find((s) => s.id === x)!.origin, ringId);
+	assert.equal(pat().stitches.find((s) => s.id === a)?.origin, x);
+	assert.equal(pat().stitches.find((s) => s.id === x)?.origin, ringId);
 	assert.deepEqual(
 		chainOrder(pat().stitches, round).map((s) => s.id),
 		[x, a, b, c],
 	);
 	store.setSelection([a]);
 	store.deleteSelection();
-	assert.equal(pat().stitches.find((s) => s.id === b)!.origin, x);
+	assert.equal(pat().stitches.find((s) => s.id === b)?.origin, x);
 	const n = pat().stitches.length;
 	store.undo();
 	assert.equal(pat().stitches.length, n + 1);
@@ -84,8 +84,8 @@ test('store: start marker lives alone in the Start row', () => {
 	const patId = store.createPattern(pid, 'Sq')!;
 	store.openPattern(pid, patId);
 	const pat = () => store.currentPattern()!;
-	assert.equal(pat().rounds[0]!.name, 'Start');
-	assert.equal(pat().activeRound, pat().rounds[0]!.id); // opens on the Start row
+	assert.equal(pat().rounds[0]?.name, 'Start');
+	assert.equal(pat().activeRound, pat().rounds[0]?.id); // opens on the Start row
 	const before = pat().rounds.length;
 	store.setStart('mr');
 	assert.equal(
@@ -93,14 +93,14 @@ test('store: start marker lives alone in the Start row', () => {
 		before,
 		'no new row added — the Start row pre-exists',
 	);
-	assert.equal(startRowId(pat()), pat().rounds[0]!.id);
+	assert.equal(startRowId(pat()), pat().rounds[0]?.id);
 	assert.notEqual(
 		pat().activeRound,
-		pat().rounds[0]!.id,
+		pat().rounds[0]?.id,
 		'advances to a working row',
 	);
 	assert.equal(
-		pat().stitches.filter((s) => s.round === pat().rounds[0]!.id).length,
+		pat().stitches.filter((s) => s.round === pat().rounds[0]?.id).length,
 		1,
 	); // ring alone in Start
 });
@@ -149,15 +149,15 @@ test('store: chains auto-align evenly between non-chain neighbours', () => {
 	assert.equal(order.length, 3);
 	assert.ok(order.every((s) => near(s.y, -30, 0.01)));
 	assert.ok(
-		near(order[1]!.x - order[0]!.x, 20, 0.01) &&
-			near(order[2]!.x - order[1]!.x, 20, 0.01),
+		near(order[1]?.x - order[0]?.x, 20, 0.01) &&
+			near(order[2]?.x - order[1]?.x, 20, 0.01),
 	);
-	store.setSelection([order[1]!.id]);
+	store.setSelection([order[1]?.id]);
 	store.moveSelectionBy(0, -25);
-	const mid = () => pat().stitches.find((s) => s.id === order[1]!.id)!;
+	const mid = () => pat().stitches.find((s) => s.id === order[1]?.id)!;
 	assert.equal(mid().auto, false);
 	assert.ok(mid().y < -40);
-	store.setSelection([order[1]!.id]);
+	store.setSelection([order[1]?.id]);
 	store.setChainAuto(true);
 	assert.ok(near(mid().y, -30, 0.01));
 });
@@ -269,7 +269,7 @@ test('store: pattern type guard + resources', () => {
 	assert.ok(yid);
 	store.updateResource(pid, 'yarns', yid, { brand: 'Acme' });
 	assert.equal(
-		activeVersion(store.getProject(pid)!).resources.yarns[0]!.brand,
+		activeVersion(store.getProject(pid)!).resources.yarns[0]?.brand,
 		'Acme',
 	);
 	store.removeResource(pid, 'yarns', yid);
@@ -322,7 +322,8 @@ test('store: evenRound fans stitches to equal radius', () => {
 	const patId = store.createPattern(pid, 'Sq')!;
 	store.openPattern(pid, patId);
 	const r = store.setStart('mr')!;
-	const round = store.currentPattern()!.activeRound; // working row after setStart auto-advances
+	const round = store.currentPattern()?.activeRound; // working row after setStart auto-advances
+	assert.ok(round);
 	let o = r;
 	for (const [,] of [
 		[10, -20],
@@ -340,7 +341,9 @@ test('store: evenRound fans stitches to equal radius', () => {
 			originId: o,
 		})!;
 	store.evenRound(round);
-	const dcs = chainOrder(store.currentPattern()!.stitches, round).filter(
+	const pattern = store.currentPattern();
+	assert.ok(pattern);
+	const dcs = chainOrder(pattern.stitches, round).filter(
 		(s) => s.type === 'dc',
 	);
 	const cx = dcs.reduce((a, s) => a + s.x, 0) / dcs.length,
@@ -366,9 +369,9 @@ test('store: version lifecycle — publish, new draft, outdate, isolation', () =
 
 	// publish it
 	store.publishVersion(pid);
-	assert.equal(publishedVersion(prj())!.label, 'v1');
+	assert.equal(publishedVersion(prj())?.label, 'v1');
 	assert.equal(draftVersion(prj()), undefined);
-	assert.ok(publishedVersion(prj())!.publishedAt);
+	assert.ok(publishedVersion(prj())?.publishedAt);
 
 	// published version is read-only: createPattern is refused
 	assert.equal(store.createPattern(pid, 'Nope'), null);
@@ -377,16 +380,16 @@ test('store: version lifecycle — publish, new draft, outdate, isolation', () =
 	// start a new draft — snapshots the published content into a fresh version
 	const draftId = store.createDraft(pid)!;
 	assert.equal(prj().versions.length, 2);
-	assert.equal(draftVersion(prj())!.id, draftId);
-	assert.equal(draftVersion(prj())!.label, 'v2');
+	assert.equal(draftVersion(prj())?.id, draftId);
+	assert.equal(draftVersion(prj())?.label, 'v2');
 	assert.equal(
-		draftVersion(prj())!.patterns.length,
+		draftVersion(prj())?.patterns.length,
 		1,
 		'draft copies the published patterns',
 	);
 	assert.notEqual(
-		draftVersion(prj())!.patterns[0]!.id,
-		publishedVersion(prj())!.patterns[0]!.id,
+		draftVersion(prj())?.patterns[0]?.id,
+		publishedVersion(prj())?.patterns[0]?.id,
 		'snapshot gets fresh ids',
 	);
 
@@ -395,21 +398,21 @@ test('store: version lifecycle — publish, new draft, outdate, isolation', () =
 	assert.equal(prj().versions.length, 2);
 
 	// editing the draft must not touch the still-published v1
-	const pubPatCount = publishedVersion(prj())!.patterns.length;
+	const pubPatCount = publishedVersion(prj())?.patterns.length;
 	store.createPattern(pid, 'Extra');
-	assert.equal(draftVersion(prj())!.patterns.length, 2);
+	assert.equal(draftVersion(prj())?.patterns.length, 2);
 	assert.equal(
-		publishedVersion(prj())!.patterns.length,
+		publishedVersion(prj())?.patterns.length,
 		pubPatCount,
 		'published version is undisturbed',
 	);
 
 	// publishing the draft outdates the old published version
 	store.publishVersion(pid);
-	assert.equal(publishedVersion(prj())!.label, 'v2');
+	assert.equal(publishedVersion(prj())?.label, 'v2');
 	assert.equal(prj().versions.filter((v) => v.status === 'outdated').length, 1);
 	assert.equal(
-		prj().versions.find((v) => v.label === 'v1')!.status,
+		prj().versions.find((v) => v.label === 'v1')?.status,
 		'outdated',
 	);
 

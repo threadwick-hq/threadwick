@@ -9,8 +9,8 @@ import type {
 } from '@threadwick/types';
 
 import {
-	decomposePattern,
 	type DecomposeMode,
+	decomposePattern,
 	type FollowUnit,
 	totalUnits,
 	unitAddressRow,
@@ -175,9 +175,7 @@ export function undoPatternProgress(
 	mode: FollowMode,
 ): PatternProgress {
 	if (!progress || progress.unitsDone <= 0) {
-		return (
-			progress ?? freshProgress(flattenFollowUnits(pattern, mode).length)
-		);
+		return progress ?? freshProgress(flattenFollowUnits(pattern, mode).length);
 	}
 
 	const activeMode = progress.cursor?.followMode ?? mode;
@@ -205,7 +203,7 @@ export function undoPatternProgress(
 
 function refUnitsDone(
 	ref: PatternReference,
-	resolvePattern: (patternId: string) => Pattern | undefined,
+	_resolvePattern: (patternId: string) => Pattern | undefined,
 ): number {
 	if (ref.progress?.completed) {
 		return ref.progress.unitsTotal ?? ref.progress.unitsDone;

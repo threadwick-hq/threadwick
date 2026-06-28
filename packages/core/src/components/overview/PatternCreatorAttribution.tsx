@@ -1,5 +1,5 @@
-import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
+import { Button } from '../ui/button';
 
 export type PatternCreatorAttributionProps = {
 	name: string;
@@ -18,7 +18,9 @@ export function PatternCreatorAttribution({
 	className,
 }: PatternCreatorAttributionProps) {
 	return (
-		<div className={cn('flex flex-wrap items-center gap-x-3 gap-y-1', className)}>
+		<div
+			className={cn('flex flex-wrap items-center gap-x-3 gap-y-1', className)}
+		>
 			<div className="min-w-0">
 				<p className="text-[13px] font-medium">{name}</p>
 				{handle ? (

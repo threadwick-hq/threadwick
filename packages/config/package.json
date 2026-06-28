@@ -1,24 +1,31 @@
 {
-  "name": "@threadwick/config",
-  "version": "0.1.0",
-  "description": "Threadwick shared code-shape config — base tsconfig, ESLint flat config (+ no-raw-hex rule), Prettier.",
-  "type": "module",
-  "license": "AGPL-3.0-or-later",
-  "files": ["tsconfig.base.json", "eslint.base.js", "prettier.js"],
-  "repository": { "type": "git", "url": "https://github.com/threadwick-hq/config.git" },
-  "exports": {
-    "./tsconfig.base.json": "./tsconfig.base.json",
-    "./eslint": "./eslint.base.js",
-    "./prettier": "./prettier.js"
-  },
-  "dependencies": {
-    "@eslint/js": "^9.17.0",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "typescript-eslint": "^8.18.2"
-  },
-  "peerDependencies": {
-    "eslint": "^9",
-    "prettier": "^3",
-    "typescript": "^5"
-  }
+	"name": "@threadwick/config",
+	"version": "0.1.0",
+	"description": "Threadwick shared code-shape config — base tsconfig, ESLint flat config (+ no-raw-hex rule), Prettier.",
+	"type": "module",
+	"license": "AGPL-3.0-or-later",
+	"files": [
+		"tsconfig.base.json",
+		"eslint.base.js",
+		"prettier.js"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/threadwick-hq/config.git"
+	},
+	"exports": {
+		"./tsconfig.base.json": "./tsconfig.base.json",
+		"./eslint": "./eslint.base.js",
+		"./prettier": "./prettier.js"
+	},
+	"dependencies": {
+		"@eslint/js": "^9.17.0",
+		"eslint-plugin-react-hooks": "^5.1.0",
+		"typescript-eslint": "^8.18.2"
+	},
+	"peerDependencies": {
+		"eslint": "^9",
+		"prettier": "^3",
+		"typescript": "^5"
+	}
 }

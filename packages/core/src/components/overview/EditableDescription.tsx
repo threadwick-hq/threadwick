@@ -26,7 +26,6 @@ export function EditableDescription({
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
 				onBlur={() => setEditing(false)}
-				autoFocus
 				rows={3}
 				className={cn(
 					'max-w-prose rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',

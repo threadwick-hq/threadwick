@@ -1,5 +1,4 @@
-import type { PatternOwnership } from '@threadwick/types';
-import type { Pattern } from '@threadwick/types';
+import type { Pattern, PatternOwnership } from '@threadwick/types';
 import {
 	type PatternQualityCheck,
 	patternQualityChecks,
@@ -18,7 +17,9 @@ export type PatternListing = {
 
 export type PatternMakerPrimaryAction = 'start-making' | 'buy';
 
-export function formatPatternPrice(listing: Pick<PatternListing, 'priceCents' | 'currency'>): string {
+export function formatPatternPrice(
+	listing: Pick<PatternListing, 'priceCents' | 'currency'>,
+): string {
 	if (listing.priceCents <= 0) return 'Free';
 	const amount = listing.priceCents / 100;
 	return new Intl.NumberFormat('en-US', {
@@ -45,6 +46,8 @@ export function patternMakerPrimaryActionLabel(
 }
 
 /** View-mode face of quality checks — only items that are included (§4.5). */
-export function patternQualityIncluded(pattern: Pattern): PatternQualityCheck[] {
+export function patternQualityIncluded(
+	pattern: Pattern,
+): PatternQualityCheck[] {
 	return patternQualityChecks(pattern).filter((check) => check.present);
 }

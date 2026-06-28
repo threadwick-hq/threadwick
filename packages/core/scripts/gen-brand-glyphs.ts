@@ -32,18 +32,30 @@ type GlyphSpec = {
 /** Each brand mark and the Font Awesome Pro Regular glyph it renders. Add surfaces here. */
 const GLYPH_SPECS: GlyphSpec[] = [
 	{ constName: 'REEL', doc: 'Threadwick — a reel.', faName: 'faReel' },
-	{ constName: 'COMPASS_DRAFTING', doc: 'Threadwick Studio — a drafting compass.', faName: 'faCompassDrafting' },
-	{ constName: 'STORE', doc: 'Threadwick Marketplace — a storefront.', faName: 'faStore' },
+	{
+		constName: 'COMPASS_DRAFTING',
+		doc: 'Threadwick Studio — a drafting compass.',
+		faName: 'faCompassDrafting',
+	},
+	{
+		constName: 'STORE',
+		doc: 'Threadwick Marketplace — a storefront.',
+		faName: 'faStore',
+	},
 ];
 
-const OUTPUT = fileURLToPath(new URL('../src/brand/glyphs.generated.ts', import.meta.url));
+const OUTPUT = fileURLToPath(
+	new URL('../src/brand/glyphs.generated.ts', import.meta.url),
+);
 
 async function generate(): Promise<void> {
 	const pro = await loadFontAwesomePro();
 	const blocks = GLYPH_SPECS.map((spec) => {
 		const faIcon = pro[spec.faName];
 		if (faIcon === undefined) {
-			throw new Error(`Glyph '${spec.faName}' was not found in Font Awesome Pro Regular.`);
+			throw new Error(
+				`Glyph '${spec.faName}' was not found in Font Awesome Pro Regular.`,
+			);
 		}
 		const [width, height, , , data] = faIcon.icon;
 		const path = Array.isArray(data) ? data.join('') : data;
@@ -61,11 +73,15 @@ async function generate(): Promise<void> {
 }
 
 /** Dynamically load the optional Font Awesome Pro package, narrowed to the shape we read. */
-async function loadFontAwesomePro(): Promise<Record<string, FaIconDefinition | undefined>> {
+async function loadFontAwesomePro(): Promise<
+	Record<string, FaIconDefinition | undefined>
+> {
 	// A non-literal specifier keeps tsc from resolving (and failing on) the optional package.
 	const moduleId: string = '@fortawesome/pro-regular-svg-icons';
 	try {
-		const pro: Record<string, FaIconDefinition | undefined> = await import(moduleId);
+		const pro: Record<string, FaIconDefinition | undefined> = await import(
+			moduleId
+		);
 		return pro;
 	} catch {
 		throw new Error(

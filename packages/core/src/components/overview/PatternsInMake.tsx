@@ -66,14 +66,21 @@ export function PatternsInMake({
 					<div className="flex flex-wrap items-start justify-between gap-2">
 						<div className="min-w-0">
 							<h3 className="text-sm font-medium">{pattern.label}</h3>
-							<p className="text-xs text-muted-foreground">{pattern.sourceLabel}</p>
+							<p className="text-xs text-muted-foreground">
+								{pattern.sourceLabel}
+							</p>
 						</div>
 						<Link
 							to={pattern.followHref}
 							className="inline-flex items-center gap-1 text-xs text-primary underline-offset-4 hover:underline"
 						>
 							Open
-							<Icon name="open-external" label="" className="size-3.5" aria-hidden />
+							<Icon
+								name="open-external"
+								label=""
+								className="size-3.5"
+								aria-hidden
+							/>
 						</Link>
 					</div>
 					<div className="mt-2.5">
@@ -100,7 +107,12 @@ export function PatternsInMake({
 							{continueAction ?? (
 								<Link to={pattern.followHref} className="inline-flex">
 									<Button type="button" size="sm" className="h-9 gap-1.5">
-										<Icon name="confirm" label="" className="size-4" aria-hidden />
+										<Icon
+											name="confirm"
+											label=""
+											className="size-4"
+											aria-hidden
+										/>
 										Continue making
 									</Button>
 								</Link>

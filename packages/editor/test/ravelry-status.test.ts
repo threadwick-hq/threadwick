@@ -1,11 +1,10 @@
 import assert from 'node:assert/strict';
-import { describe, test } from 'vitest';
-
 import {
 	makerStatusToRavelry,
 	ravelryStatusDiffersFromMaker,
 	ravelryStatusToMaker,
 } from '@threadwick/types';
+import { describe, test } from 'vitest';
 
 describe('Ravelry status mapping (§5)', () => {
 	test('maker → Ravelry total map', () => {
@@ -24,13 +23,25 @@ describe('Ravelry status mapping (§5)', () => {
 	});
 
 	test('draft and on-hold both round-trip to on-hold from Ravelry', () => {
-		assert.equal(ravelryStatusToMaker(makerStatusToRavelry('draft')), 'on-hold');
-		assert.equal(ravelryStatusToMaker(makerStatusToRavelry('on-hold')), 'on-hold');
+		assert.equal(
+			ravelryStatusToMaker(makerStatusToRavelry('draft')),
+			'on-hold',
+		);
+		assert.equal(
+			ravelryStatusToMaker(makerStatusToRavelry('on-hold')),
+			'on-hold',
+		);
 	});
 
 	test('ravelryStatusDiffersFromMaker detects mapped changes', () => {
 		assert.equal(ravelryStatusDiffersFromMaker('draft', 'hibernating'), true);
-		assert.equal(ravelryStatusDiffersFromMaker('on-hold', 'hibernating'), false);
-		assert.equal(ravelryStatusDiffersFromMaker('in-progress', 'in-progress'), false);
+		assert.equal(
+			ravelryStatusDiffersFromMaker('on-hold', 'hibernating'),
+			false,
+		);
+		assert.equal(
+			ravelryStatusDiffersFromMaker('in-progress', 'in-progress'),
+			false,
+		);
 	});
 });

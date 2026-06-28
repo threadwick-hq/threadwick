@@ -36,21 +36,36 @@ function VersionSwitcher({
 	onVersionChange,
 }: Pick<
 	PinnedVersionTileProps,
-	'versionLabel' | 'versionStatus' | 'versions' | 'activeVersionId' | 'onVersionChange'
+	| 'versionLabel'
+	| 'versionStatus'
+	| 'versions'
+	| 'activeVersionId'
+	| 'onVersionChange'
 >) {
 	const canSwitch = versions && versions.length > 1 && onVersionChange;
 
 	if (!canSwitch) {
 		return (
 			<>
-				<Icon name="draft" label="" className="size-4 shrink-0 text-muted-foreground" />
+				<Icon
+					name="draft"
+					label=""
+					className="size-4 shrink-0 text-muted-foreground"
+				/>
 				<span className="min-w-0 flex-1 truncate text-[12.5px] font-medium">
 					{versionLabel}
 					{versionStatus ? (
-						<span className="font-normal text-muted-foreground"> · {versionStatus}</span>
+						<span className="font-normal text-muted-foreground">
+							{' '}
+							· {versionStatus}
+						</span>
 					) : null}
 				</span>
-				<Icon name="chevron-down" label="" className="size-3.5 shrink-0 text-muted-foreground" />
+				<Icon
+					name="chevron-down"
+					label=""
+					className="size-3.5 shrink-0 text-muted-foreground"
+				/>
 			</>
 		);
 	}
@@ -63,14 +78,25 @@ function VersionSwitcher({
 					className="flex min-w-0 flex-1 items-center gap-2 rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-ring"
 					aria-label="Switch version"
 				>
-					<Icon name="draft" label="" className="size-4 shrink-0 text-muted-foreground" />
+					<Icon
+						name="draft"
+						label=""
+						className="size-4 shrink-0 text-muted-foreground"
+					/>
 					<span className="min-w-0 flex-1 truncate text-[12.5px] font-medium">
 						{versionLabel}
 						{versionStatus ? (
-							<span className="font-normal text-muted-foreground"> · {versionStatus}</span>
+							<span className="font-normal text-muted-foreground">
+								{' '}
+								· {versionStatus}
+							</span>
 						) : null}
 					</span>
-					<Icon name="chevron-down" label="" className="size-3.5 shrink-0 text-muted-foreground" />
+					<Icon
+						name="chevron-down"
+						label=""
+						className="size-3.5 shrink-0 text-muted-foreground"
+					/>
 				</button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="start" className="min-w-[12rem]">
@@ -125,7 +151,12 @@ export function PinnedVersionTile({
 						</Button>
 					)}
 					{secondaryAction ?? (
-						<Button type="button" variant="outline" className="h-8 px-3 text-[11.5px]" disabled>
+						<Button
+							type="button"
+							variant="outline"
+							className="h-8 px-3 text-[11.5px]"
+							disabled
+						>
 							Remix
 						</Button>
 					)}

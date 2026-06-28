@@ -2,14 +2,18 @@
 // and interactive SVG markup (TW-030). No DOM.
 
 import { INK } from './colors';
-import { flattenFollowUnits } from './progress';
 import { startRowId } from './model';
+import { flattenFollowUnits } from './progress';
 import { contentBounds, stitchToSVG } from './render';
 import { STITCHES } from './symbols';
 import type { FollowMode, Pattern, PatternProgress } from './types';
 import { round } from './util';
 
-export type FollowStitchState = 'completed' | 'current' | 'upcoming' | 'ghosted';
+export type FollowStitchState =
+	| 'completed'
+	| 'current'
+	| 'upcoming'
+	| 'ghosted';
 
 export interface FollowChartModel {
 	stitchStates: Map<string, FollowStitchState>;
@@ -36,12 +40,13 @@ export interface StitchInspectInfo {
 
 const FOLLOW_CURRENT = '#993C1D';
 
-export const FOLLOW_CHART_STYLES: Record<FollowStitchState, FollowChartStyle> = {
-	completed: { color: INK, opacity: 1 },
-	current: { color: FOLLOW_CURRENT, opacity: 1 },
-	upcoming: { color: INK, opacity: 0.38 },
-	ghosted: { color: INK, opacity: 0.16 },
-};
+export const FOLLOW_CHART_STYLES: Record<FollowStitchState, FollowChartStyle> =
+	{
+		completed: { color: INK, opacity: 1 },
+		current: { color: FOLLOW_CURRENT, opacity: 1 },
+		upcoming: { color: INK, opacity: 0.38 },
+		ghosted: { color: INK, opacity: 0.16 },
+	};
 
 function workingRoundIds(pattern: Pattern): string[] {
 	const startId = startRowId(pattern);
@@ -54,7 +59,9 @@ function currentUnitIndex(
 ): number {
 	if (progress?.completed) return units.length;
 	if (progress?.cursor?.unitAddress) {
-		const idx = units.findIndex((u) => u.address === progress.cursor!.unitAddress);
+		const idx = units.findIndex(
+			(u) => u.address === progress.cursor?.unitAddress,
+		);
 		if (idx >= 0) return idx;
 	}
 	return 0;
@@ -65,7 +72,7 @@ function unitIndexForStitch(
 	stitchId: string,
 ): number {
 	for (let i = 0; i < units.length; i++) {
-		if (units[i]!.stitchIds.includes(stitchId)) return i;
+		if (units[i]?.stitchIds.includes(stitchId)) return i;
 	}
 	return -1;
 }

@@ -7,7 +7,10 @@ import type {
 import { activePatternVersion } from './pattern-overview';
 import { deepClone, nowISO, uid } from './util';
 
-export type PatternPublishAction = 'publish-pattern' | 'publish-version' | 'new-draft';
+export type PatternPublishAction =
+	| 'publish-pattern'
+	| 'publish-version'
+	| 'new-draft';
 
 export type PatternQualityTier = 'floor' | 'optional';
 
@@ -24,15 +27,21 @@ const VERSION_STATUS_LABEL: Record<PatternVersionStatus, string> = {
 	outdated: 'outdated',
 };
 
-export function patternVersionStatusLabel(status: PatternVersionStatus): string {
+export function patternVersionStatusLabel(
+	status: PatternVersionStatus,
+): string {
 	return VERSION_STATUS_LABEL[status];
 }
 
-export function patternDraftVersion(pattern: Pattern): PatternVersion | undefined {
+export function patternDraftVersion(
+	pattern: Pattern,
+): PatternVersion | undefined {
 	return pattern.versioning?.versions.find((v) => v.status === 'draft');
 }
 
-export function patternPublishedVersion(pattern: Pattern): PatternVersion | undefined {
+export function patternPublishedVersion(
+	pattern: Pattern,
+): PatternVersion | undefined {
 	return pattern.versioning?.versions.find((v) => v.status === 'published');
 }
 
@@ -55,7 +64,9 @@ export function patternPublishAction(pattern: Pattern): PatternPublishAction {
 	return 'new-draft';
 }
 
-export function patternPublishActionLabel(action: PatternPublishAction): string {
+export function patternPublishActionLabel(
+	action: PatternPublishAction,
+): string {
 	switch (action) {
 		case 'publish-pattern':
 			return 'Publish pattern';
@@ -166,7 +177,10 @@ export function patternPublishFloorMissing(pattern: Pattern): string[] {
 		.map((c) => c.label);
 }
 
-function newPatternVersion(label: string, status: PatternVersionStatus): PatternVersion {
+function newPatternVersion(
+	label: string,
+	status: PatternVersionStatus,
+): PatternVersion {
 	const ts = nowISO();
 	return {
 		id: uid('ver'),

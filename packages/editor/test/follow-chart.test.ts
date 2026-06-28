@@ -5,9 +5,9 @@ import {
 	resolveFollowChartContext,
 	stitchInspectInfo,
 } from '../src/follow-chart';
+import { activeVersion } from '../src/model';
 import { advancePatternProgress as advance } from '../src/progress';
 import { sampleProject } from '../src/sample';
-import { activeVersion } from '../src/model';
 
 describe('follow chart', () => {
 	test('deriveFollowChartModel ghostes future rounds at start', () => {
@@ -15,7 +15,7 @@ describe('follow chart', () => {
 		const pat = activeVersion(prj).patterns[0]!;
 		const model = deriveFollowChartModel(pat, undefined, 'per-row');
 		const roundIds = [...new Set(pat.stitches.map((s) => s.round))];
-		const startRound = pat.rounds[0]!.id;
+		const startRound = pat.rounds[0]?.id;
 		const working = roundIds.filter((id) => id !== startRound);
 		const currentRound = model.currentRoundId;
 		assert.ok(currentRound);
@@ -68,7 +68,7 @@ describe('follow chart', () => {
 		const st = pat.stitches[0]!;
 		const info = stitchInspectInfo(pat, st.id);
 		assert.ok(info);
-		assert.equal(info!.id, st.id);
-		assert.ok(info!.name.length);
+		assert.equal(info?.id, st.id);
+		assert.ok(info?.name.length);
 	});
 });

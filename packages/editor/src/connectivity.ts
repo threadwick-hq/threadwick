@@ -120,7 +120,7 @@ export function pickBase(
 	let best: BaseHit | null = null,
 		bd = maxD;
 	for (const s of stitches) {
-		if (exclude && exclude.has(s.id)) continue;
+		if (exclude?.has(s.id)) continue;
 		const pt = topOfStitch(s);
 		const d = Math.hypot(pt.x - x, pt.y - y);
 		if (d < bd) {

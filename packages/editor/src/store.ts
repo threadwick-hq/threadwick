@@ -2,6 +2,11 @@
 // Subscribers re-render on emit(). Editor edits (rounds + stitches) are
 // transactional with undo/redo; project/resource edits autosave but aren't undoable.
 
+import {
+	advanceExternalProgress,
+	completeExternalProgress,
+	undoExternalProgress,
+} from './external-follow';
 import type {
 	Base,
 	FollowMode,
@@ -17,19 +22,13 @@ import type {
 	UIState,
 } from './index';
 import {
-	advanceExternalProgress,
-	completeExternalProgress,
-	undoExternalProgress,
-} from './external-follow';
-import {
 	activeVersion,
+	advancePatternProgress,
 	buildStitchShapes,
 	chainOrder,
 	deepClone,
 	draftVersion,
 	effectiveFollowMode,
-	advancePatternProgress,
-	undoPatternProgress,
 	FILE_FORMAT,
 	FILE_VERSION,
 	isRealStitch,
@@ -48,6 +47,7 @@ import {
 	startRowId,
 	topOfStitch,
 	uid,
+	undoPatternProgress,
 } from './index';
 
 const SAVE_KEY = 'threadwickstudio:v2';
@@ -234,7 +234,7 @@ class Store {
 		const copy = normalizeProject(deepClone(src));
 		copy.id = uid('prj');
 		this.reidVersions(copy);
-		copy.name = this.uniqueProjectName(src.name + ' (copy)');
+		copy.name = this.uniqueProjectName(`${src.name} (copy)`);
 		copy.createdAt = nowISO();
 		copy.updatedAt = nowISO();
 		this.state.library.projects.unshift(copy);
@@ -278,7 +278,7 @@ class Store {
 	// ---- versions ------------------------------------------------------------
 	setActiveVersion(projectId: string, versionId: string): void {
 		const prj = this.getProject(projectId);
-		if (!prj || !prj.versions.find((v) => v.id === versionId)) return;
+		if (!prj?.versions.find((v) => v.id === versionId)) return;
 		prj.activeVersionId = versionId;
 		this.clearEditor();
 		// If we were in the editor on a pattern that doesn't exist in this version, step back.
@@ -356,8 +356,7 @@ class Store {
 		type: 'granny' | 'round' | 'flat' = 'granny',
 	): string | null {
 		const prj = this.getProject(projectId);
-		if (!prj || !PATTERN_TYPES[type] || !PATTERN_TYPES[type].available)
-			return null;
+		if (!prj || !PATTERN_TYPES[type]?.available) return null;
 		const ver = activeVersion(prj);
 		if (ver.status !== 'draft') return null; // only draft versions are editable
 		const pat = newPattern(name, type);
@@ -369,7 +368,7 @@ class Store {
 	}
 	renamePattern(patternId: string, name: string): void {
 		const found = this.findPattern(patternId);
-		if (!found || found.version.status !== 'draft') return;
+		if (found?.version.status !== 'draft') return;
 		found.pat.name = name;
 		found.pat.updatedAt = nowISO();
 		found.version.updatedAt = nowISO();
@@ -390,11 +389,11 @@ class Store {
 	duplicatePattern(projectId: string, patternId: string): string | null {
 		const prj = this.getProject(projectId);
 		const ver = prj && activeVersion(prj);
-		const src = ver && ver.patterns.find((p) => p.id === patternId);
+		const src = ver?.patterns.find((p) => p.id === patternId);
 		if (!prj || !ver || !src || ver.status !== 'draft') return null;
 		const copy = deepClone(src);
 		copy.id = uid('pat');
-		copy.name = src.name + ' (copy)';
+		copy.name = `${src.name} (copy)`;
 		copy.createdAt = nowISO();
 		copy.updatedAt = nowISO();
 		ver.patterns.push(copy);
@@ -524,7 +523,7 @@ class Store {
 	// ---- editor: rounds ------------------------------------------------------
 	setActiveRound(roundId: string): void {
 		const pat = this.currentPattern();
-		if (!pat || !pat.rounds.find((r) => r.id === roundId)) return;
+		if (!pat?.rounds.find((r) => r.id === roundId)) return;
 		pat.activeRound = roundId;
 		this.emit(); // the Start row is selectable too
 	}
@@ -533,7 +532,7 @@ class Store {
 		this.editTransact((pat) => {
 			const startId = startRowId(pat);
 			const working = pat.rounds.filter((r) => r.id !== startId).length;
-			const r = newRound(name || 'Round ' + (working + 1));
+			const r = newRound(name || `Round ${working + 1}`);
 			pat.rounds.push(r);
 			pat.activeRound = r.id;
 			id = r.id;
@@ -592,7 +591,10 @@ class Store {
 			const i = corners.indexOf(stitchId);
 			if (i >= 0) corners.splice(i, 1);
 			else corners.push(stitchId);
-			if (!round.followMarks.corners.length && !round.followMarks.repeats.length)
+			if (
+				!round.followMarks.corners.length &&
+				!round.followMarks.repeats.length
+			)
 				round.followMarks = undefined;
 		});
 	}
@@ -1068,8 +1070,7 @@ class Store {
 			if (fromLegacy) raw = localStorage.getItem(LEGACY_SAVE_KEY); // tool was renamed; keep old data
 			if (!raw) return false;
 			const data = JSON.parse(raw);
-			if (!data || !data.library || !Array.isArray(data.library.projects))
-				return false;
+			if (!data?.library || !Array.isArray(data.library.projects)) return false;
 			this.state.library.projects = data.library.projects.map(normalizeProject);
 			const ui = data.ui || {};
 			const prj = this.getProject(ui.projectId);

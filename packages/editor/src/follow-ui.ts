@@ -1,15 +1,20 @@
 // Pure helpers for the Follow instruction box, counter pills and mode labels (TW-029).
 // No DOM — consumed by @threadwick/core Follow components and apps/web.
 
+import { summarizeRound } from './instructions';
 import { startRowId } from './model';
 import {
 	deriveUnitDisplay,
 	effectiveFollowMode,
 	type UnitDisplay,
 } from './progress';
-import { summarizeRound } from './instructions';
 import { isStart, STITCHES } from './symbols';
-import type { FollowMode, Pattern, PatternProgress, PatternReference } from './types';
+import type {
+	FollowMode,
+	Pattern,
+	PatternProgress,
+	PatternReference,
+} from './types';
 
 export type InstructionSegmentKind = 'stitch' | 'connector' | 'text';
 
@@ -48,13 +53,15 @@ function patternStartLabel(pattern: Pattern): string | null {
 }
 
 /** Split a summarizeRound line into emphasised stitch tokens and italic connectors. */
-export function segmentsFromInstructionLine(line: string): InstructionSegment[] {
+export function segmentsFromInstructionLine(
+	line: string,
+): InstructionSegment[] {
 	const trimmed = line.trim();
 	if (!trimmed) return [];
 	const segments: InstructionSegment[] = [];
 	const parts = trimmed.split(/, /);
 	for (let i = 0; i < parts.length; i++) {
-		const part = parts[i]!.trim();
+		const part = parts[i]?.trim();
 		if (!part) continue;
 		segments.push({
 			kind: STITCH_TOKEN.test(part) ? 'stitch' : 'text',
@@ -133,9 +140,7 @@ export function deriveCounterPills(
 
 function workingRoundIds(pattern: Pattern): string[] {
 	const startId = startRowId(pattern);
-	return pattern.rounds
-		.filter((r) => r.id !== startId)
-		.map((r) => r.id);
+	return pattern.rounds.filter((r) => r.id !== startId).map((r) => r.id);
 }
 
 export function deriveFollowSections(
@@ -163,8 +168,7 @@ export function deriveFollowSections(
 	const roundDone = completed;
 	const roundOpen = startDone && !roundDone;
 
-	const why =
-		roundOpen && !roundDone ? followWhyComment(mode) : null;
+	const why = roundOpen && !roundDone ? followWhyComment(mode) : null;
 
 	return [
 		{

@@ -17,7 +17,9 @@ describe('pattern versioning helpers', () => {
 
 	it('derives contextual publish action labels', () => {
 		expect(patternPublishAction(pattern)).toBe('publish-version');
-		expect(patternPublishActionLabel('publish-version')).toBe('Publish version');
+		expect(patternPublishActionLabel('publish-version')).toBe(
+			'Publish version',
+		);
 
 		const privatePattern = {
 			...pattern,
@@ -63,7 +65,9 @@ describe('pattern versioning helpers', () => {
 	it('creates a new draft when none exists', () => {
 		const publishedOnly = publishPatternVersion(pattern);
 		const withDraft = createPatternDraft(publishedOnly);
-		expect(withDraft.versioning?.versions.some((v) => v.status === 'draft')).toBe(true);
+		expect(
+			withDraft.versioning?.versions.some((v) => v.status === 'draft'),
+		).toBe(true);
 		expect(patternPublishAction(withDraft)).toBe('publish-version');
 	});
 

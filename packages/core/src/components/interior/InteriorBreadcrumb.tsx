@@ -21,7 +21,11 @@ export type InteriorBreadcrumbProps = {
 };
 
 /** Location trail beneath the identity tile — reflects the entry path (TW-025). */
-export function InteriorBreadcrumb({ crumbs, className, leading }: InteriorBreadcrumbProps) {
+export function InteriorBreadcrumb({
+	crumbs,
+	className,
+	leading,
+}: InteriorBreadcrumbProps) {
 	return (
 		<Breadcrumb className={cn('px-2 pb-1 pt-0.5', className)}>
 			<BreadcrumbList className="text-[11px]">
@@ -30,7 +34,7 @@ export function InteriorBreadcrumb({ crumbs, className, leading }: InteriorBread
 					const isLast = index === crumbs.length - 1;
 					return (
 						<InteriorBreadcrumbSegment
-							key={`${crumb.label}-${index}`}
+							key={crumb.href ?? crumb.label}
 							crumb={crumb}
 							isLast={isLast}
 							showSeparator={index > 0 || !!leading}

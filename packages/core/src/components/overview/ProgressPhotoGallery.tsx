@@ -34,13 +34,23 @@ export function ProgressPhotoGallery({
 							className="size-full object-cover"
 						/>
 					) : (
-						<Icon name="preview" label="" className="size-7 opacity-60" aria-hidden />
+						<Icon
+							name="preview"
+							label=""
+							className="size-7 opacity-60"
+							aria-hidden
+						/>
 					)}
 				</div>
 			))}
 			{photos.length === 0 ? (
 				<div className="flex size-[7.5rem] shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
-					<Icon name="preview" label="" className="size-7 opacity-60" aria-hidden />
+					<Icon
+						name="preview"
+						label=""
+						className="size-7 opacity-60"
+						aria-hidden
+					/>
 				</div>
 			) : null}
 			{addPhotoAction}
