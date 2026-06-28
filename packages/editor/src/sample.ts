@@ -166,6 +166,10 @@ export function sampleProject(): Project {
 
 	pat.stitches = stitches;
 	pat.view = { scale: 1.5, panX: 0, panY: 0 };
+	const r2Corners = stitches
+		.filter((s) => s.round === r2.id && s.type === 'ch')
+		.map((s) => s.id);
+	r2.followMarks = { corners: r2Corners, repeats: [] };
 	activeVersion(prj).patterns.push(pat);
 	return normalizeProject(prj);
 }

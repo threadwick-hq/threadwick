@@ -408,6 +408,14 @@ function Inspector({ pat, ctrl, readOnly }: { pat: import('@threadwick/editor').
           <Switch disabled={readOnly} checked={allAuto} onCheckedChange={(v) => s.setChainAuto(v)} />
         </label>
       )}
+      {!readOnly && items.length === 1 && first.round === pat.activeRound && (
+        <label className="field row"><span>Corner mark</span>
+          <Switch checked={s.isCornerMarked(first.id)} onCheckedChange={() => s.toggleCornerMark(first.id)} />
+        </label>
+      )}
+      {!readOnly && items.length >= 2 && (
+        <Button variant="outline" size="sm" onClick={() => s.setRepeatOnSelection()}>Mark repeat</Button>
+      )}
       {!readOnly && <div className="insp-acts">
         <Tip label="Rotate −15°"><Button variant="outline" size="iconSm" aria-label="Rotate −15°" onClick={() => s.rotateSelectionBy(-15)}><Icon name="rotate-stitch-right" label="" className="icon-flip-h" /></Button></Tip>
         <Tip label="Rotate +15°"><Button variant="outline" size="iconSm" aria-label="Rotate +15°" onClick={() => s.rotateSelectionBy(15)}><Icon name="rotate-stitch-right" label="" /></Button></Tip>
