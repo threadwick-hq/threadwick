@@ -13,7 +13,7 @@ status ledger. Git is the source of truth; there is no external issue tracker.
 3. Otherwise run `pnpm run work next [--area A] [--phase N]` and claim with
    `pnpm run work claim TW-NNN [--assignee agent]`.
 4. Branch `feat/TW-NNN-slug`, implement against the task file's acceptance criteria.
-5. End every commit with `Refs TW-NNN`; **open a draft PR on the first commit** via `gt submit --draft` and update it on every subsequent commit.
+5. End every commit with `Refs TW-NNN`; **open a draft PR on the first commit** with `gh pr create --draft` and push updates on every subsequent commit.
 6. After frontmatter changes, run `pnpm run work index`. Before each push, run `pnpm check` and
    `pnpm run work check`.
 
@@ -42,16 +42,16 @@ Commands: `work check` · `work index` · `work next` · `work list` · `work ne
 
 ## Git workflow
 
-Code review is **Graphite Agent** on the published PR — not local Bugbot (`/review-bugbot`).
+Code review is **GitHub PR review** (owner or collaborators) plus CI — not local Bugbot (`/review-bugbot`).
 
 Every change follows this loop:
 
-1. **Branch** — `gt sync`, then new branch from `main` (`cursor/…` or `feat/TW-NNN-slug`).
-2. **Commit & draft PR** — run `pnpm check` (and `pnpm run work check` when touching `work/`), commit, then `gt submit --draft`. Repeat on every commit; never push without updating the draft PR.
+1. **Branch** — `git fetch origin && git checkout main && git pull --ff-only`, then new branch from `main` (`cursor/…` or `feat/TW-NNN-slug`).
+2. **Commit & draft PR** — run `pnpm check` (and `pnpm run work check` when touching `work/`), commit, then `git push -u origin HEAD` and `gh pr create --draft` on the first push. Repeat on every commit; never push without updating the draft PR.
 3. **Finish** — complete acceptance criteria; fill `pr` in the task file once the draft exists.
-4. **Mark ready** — `gt submit --publish` or `gh pr ready`; set `status: review`; put `Closes TW-NNN` in the PR body.
-5. **Review & fix loop** — wait for Graphite Agent comments (`gh pr view --comments`); fix with `gt modify` / `gt submit --publish` until clean. Re-draft if more implementation is needed.
-6. **Merge & done** — squash-merge from Graphite, `gt sync`, set `status: done` + `completed`. Work ends at merge.
+4. **Mark ready** — `gh pr ready`; set `status: review`; put `Closes TW-NNN` in the PR body.
+5. **Review & fix loop** — wait for PR review comments and CI (`gh pr view --comments`, `gh pr checks`); fix with commit + push until clean. Re-draft with `gh pr ready --undo` if more implementation is needed.
+6. **Merge & done** — squash-merge with `gh pr merge --squash` (or GitHub UI / merge queue), then `git checkout main && git pull --ff-only`; set `status: done` + `completed`. Work ends at merge.
 
 See [`.cursor/rules/git-workflow.mdc`](.cursor/rules/git-workflow.mdc).
 
