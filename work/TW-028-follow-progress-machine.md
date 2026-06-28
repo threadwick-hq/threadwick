@@ -6,9 +6,10 @@ area:
   - packages/editor
   - packages/types
 phase: 6
-status: review
+status: done
 priority: p1
 created: 2026-06-23
+completed: 2026-06-28
 pr: 21
 acceptance:
   - progress advances/undoes over Units and aggregates per-pattern to project

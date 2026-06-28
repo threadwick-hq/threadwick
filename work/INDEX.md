@@ -2,12 +2,12 @@
 
 Generated from `work/*.md` frontmatter by `scripts/work.ts`. Do not edit by hand; run `pnpm run work index`.
 
-Totals: backlog 31 · active 0 · review 1 · done 13 · blocked 0 · abandoned 5
+Totals: backlog 29 · active 0 · review 1 · done 15 · blocked 0 · abandoned 5
 
 | ID | Title | Type | Area | Phase | Status | Priority | Assignee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | TW-007 | Promote Biome from report-only to a hard CI gate | chore | repo, packages/config | 3 | backlog | p2 | - |
-| TW-028 | Build the Follow progress state machine, Undo and aggregation (FILE_VERSION 3 to 4) | feat | packages/editor, packages/types | 6 | review | p1 | agent |
+| TW-029 | Build the Follow instruction box, counter pills and mode selector (phone baseline) | feat | apps/web, packages/core | 6 | review | p1 | agent |
 | TW-015 | Migrate ProjectView, ProjectsView and TopBar/VersionTag from AntD to shadcn | refactor | apps/studio | 6 | backlog | p2 | - |
 | TW-016 | Replace App.useApp() with a shadcn toast and confirm layer and migrate AuthMenu | refactor | apps/studio, packages/core | 6 | backlog | p2 | - |
 | TW-017 | Drop AntD from apps/studio and remove the theme and provider wiring | chore | apps/studio | 6 | backlog | p2 | - |
@@ -15,7 +15,6 @@ Totals: backlog 31 · active 0 · review 1 · done 13 · blocked 0 · abandoned 
 | TW-023 | Implement the craft picker as a studio-wide persisted scope with inclusion semantics | feat | apps/web, packages/core, packages/types | 6 | backlog | p2 | - |
 | TW-024 | Build the mobile bottom tab bar and responsive sidebar collapse | feat | apps/web, packages/core | 6 | backlog | p2 | - |
 | TW-025 | Define the identity-tile slot-swap and breadcrumb contract for interiors (no layout shift) | feat | apps/web, packages/core | 6 | backlog | p2 | - |
-| TW-029 | Build the Follow instruction box, counter pills and mode selector (phone baseline) | feat | apps/web, packages/core | 6 | backlog | p1 | - |
 | TW-030 | Build the Follow chart pane (state styling, follow-position, zoom, tap-to-inspect) | feat | apps/web, packages/editor | 6 | backlog | p1 | - |
 | TW-031 | Wire the locked-responsive Follow shell across all five breakpoints plus Wake Lock | feat | apps/web, packages/core | 6 | backlog | p1 | - |
 | TW-032 | Add the external-pattern Follow fallback (Ravelry/PDF to checklist or open source) | feat | apps/web, packages/editor | 6 | backlog | p2 | - |
@@ -49,10 +48,11 @@ Totals: backlog 31 · active 0 · review 1 · done 13 · blocked 0 · abandoned 
 | TW-021 | Build the always-expanded sidebar nav with sections, counts and active state | feat | apps/web, packages/core, packages/icons | 6 | done | p1 | agent |
 | TW-026 | Land the maker-plane Project model (references, progress, status, follow-mode) in @threadwick/types | feat | packages/types | 6 | done | p1 | agent |
 | TW-027 | Build the instruction-decomposition engine (round to follow Units per granularity) | feat | packages/editor, packages/types | 6 | done | p1 | agent |
+| TW-028 | Build the Follow progress state machine, Undo and aggregation (FILE_VERSION 3 to 4) | feat | packages/editor, packages/types | 6 | done | p1 | agent |
 | TW-002 | Factor the editor/viewer out of apps/studio into packages/editor | refactor | apps/studio, packages/editor | 6 | abandoned | p1 | - |
 | TW-003 | Migrate the editor chrome from AntD to shadcn | refactor | packages/editor, apps/studio | 6 | abandoned | p1 | - |
 | TW-004 | Mount @threadwick/editor in apps/web as a client-only /studio route | feat | apps/web, packages/editor | 6 | abandoned | p1 | - |
 | TW-005 | Pin Supabase redirectTo to a fixed /studio/auth/callback | fix | apps/web, apps/studio | 6 | abandoned | p2 | - |
 | TW-006 | Audit studio source for hardcoded /studio/ absolute asset paths | chore | apps/studio | 6 | abandoned | p3 | - |
-| TW-050 | Replace the Font-Awesome-derived Studio/Marketplace brand glyphs with originals (pre-public gate) | chore | packages/core | 8 | review | p1 | agent |
 | TW-008 | Widen CI build/typecheck beyond packages/* to apps and root | chore | repo | 8 | backlog | p3 | - |
+| TW-050 | Replace the Font-Awesome-derived Studio/Marketplace brand glyphs with originals (pre-public gate) | chore | packages/core | 8 | done | p1 | agent |
