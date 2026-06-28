@@ -6,15 +6,16 @@ area:
   - apps/studio
   - packages/core
 phase: 6
-status: backlog
+status: active
 priority: p2
 created: 2026-06-23
 acceptance:
   - a toast + confirm layer lives in @threadwick/core and replaces App.useApp()
   - all 14 message/confirm sites are migrated
   - AuthMenu renders with no AntD
+assignee: agent
+started: 2026-06-28
 ---
-
 ## Context
 
 AntD App.useApp() backs 8 message.* (AuthMenu) and 6 modal.confirm sites. Replace with a small bespoke toast + confirm layer in @threadwick/core. Spec §1. (Phase 6 sub-phase 6c.) From the Studio redesign handoff at `apps/studio/docs/redesign/`.
@@ -29,10 +30,12 @@ Depends on: TW-015.
 
 ## Acceptance
 
-- [ ] a toast + confirm layer lives in @threadwick/core and replaces App.useApp()
-- [ ] all 14 message/confirm sites are migrated
-- [ ] AuthMenu renders with no AntD
+- [x] a toast + confirm layer lives in @threadwick/core and replaces App.useApp()
+- [x] all 14 message/confirm sites are migrated
+- [x] AuthMenu renders with no AntD
 
 ## Log
 
+- 2026-06-28 Added FeedbackProvider (toast + confirm) to @threadwick/core; migrated AuthMenu and six confirm call sites; removed AntApp wrapper.
+- 2026-06-28 claimed by agent.
 - 2026-06-23 created (Phase 6 re-scope from the studio redesign handoff).

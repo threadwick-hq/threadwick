@@ -3,7 +3,6 @@ import type { ComponentType } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Alert, AlertDescription, AlertTitle,
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
   Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator,
   Button,
   Card, CardContent, CardDescription, CardHeader, CardTitle,
@@ -12,6 +11,7 @@ import {
   Input,
   Label,
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  confirm,
 } from '@threadwick/core/components';
 import {
   PlusIcon, DownloadIcon, PdfIcon, DeleteIcon,
@@ -37,20 +37,11 @@ type ResItem = Yarn | LinkRes | NoteRes | VariationRes;
 type ResForm = Partial<Yarn & LinkRes & NoteRes & VariationRes>;
 type PatternForm = { name: string; type: 'granny' | 'round' | 'flat' };
 
-type ConfirmState = {
-  title: string;
-  description?: string;
-  okText: string;
-  destructive?: boolean;
-  onConfirm: () => void;
-};
-
 export function ProjectView() {
   const s = useStore();
   const prj = s.currentProject();
   const [newPat, setNewPat] = useState(false);
   const [res, setRes] = useState<{ kind: ResourceKind; item: ResItem | null } | null>(null);
-  const [confirm, setConfirm] = useState<ConfirmState | null>(null);
   const patForm = useForm<PatternForm>({ defaultValues: { type: 'granny' } });
   const resForm = useForm<ResForm>();
 
@@ -69,13 +60,13 @@ export function ProjectView() {
   const isDraft = ver.status === 'draft';
   const hasDraft = prj.versions.some((v) => v.status === 'draft');
 
-  const publish = () => setConfirm({
+  const publish = () => confirm({
     title: `Publish ${ver.label}?`,
     description: 'This becomes the live version. Any currently published version is marked Outdated.',
     okText: 'Publish',
     onConfirm: () => s.publishVersion(prj.id),
   });
-  const discard = () => setConfirm({
+  const discard = () => confirm({
     title: `Discard draft ${ver.label}?`,
     description: 'Unpublished changes in this draft will be removed. This can’t be undone.',
     okText: 'Discard draft',
@@ -99,7 +90,7 @@ export function ProjectView() {
     setRes(null);
   });
 
-  const deleteProject = () => setConfirm({
+  const deleteProject = () => confirm({
     title: `Delete “${prj.name}”?`,
     description: 'Removes the project and all its patterns.',
     okText: 'Delete',
@@ -208,7 +199,7 @@ export function ProjectView() {
                           <DropdownMenuContent>
                             <DropdownMenuItem onSelect={() => s.duplicatePattern(prj.id, pat.id)}><CopyIcon /> Duplicate</DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem variant="destructive" onSelect={() => setConfirm({
+                            <DropdownMenuItem variant="destructive" onSelect={() => confirm({
                               title: `Delete pattern “${pat.name}”?`,
                               okText: 'Delete',
                               destructive: true,
@@ -351,20 +342,6 @@ export function ProjectView() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <AlertDialog open={!!confirm} onOpenChange={(o) => { if (!o) setConfirm(null); }}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{confirm?.title}</AlertDialogTitle>
-            {confirm?.description && <AlertDialogDescription>{confirm.description}</AlertDialogDescription>}
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction variant={confirm?.destructive ? 'destructive' : 'default'}
-              onClick={() => { confirm?.onConfirm(); setConfirm(null); }}>{confirm?.okText ?? 'OK'}</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

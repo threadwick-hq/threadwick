@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 import {
   Alert, AlertDescription, AlertTitle,
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
   Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator,
   Button,
   ColorPicker,
+  confirm,
   Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle,
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
   Input,
@@ -59,7 +59,6 @@ export function EditorView() {
   const [help, setHelp] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [rename, setRename] = useState<{ id: string; name: string } | null>(null);
-  const [confirmDel, setConfirmDel] = useState<{ id: string; name: string } | null>(null);
 
   const sync = () => {
     const c = ctrl.current; if (!c) return;
@@ -239,7 +238,12 @@ export function EditorView() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent>
                             <DropdownMenuItem onSelect={() => setRename({ id: r.id, name: r.name })}><Icon name="edit" label="" /> Rename</DropdownMenuItem>
-                            {working.length > 1 && <DropdownMenuItem variant="destructive" onSelect={() => setConfirmDel({ id: r.id, name: r.name })}><Icon name="delete" label="" /> Delete row</DropdownMenuItem>}
+                            {working.length > 1 && <DropdownMenuItem variant="destructive" onSelect={() => confirm({
+                              title: `Delete ${r.name} and its stitches?`,
+                              okText: 'Delete',
+                              destructive: true,
+                              onConfirm: () => { s.removeRound(r.id); ctrl.current?.resetInsert(); },
+                            })}><Icon name="delete" label="" /> Delete row</DropdownMenuItem>}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       )}
@@ -270,19 +274,6 @@ export function EditorView() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-
-        <AlertDialog open={!!confirmDel} onOpenChange={(o) => { if (!o) setConfirmDel(null); }}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete {confirmDel?.name} and its stitches?</AlertDialogTitle>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction variant="destructive"
-                onClick={() => { if (confirmDel) { s.removeRound(confirmDel.id); ctrl.current?.resetInsert(); } setConfirmDel(null); }}>Delete</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </div>
     </TooltipProvider>
   );
