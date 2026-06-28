@@ -6,10 +6,11 @@ area:
   - apps/web
   - packages/core
 phase: 6
-status: review
+status: done
 pr: 22
 priority: p1
 created: 2026-06-23
+completed: 2026-06-28
 acceptance:
   - the instruction box renders Start/Round/Finish with the one big action driving the cursor
   - the mode selector switches granularity and is remembered per project
