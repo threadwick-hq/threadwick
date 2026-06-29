@@ -5,11 +5,12 @@ type: chore
 area:
   - repo
 phase: 0
-status: review
+status: done
 priority: p2
 created: 2026-06-29
 assignee: claude
 started: 2026-06-29
+completed: 2026-06-29
 pr: 44
 acceptance:
   - AGENTS.md is the tool-agnostic source of truth with no Cursor-specific framing
@@ -54,3 +55,6 @@ Out: the work-tracking system itself, app/package source behaviour, the AntD→s
   admin metadata) before branching. Implementing the migration on `feat/TW-051`.
 - 2026-06-29 implemented; verified hooks (bash -n + simulated SessionStart/PostToolUse), `work check`
   ok, `turbo typecheck test` 13/13 green. Opened draft PR #44 → ready for review.
+- 2026-06-29 independent code review (PR #44): hardened `work-index-reminder.sh` (payload via stdin
+  to avoid ARG_MAX on large edits; try/catch on parse; heredoc message to fix newline escaping) and
+  dropped the unused `THREADWICK_WORK_ROOT` env write from `session-start.sh`. Marked done for merge.
