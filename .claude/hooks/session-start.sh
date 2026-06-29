@@ -5,11 +5,6 @@ set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$ROOT"
 
-# Persist the work root for the rest of the session (Claude Code sources this file).
-if [[ -n "${CLAUDE_ENV_FILE:-}" ]]; then
-	printf 'export THREADWICK_WORK_ROOT=%q\n' "$ROOT" >> "$CLAUDE_ENV_FILE"
-fi
-
 node <<'NODE'
 const { execSync } = require('node:child_process');
 
