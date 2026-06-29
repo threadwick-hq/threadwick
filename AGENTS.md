@@ -1,7 +1,7 @@
 # AGENTS.md — read this first
 
-Threadwick is a pnpm + Turborepo monorepo built primarily by AI agents. This file is the entry
-point for Cursor agents (and other tools) before touching code.
+Threadwick is a pnpm + Turborepo monorepo built primarily by AI agents. This file is the
+tool-agnostic entry point for any agent (Claude Code and other agentic tools) before touching code.
 
 ## Work tracking (start here)
 
@@ -42,32 +42,31 @@ Commands: `work check` · `work index` · `work next` · `work list` · `work ne
 
 ## Git workflow
 
-Code review is **GitHub PR review** (owner or collaborators) plus CI — not local Bugbot (`/review-bugbot`).
+Code review is **GitHub PR review** (owner or collaborators) plus CI.
 
 Every change follows this loop:
 
-1. **Branch** — `git fetch origin && git checkout main && git pull --ff-only`, then new branch from `main` (`cursor/…` or `feat/TW-NNN-slug`).
+1. **Branch** — `git fetch origin && git checkout main && git pull --ff-only`, then a new branch from `main` (`feat/TW-NNN-slug` for task work).
 2. **Commit & draft PR** — run `pnpm check` (and `pnpm run work check` when touching `work/`), commit, then `git push -u origin HEAD` and `gh pr create --draft` on the first push. Repeat on every commit; never push without updating the draft PR.
 3. **Finish** — complete acceptance criteria; fill `pr` in the task file once the draft exists.
 4. **Mark ready** — `gh pr ready`; set `status: review`; put `Closes TW-NNN` in the PR body.
 5. **Review & fix loop** — wait for PR review comments and CI (`gh pr view --comments`, `gh pr checks`); fix with commit + push until clean. Re-draft with `gh pr ready --undo` if more implementation is needed.
 6. **Merge & done** — squash-merge with `gh pr merge --squash` (or GitHub UI / merge queue), then `git checkout main && git pull --ff-only`; set `status: done` + `completed`. Work ends at merge.
 
-See [`.cursor/rules/git-workflow.mdc`](.cursor/rules/git-workflow.mdc).
+Never commit directly to `main`. Never merge while the PR is draft or before review and CI pass.
 
-## Cursor integration
+## Agent tooling integration
 
 | Path | Purpose |
 | --- | --- |
-| [`.cursor/rules/git-workflow.mdc`](.cursor/rules/git-workflow.mdc) | Branch, review, squash-merge loop (always on) |
-| [`.cursor/rules/monorepo.mdc`](.cursor/rules/monorepo.mdc) | Stack, commands, migration (always on) |
-| [`.cursor/rules/work-tracking.mdc`](.cursor/rules/work-tracking.mdc) | Task lifecycle (always on) |
-| [`.cursor/rules/studio.mdc`](.cursor/rules/studio.mdc) | Studio app when editing `apps/studio/**` |
-| [`.cursor/hooks/`](.cursor/hooks/) | Session bootstrap + work index on task edits |
-| [`.cursor/mcp.json`](.cursor/mcp.json) | Project MCP servers (Ant Design docs) |
+| [`CLAUDE.md`](CLAUDE.md) | Claude Code entry point — imports this file via `@AGENTS.md` |
+| [`apps/studio/CLAUDE.md`](apps/studio/CLAUDE.md) | Studio entry point — imports `apps/studio/AGENTS.md`; loaded when working under `apps/studio/**` |
+| [`.claude/settings.json`](.claude/settings.json) | Claude Code hooks (session bootstrap + work index regeneration) |
+| [`.claude/hooks/`](.claude/hooks/) | Hook scripts: `session-start.sh`, `work-index-reminder.sh` |
+| [`.mcp.json`](.mcp.json) | Project MCP servers (Ant Design v5 docs) |
 | [`.vscode/launch.json`](.vscode/launch.json) | Dev server launch configs (web, studio) |
 
-## Cursor Cloud specific instructions
+## Environment & gotchas
 
 Dependencies are installed automatically on startup (`pnpm install`). Node 22 + pnpm 10 are
 preinstalled. Standard commands are documented above and in [`README.md`](README.md); the notes

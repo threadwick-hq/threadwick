@@ -101,7 +101,7 @@ library export *and* import** (projects, patterns, resources) in a
 **documented open format** (JSON) so a user can take everything out and bring
 it back. This operationally backs the no-lock-in promise. (Tracked: issue #63;
 see also the data-ownership principle in [`AGENTS.md`](../../AGENTS.md) and
-[`.cursor/rules/studio.mdc`](../../.cursor/rules/studio.mdc).)
+[`apps/studio/AGENTS.md`](../AGENTS.md).)
 
 ## Privacy & data posture (backs "we don't sell your data")
 

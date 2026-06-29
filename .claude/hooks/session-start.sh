@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sessionStart — inject active/next work task context for Cursor agents.
+# SessionStart — inject active/next work task context for Claude Code.
 set -euo pipefail
 
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
@@ -37,12 +37,14 @@ if (/^TW-/m.test(active)) {
 		lines.push('No claimable backlog task matches the default filter.');
 	}
 }
-lines.push('', 'See `AGENTS.md`, `work/README.md`, and `.cursor/rules/`.');
+lines.push('', 'See `AGENTS.md` and `work/README.md`.');
 
 console.log(
 	JSON.stringify({
-		env: { THREADWICK_WORK_ROOT: root },
-		additional_context: lines.join('\n'),
+		hookSpecificOutput: {
+			hookEventName: 'SessionStart',
+			additionalContext: lines.join('\n'),
+		},
 	}),
 );
 NODE
