@@ -5,7 +5,7 @@ type: chore
 area:
   - repo
 phase: 0
-status: review
+status: done
 priority: p1
 created: 2026-06-29
 acceptance:
@@ -36,6 +36,7 @@ links:
   - main/.github/workflows/work-cleanup.yml
 assignee: claude
 started: 2026-06-29
+completed: 2026-07-03
 pr: 45
 ---
 ## Context
@@ -79,21 +80,21 @@ Key technical decisions:
 
 ## Acceptance
 
-- [ ] require-plan.sh PreToolUse hook blocks Write/Edit of non-work files when no active task exists
-- [ ] require-plan.sh blocks when active task has an empty ## Plan section (template comment only)
-- [ ] require-plan.sh allows writes to work/ files unconditionally
-- [ ] require-plan.sh is fail-open (any exception exits 0)
-- [ ] validate-plan TW-NNN errors on empty plan, passes on non-empty plan
-- [ ] append-section replaces template comment when section is empty, appends otherwise
-- [ ] section-set replaces section content entirely
-- [ ] log TW-NNN appends a dated entry to ## Log
-- [ ] session-start.sh warns when active task lacks ## Plan
-- [ ] session-start.sh warns on stale active tasks (>3 days)
-- [ ] cleanup-worktree.sh removes worktree dir and local branch
-- [ ] pre-push hook blocks push when active task has no plan
-- [ ] AGENTS.md documents the updated 10-step lifecycle
-- [ ] work-cleanup.yml posts cleanup reminder on feat/TW-* PR merge
-- [ ] pnpm run work check passes with no regressions on existing tasks
+- [x] require-plan.sh PreToolUse hook blocks Write/Edit of non-work files when no active task exists
+- [x] require-plan.sh blocks when active task has an empty ## Plan section (template comment only)
+- [x] require-plan.sh allows writes to work/ files unconditionally
+- [x] require-plan.sh is fail-open (any exception exits 0)
+- [x] validate-plan TW-NNN errors on empty plan, passes on non-empty plan
+- [x] append-section replaces template comment when section is empty, appends otherwise
+- [x] section-set replaces section content entirely
+- [x] log TW-NNN appends a dated entry to ## Log
+- [x] session-start.sh warns when active task lacks ## Plan
+- [x] session-start.sh warns on stale active tasks (>3 days)
+- [x] cleanup-worktree.sh removes worktree dir and local branch
+- [x] pre-push hook blocks push when active task has no plan
+- [x] AGENTS.md documents the updated 10-step lifecycle
+- [x] work-cleanup.yml posts cleanup reminder on feat/TW-* PR merge
+- [x] pnpm run work check passes with no regressions on existing tasks
 
 ## Code review
 
@@ -105,3 +106,4 @@ Reviewed by /code-review ultra. No blocking issues found. All acceptance criteri
 - 2026-06-29 created and claimed by claude.
 - 2026-06-29 implementation complete, running verification
 - 2026-07-03 opened PR #45; status review
+- 2026-07-03 acceptance verified; status done ahead of squash-merge
