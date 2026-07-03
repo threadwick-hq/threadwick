@@ -77,7 +77,7 @@ export function fetchSnapshot(
 	}
 
 	const issues = parsedIssues.map((issue) =>
-		finalizeIssue(issue, dependencyMode, issueTypesAvailable),
+		finalizeIssue(issue, dependencyMode, issueTypesAvailable, projectNumber),
 	);
 
 	return {
@@ -120,6 +120,7 @@ export function fetchSingleIssue(
 			parsed,
 			snapshot.value.dependencyMode,
 			snapshot.value.issueTypesAvailable,
+			snapshot.value.projectNumber,
 		),
 	};
 }
@@ -466,6 +467,7 @@ function finalizeIssue(
 	parsed: ParsedIssue,
 	dependencyMode: DependencyMode,
 	issueTypesAvailable: boolean,
+	projectNumber: number | undefined,
 ): WorkIssue {
 	const blockedBy =
 		parsed.graphqlBlockers ??
@@ -477,10 +479,13 @@ function finalizeIssue(
 				: 0
 			: blockedBy.filter((blocker) => blocker.state === 'OPEN').length;
 
+	// The shape requirements degrade with the environment: priority is only
+	// required when this token can see the project at all (CI tokens cannot),
+	// and the type only when the org exposes issue types.
 	const triaged =
 		parsed.issue.areas.length > 0 &&
 		parsed.issue.phase !== undefined &&
-		parsed.issue.priority !== undefined &&
+		(projectNumber === undefined || parsed.issue.priority !== undefined) &&
 		(!issueTypesAvailable || parsed.issue.type !== undefined);
 
 	const authorTrusted = isTrustedAuthor(

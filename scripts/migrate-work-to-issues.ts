@@ -204,13 +204,11 @@ function ledgerSection(file: string, name: string): string | undefined {
 	return body.length > 0 ? body : undefined;
 }
 
-/** Removes HTML comments, re-scanning until stable so no `<!--` survives. */
+/** Removes HTML comments, looping until no comment delimiter survives. */
 function stripHtmlComments(text: string): string {
-	let previous = text;
-	let current = text.replace(/<!--[\s\S]*?-->/g, '');
-	while (current !== previous) {
-		previous = current;
-		current = current.replace(/<!--[\s\S]*?-->/g, '');
+	let current = text;
+	while (current.includes('<!--') || current.includes('-->')) {
+		current = current.replace(/<!--[\s\S]*?-->/g, '').replace(/<!--|-->/g, '');
 	}
 	return current;
 }

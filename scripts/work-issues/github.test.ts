@@ -178,6 +178,37 @@ describe('fetchSnapshot', () => {
 		expect(issue.title).toBe('Example issue');
 	});
 
+	it('keeps triage (and body trust) when the project is invisible to the token', () => {
+		// CI tokens cannot read the project: priority is unknowable, and the
+		// trust gate must degrade to the shape the token can actually verify.
+		const projectBlindRunner: GhRunner = (args) => {
+			if (args[0] === 'project') {
+				return {
+					ok: false,
+					error: { message: 'project scope missing', exitCode: 1 },
+				};
+			}
+			return fixtureRunner([
+				issueNode({
+					number: 13,
+					author: { login: 'github-actions', __typename: 'Bot' },
+					authorAssociation: 'NONE',
+					editor: { login: 'eiluviann' },
+					projectItems: { nodes: [] },
+				}),
+			])(args);
+		};
+		const result = fetchSnapshot(projectBlindRunner);
+		expect(result.ok).toBe(true);
+		if (!result.ok) return;
+		expect(result.value.projectNumber).toBeUndefined();
+		const issue = result.value.issues[0];
+		if (issue === undefined) return;
+		expect(issue.priority).toBeUndefined();
+		expect(issue.triaged).toBe(true);
+		expect(issue.bodyTrusted).toBe(true);
+	});
+
 	it('derives blocked from unresolved blocked-by relationships', () => {
 		const node = issueNode({
 			number: 10,
