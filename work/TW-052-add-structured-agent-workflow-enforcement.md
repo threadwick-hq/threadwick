@@ -5,7 +5,7 @@ type: chore
 area:
   - repo
 phase: 0
-status: active
+status: review
 priority: p1
 created: 2026-06-29
 acceptance:
@@ -36,6 +36,7 @@ links:
   - main/.github/workflows/work-cleanup.yml
 assignee: claude
 started: 2026-06-29
+pr: 45
 ---
 ## Context
 
@@ -103,3 +104,4 @@ Reviewed by /code-review ultra. No blocking issues found. All acceptance criteri
 - 2026-06-29 claimed by claude.
 - 2026-06-29 created and claimed by claude.
 - 2026-06-29 implementation complete, running verification
+- 2026-07-03 opened PR #45; status review
