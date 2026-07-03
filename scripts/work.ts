@@ -118,6 +118,16 @@ const TEMPLATE_FILE = join(WORK_DIR, '_TEMPLATE.md');
 
 function main(): void {
 	const [command = 'check', ...rest] = process.argv.slice(2);
+	if (
+		command === 'help' ||
+		command === '--help' ||
+		command === '-h' ||
+		rest.includes('--help') ||
+		rest.includes('-h')
+	) {
+		printUsage(console.log);
+		return;
+	}
 	switch (command) {
 		case 'check':
 			runCheck();
@@ -159,11 +169,42 @@ function main(): void {
 			runLog(rest);
 			break;
 		default:
-			console.error(
-				`work: unknown command "${command}". Use: check | index | next | list | new | claim | show | stale | export | validate-plan | append-section | section-set | log`,
-			);
+			console.error(`work: unknown command "${command}".`);
+			printUsage(console.error);
 			process.exit(2);
 	}
+}
+
+function printUsage(write: (line: string) => void): void {
+	write(
+		'work — file-based task ledger (work/TW-NNN-*.md). Usage: pnpm run work <command> [args]',
+	);
+	write('');
+	write(
+		'  check                              validate all task files + status/derivation/index gates',
+	);
+	write('  index                              regenerate work/INDEX.md');
+	write(
+		'  next [--area A] [--phase N]        print the top claimable backlog task',
+	);
+	write('  list [--status S] [--area A]       list tasks');
+	write(
+		'  new --title "..." [--type T] [--area A] [--phase N]  create a task file from the template',
+	);
+	write('  claim TW-NNN [--assignee NAME]     set backlog -> active');
+	write('  show TW-NNN                        print one task');
+	write(
+		'  stale [--days N]                   list active tasks older than N days',
+	);
+	write(
+		'  export                             JSON export (used by the GitHub Issues mirror)',
+	);
+	write('  validate-plan TW-NNN               error when ## Plan is empty');
+	write(
+		'  append-section TW-NNN <sec> "..."  append to a section (replaces the template comment)',
+	);
+	write('  section-set TW-NNN <sec> "..."     replace a section entirely');
+	write('  log TW-NNN "..."                   append a dated ## Log entry');
 }
 
 function runCheck(): void {
@@ -283,10 +324,7 @@ function runClaim(rest: string[]): void {
 		assignee,
 		started: today,
 	});
-	const logged = appendLogLine(
-		patched,
-		`${today} claimed by ${assignee}.`,
-	);
+	const logged = appendLogLine(patched, `${today} claimed by ${assignee}.`);
 	writeFileSync(filePath, logged, 'utf8');
 	runIndex();
 	console.log(`work: claimed ${id} (${task.file}) for ${assignee}`);
@@ -438,7 +476,9 @@ function runValidatePlan(rest: string[]): void {
 		);
 		process.exit(1);
 	}
-	console.log(`work: ${id} is active with a non-empty ## Plan. Ready for implementation.`);
+	console.log(
+		`work: ${id} is active with a non-empty ## Plan. Ready for implementation.`,
+	);
 }
 
 function runAppendSection(rest: string[]): void {
@@ -476,7 +516,10 @@ function runAppendSection(rest: string[]): void {
 		newBodyLines = ['', text, ''];
 	} else {
 		const bodyLines = lines.slice(bounds.bodyStart, bounds.bodyEnd);
-		while (bodyLines.length > 0 && bodyLines[bodyLines.length - 1]?.trim() === '') {
+		while (
+			bodyLines.length > 0 &&
+			bodyLines[bodyLines.length - 1]?.trim() === ''
+		) {
 			bodyLines.pop();
 		}
 		newBodyLines = [...bodyLines, text, ''];
@@ -551,11 +594,18 @@ function runLog(rest: string[]): void {
 	const lines = content.split('\n');
 	const bounds = findSection(lines, 'log');
 	if (bounds === undefined) {
-		writeFileSync(filePath, appendLogLine(content, `${today} ${message}`), 'utf8');
+		writeFileSync(
+			filePath,
+			appendLogLine(content, `${today} ${message}`),
+			'utf8',
+		);
 	} else {
 		const existingContent = getSectionContent(lines, bounds);
 		const bodyLines = lines.slice(bounds.bodyStart, bounds.bodyEnd);
-		while (bodyLines.length > 0 && bodyLines[bodyLines.length - 1]?.trim() === '') {
+		while (
+			bodyLines.length > 0 &&
+			bodyLines[bodyLines.length - 1]?.trim() === ''
+		) {
 			bodyLines.pop();
 		}
 		const newBodyLines =
@@ -1189,7 +1239,10 @@ function patchFrontmatter(
 
 type SectionBounds = { headingIdx: number; bodyStart: number; bodyEnd: number };
 
-function findSection(lines: string[], prefix: string): SectionBounds | undefined {
+function findSection(
+	lines: string[],
+	prefix: string,
+): SectionBounds | undefined {
 	const p = prefix.toLowerCase();
 	const headingIdx = lines.findIndex(
 		(l) =>
@@ -1202,7 +1255,9 @@ function findSection(lines: string[], prefix: string): SectionBounds | undefined
 	);
 	if (headingIdx === -1) return undefined;
 	const bodyStart = headingIdx + 1;
-	const nextHeading = lines.findIndex((l, i) => i > headingIdx && /^## /.test(l));
+	const nextHeading = lines.findIndex(
+		(l, i) => i > headingIdx && /^## /.test(l),
+	);
 	const bodyEnd = nextHeading === -1 ? lines.length : nextHeading;
 	return { headingIdx, bodyStart, bodyEnd };
 }
