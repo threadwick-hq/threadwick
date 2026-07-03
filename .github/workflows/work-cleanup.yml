@@ -1,0 +1,27 @@
+name: Worktree cleanup reminder
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  remind:
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'feat/TW-')
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Post cleanup reminder
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          TASK_ID=$(echo "$BRANCH" | grep -oE 'TW-[0-9]+' | head -1)
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body \
+            "PR merged. Run locally to remove the linked worktree and branch:
+          \`\`\`bash
+          bash scripts/cleanup-worktree.sh ${TASK_ID}
+          \`\`\`"

@@ -1,4 +1,47 @@
 {
+	"permissions": {
+		"allow": [
+			"Bash(pnpm check)",
+			"Bash(pnpm check *)",
+			"Bash(pnpm turbo run typecheck test lint --continue)",
+			"Bash(pnpm turbo run typecheck test lint --continue *)",
+			"Bash(pnpm turbo run build --filter=./packages/*)",
+			"Bash(pnpm turbo run build --filter=./packages/* *)",
+			"Bash(pnpm --filter threadwick-studio typecheck *)",
+			"Bash(pnpm --filter threadwick-studio test *)",
+			"Bash(pnpm --filter threadwick-studio lint *)",
+			"Bash(pnpm --filter threadwick-studio exec tsc --noEmit *)",
+			"Bash(pnpm --filter threadwick-web typecheck *)",
+			"Bash(pnpm --filter threadwick-web test *)",
+			"Bash(pnpm --filter threadwick-web lint *)",
+			"Bash(pnpm --filter threadwick-web exec tsc --noEmit *)",
+			"Bash(pnpm --filter @threadwick/core typecheck *)",
+			"Bash(pnpm --filter @threadwick/core test *)",
+			"Bash(pnpm --filter @threadwick/core lint *)",
+			"Bash(pnpm --filter @threadwick/core exec tsc --noEmit *)",
+			"Bash(pnpm --filter @threadwick/editor typecheck *)",
+			"Bash(pnpm --filter @threadwick/editor test *)",
+			"Bash(pnpm --filter @threadwick/editor lint *)",
+			"Bash(pnpm --filter @threadwick/icons typecheck *)",
+			"Bash(pnpm --filter @threadwick/icons test *)",
+			"Bash(pnpm --filter @threadwick/i18n typecheck *)",
+			"Bash(pnpm --filter @threadwick/i18n test *)"
+		]
+	},
+	"worktree": {
+		"symlinkDirectories": [
+			"node_modules",
+			"apps/studio/node_modules",
+			"apps/web/node_modules",
+			"packages/config/node_modules",
+			"packages/core/node_modules",
+			"packages/editor/node_modules",
+			"packages/i18n/node_modules",
+			"packages/icons/node_modules",
+			"packages/org/node_modules",
+			"packages/types/node_modules"
+		]
+	},
 	"hooks": {
 		"SessionStart": [
 			{
@@ -18,6 +61,18 @@
 						"type": "command",
 						"command": ".claude/hooks/session-start.sh",
 						"timeout": 30
+					}
+				]
+			}
+		],
+		"PreToolUse": [
+			{
+				"matcher": "Write|Edit",
+				"hooks": [
+					{
+						"type": "command",
+						"command": ".claude/hooks/require-plan.sh",
+						"timeout": 15
 					}
 				]
 			}
