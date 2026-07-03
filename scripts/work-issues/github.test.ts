@@ -58,9 +58,6 @@ function fixtureRunner(nodes: unknown[]): GhRunner {
 		if (joined.startsWith('api graphql')) {
 			return { ok: true, value: graphqlPage(nodes) };
 		}
-		if (joined.includes('collaborators')) {
-			return { ok: true, value: 'eiluviann\n' };
-		}
 		if (args[0] === 'project') {
 			return {
 				ok: true,
@@ -144,7 +141,7 @@ describe('fetchSnapshot', () => {
 		expect(issue.triaged).toBe(false);
 	});
 
-	it('quarantines a triaged body whose last editor is not a collaborator', () => {
+	it('quarantines a triaged body whose untrusted author edited it last', () => {
 		const node = issueNode({
 			number: 9,
 			author: { login: 'stranger', __typename: 'User' },
@@ -156,10 +153,29 @@ describe('fetchSnapshot', () => {
 		if (!result.ok) return;
 		const issue = result.value.issues[0];
 		if (issue === undefined) return;
-		// Triaged (labels/milestone/priority present) but the stranger's own
-		// edit stands as the last revision: quarantine until a member re-owns it.
+		// Triaged (shape present) but the stranger's own edit stands as the last
+		// revision: quarantine until a member re-owns the body.
 		expect(issue.triaged).toBe(true);
 		expect(issue.bodyTrusted).toBe(false);
+	});
+
+	it('trusts a non-author editor: only write access can edit foreign bodies', () => {
+		const node = issueNode({
+			number: 12,
+			author: { login: 'github-actions', __typename: 'Bot' },
+			authorAssociation: 'NONE',
+			editor: { login: 'eiluviann' },
+		});
+		const result = fetchSnapshot(fixtureRunner([node]));
+		expect(result.ok).toBe(true);
+		if (!result.ok) return;
+		const issue = result.value.issues[0];
+		if (issue === undefined) return;
+		// Bot-authored but triaged, and the last edit came from someone other
+		// than the author, which GitHub only permits with write access.
+		expect(issue.triaged).toBe(true);
+		expect(issue.bodyTrusted).toBe(true);
+		expect(issue.title).toBe('Example issue');
 	});
 
 	it('derives blocked from unresolved blocked-by relationships', () => {

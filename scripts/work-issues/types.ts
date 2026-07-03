@@ -105,8 +105,6 @@ export type WorkSnapshot = {
 	dependencyMode: DependencyMode;
 	issueTypesAvailable: boolean;
 	projectNumber: number | undefined;
-	/** Repo collaborator logins; used to judge body editors. */
-	collaborators: string[];
 	issues: WorkIssue[];
 };
 
