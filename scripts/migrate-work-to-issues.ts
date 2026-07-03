@@ -8,8 +8,10 @@
  * Done/abandoned tasks with still-open mirror issues are closed with the
  * matching state reason. Ledger ## Log sections are preserved as one comment.
  *
- * Usage: pnpm exec tsx scripts/migrate-work-to-issues.ts [--dry-run]
- * Idempotent: PATCHes and project writes overwrite to the same end state.
+ * HISTORICAL RECORD: executed 2026-07-03 against threadwick-hq/threadwick
+ * (see PR #106 for the TW-id to issue mapping). It can no longer run — it
+ * read the ledger through `scripts/work.ts export --json`, which the same
+ * cutover deleted. Kept for the audit trail of how the migration worked.
  */
 
 import { execFileSync } from 'node:child_process';

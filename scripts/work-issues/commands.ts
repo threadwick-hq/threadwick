@@ -291,7 +291,7 @@ export function runNext(run: GhRunner, rest: string[]): void {
 		return;
 	}
 	console.log(formatIssueLine(top));
-	console.log(`  claim with: pnpm run work2 claim ${top.number}`);
+	console.log(`  claim with: pnpm run work claim ${top.number}`);
 }
 
 export function runShow(run: GhRunner, rest: string[]): void {
@@ -481,7 +481,10 @@ export function runGate(run: GhRunner, rest: string[]): void {
 	}
 	const parsed = parseJson(view.value);
 	const body = isRecord(parsed) ? (getString(parsed, 'body') ?? '') : '';
-	const refs = [...body.matchAll(/\bCloses #(\d+)/gi)].flatMap((match) =>
+	// GitHub's full auto-close keyword set; the documented convention is Closes.
+	const refs = [
+		...body.matchAll(/\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?) #(\d+)/gi),
+	].flatMap((match) =>
 		match[1] === undefined ? [] : [Number.parseInt(match[1], 10)],
 	);
 	if (refs.length === 0) {
@@ -526,13 +529,14 @@ function loadSnapshot(
 				};
 	const fresh = fetchSnapshot(run, hints);
 	if (fresh.ok) {
-		const cache = nextCache(
+		const snapshot = withRetainedViewer(
 			fresh.value,
-			previous.ok ? previous.value : undefined,
+			previous.ok ? previous.value.snapshot : undefined,
 		);
+		const cache = nextCache(snapshot, previous.ok ? previous.value : undefined);
 		const written = writeCache(cache);
 		if (!written.ok) warn(written.error);
-		return { snapshot: fresh.value, cache, fromCache: false };
+		return { snapshot, cache, fromCache: false };
 	}
 	if (previous.ok) {
 		warn(
@@ -561,10 +565,31 @@ function refreshCache(run: GhRunner, options: { reprobe?: boolean }): void {
 		warn(`cache not refreshed: ${fresh.error}`);
 		return;
 	}
+	const snapshot = withRetainedViewer(
+		fresh.value,
+		previous.ok ? previous.value.snapshot : undefined,
+	);
 	const written = writeCache(
-		nextCache(fresh.value, previous.ok ? previous.value : undefined),
+		nextCache(snapshot, previous.ok ? previous.value : undefined),
 	);
 	if (!written.ok) warn(written.error);
+}
+
+/**
+ * A transient /user failure must not overwrite a known identity in the shared
+ * cache: hooks key on viewerLogin, and an empty one would fail-close them
+ * with a misleading "claim an issue" remedy.
+ */
+function withRetainedViewer(
+	fresh: WorkSnapshot,
+	previous: WorkSnapshot | undefined,
+): WorkSnapshot {
+	if (fresh.viewerLogin !== '') return fresh;
+	if (previous === undefined || previous.viewerLogin === '') return fresh;
+	warn(
+		`viewer login unavailable this run; keeping cached identity ${previous.viewerLogin}`,
+	);
+	return { ...fresh, viewerLogin: previous.viewerLogin };
 }
 
 // --- Body editing ---
