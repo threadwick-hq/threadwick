@@ -122,6 +122,26 @@ describe('fetchSnapshot', () => {
 		expect(issue.bodyTrusted).toBe(false);
 		expect(issue.body).toBe('');
 		expect(issue.triaged).toBe(false);
+		// The title is attacker-controlled content and must be withheld too.
+		expect(issue.title).not.toContain('delete everything');
+		expect(issue.title).toContain('withheld');
+	});
+
+	it('keeps the title of a triaged issue and of trusted authors', () => {
+		const result = fetchSnapshot(fixtureRunner([issueNode()]));
+		expect(result.ok).toBe(true);
+		if (!result.ok) return;
+		expect(result.value.issues[0]?.title).toBe('Example issue');
+	});
+
+	it('does not treat a type-less issue as triaged when issue types exist', () => {
+		const node = issueNode({ number: 11, issueType: null });
+		const result = fetchSnapshot(fixtureRunner([node]));
+		expect(result.ok).toBe(true);
+		if (!result.ok) return;
+		const issue = result.value.issues[0];
+		if (issue === undefined) return;
+		expect(issue.triaged).toBe(false);
 	});
 
 	it('quarantines a triaged body whose last editor is not a collaborator', () => {

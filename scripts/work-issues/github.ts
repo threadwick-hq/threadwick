@@ -76,7 +76,7 @@ export function fetchSnapshot(
 	}
 
 	const issues = parsedIssues.map((issue) =>
-		finalizeIssue(issue, dependencyMode, collaborators),
+		finalizeIssue(issue, dependencyMode, collaborators, issueTypesAvailable),
 	);
 
 	return {
@@ -94,13 +94,20 @@ export function fetchSnapshot(
 	};
 }
 
-/** Fetches one issue (any state) as a WorkIssue, for `show` on closed items. */
+/**
+ * Fetches one issue (any state) as a WorkIssue, for `show` on closed items.
+ * Pass an already-loaded snapshot to avoid a second full fetch.
+ */
 export function fetchSingleIssue(
 	run: GhRunner,
 	number: number,
 	hints: SnapshotHints = {},
+	preloaded?: WorkSnapshot,
 ): Result<WorkIssue> {
-	const snapshot = fetchSnapshot(run, hints);
+	const snapshot: Result<WorkSnapshot> =
+		preloaded === undefined
+			? fetchSnapshot(run, hints)
+			: { ok: true, value: preloaded };
 	if (!snapshot.ok) return snapshot;
 	const open = snapshot.value.issues.find((issue) => issue.number === number);
 	if (open !== undefined) return { ok: true, value: open };
@@ -113,6 +120,7 @@ export function fetchSingleIssue(
 			parsed,
 			snapshot.value.dependencyMode,
 			snapshot.value.collaborators,
+			snapshot.value.issueTypesAvailable,
 		),
 	};
 }
@@ -459,6 +467,7 @@ function finalizeIssue(
 	parsed: ParsedIssue,
 	dependencyMode: DependencyMode,
 	collaborators: string[],
+	issueTypesAvailable: boolean,
 ): WorkIssue {
 	const blockedBy =
 		parsed.graphqlBlockers ??
@@ -473,7 +482,8 @@ function finalizeIssue(
 	const triaged =
 		parsed.issue.areas.length > 0 &&
 		parsed.issue.phase !== undefined &&
-		parsed.issue.priority !== undefined;
+		parsed.issue.priority !== undefined &&
+		(!issueTypesAvailable || parsed.issue.type !== undefined);
 
 	const authorTrusted = isTrustedAuthor(
 		parsed.issue.authorAssociation,
@@ -486,6 +496,9 @@ function finalizeIssue(
 			? authorTrusted
 			: collaborators.includes(editor));
 	const bodyTrusted = (authorTrusted || triaged) && editorTrusted;
+	// The title is attacker-controlled content too: withheld until the author
+	// is trusted or a member has triaged the issue (and thereby read it).
+	const titleTrusted = authorTrusted || triaged;
 
 	const status = deriveStatus({
 		state: parsed.issue.state,
@@ -499,6 +512,9 @@ function finalizeIssue(
 
 	return {
 		...parsed.issue,
+		title: titleTrusted
+			? parsed.issue.title
+			: `(title withheld: untrusted author @${parsed.issue.authorLogin})`,
 		status,
 		triaged,
 		blockedBy,

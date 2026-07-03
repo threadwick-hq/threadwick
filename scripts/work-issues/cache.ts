@@ -8,7 +8,7 @@
  */
 
 import { execFileSync } from 'node:child_process';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { CACHE_FILE_NAME } from './config';
 import { isRecord } from './json';
@@ -52,7 +52,11 @@ export function writeCache(cache: WorkCache): Result<undefined> {
 	const path = cacheFilePath();
 	if (!path.ok) return path;
 	try {
-		writeFileSync(path.value, `${JSON.stringify(cache, null, '\t')}\n`, 'utf8');
+		// Write-then-rename: the cache is shared across worktrees and read by
+		// hooks, so a concurrent reader must never observe a torn file.
+		const tempPath = `${path.value}.tmp-${process.pid}`;
+		writeFileSync(tempPath, `${JSON.stringify(cache, null, '\t')}\n`, 'utf8');
+		renameSync(tempPath, path.value);
 		return { ok: true, value: undefined };
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);

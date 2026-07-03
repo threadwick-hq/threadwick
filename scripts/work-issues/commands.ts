@@ -243,7 +243,7 @@ export function runList(run: GhRunner, rest: string[]): void {
 		usage(`work list: --status must be one of ${STATUSES.join('|')}`);
 	}
 	const wantedArea = getFlag(rest, '--area');
-	const wantedPhase = getFlag(rest, '--phase');
+	const wantedPhase = parsePhaseFlag(rest, 'list');
 	const wantedType = getFlag(rest, '--type');
 	const issues = source.snapshot.issues
 		.filter(
@@ -252,11 +252,7 @@ export function runList(run: GhRunner, rest: string[]): void {
 		.filter(
 			(issue) => wantedArea === undefined || issue.areas.includes(wantedArea),
 		)
-		.filter(
-			(issue) =>
-				wantedPhase === undefined ||
-				issue.phase === Number.parseInt(wantedPhase, 10),
-		)
+		.filter((issue) => wantedPhase === undefined || issue.phase === wantedPhase)
 		.filter((issue) => wantedType === undefined || issue.type === wantedType)
 		.sort(byPriorityThenAge);
 	if (hasFlag(rest, '--json')) {
@@ -274,17 +270,13 @@ export function runList(run: GhRunner, rest: string[]): void {
 export function runNext(run: GhRunner, rest: string[]): void {
 	const source = loadSnapshot(run, {});
 	const wantedArea = getFlag(rest, '--area');
-	const wantedPhase = getFlag(rest, '--phase');
+	const wantedPhase = parsePhaseFlag(rest, 'next');
 	const claimable = source.snapshot.issues
 		.filter((issue) => issue.status === 'backlog' && issue.triaged)
 		.filter(
 			(issue) => wantedArea === undefined || issue.areas.includes(wantedArea),
 		)
-		.filter(
-			(issue) =>
-				wantedPhase === undefined ||
-				issue.phase === Number.parseInt(wantedPhase, 10),
-		)
+		.filter((issue) => wantedPhase === undefined || issue.phase === wantedPhase)
 		.sort(byPriorityThenAge);
 	const top = claimable[0];
 	if (top === undefined) {
@@ -302,10 +294,15 @@ export function runShow(run: GhRunner, rest: string[]): void {
 	const issue =
 		cached ??
 		unwrap(
-			fetchSingleIssue(run, number, {
-				dependencyMode: source.snapshot.dependencyMode,
-				issueTypesAvailable: source.snapshot.issueTypesAvailable,
-			}),
+			fetchSingleIssue(
+				run,
+				number,
+				{
+					dependencyMode: source.snapshot.dependencyMode,
+					issueTypesAvailable: source.snapshot.issueTypesAvailable,
+				},
+				source.snapshot,
+			),
 		);
 	if (hasFlag(rest, '--json')) {
 		console.log(JSON.stringify(issue, null, 2));
@@ -682,6 +679,16 @@ function getFlag(rest: string[], name: string): string | undefined {
 	const index = rest.indexOf(name);
 	if (index === -1) return undefined;
 	return rest[index + 1];
+}
+
+function parsePhaseFlag(rest: string[], command: string): number | undefined {
+	const raw = getFlag(rest, '--phase');
+	if (raw === undefined) return undefined;
+	const phase = Number.parseInt(raw, 10);
+	if (!Number.isInteger(phase) || phase < 0 || phase > MAX_PHASE) {
+		usage(`work ${command}: --phase must be 0..${MAX_PHASE}`);
+	}
+	return phase;
 }
 
 function getFlagAll(rest: string[], name: string): string[] {

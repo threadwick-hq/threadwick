@@ -5,9 +5,10 @@ type: chore
 area:
   - repo
 phase: 0
-status: active
+status: review
 priority: p1
 created: 2026-07-03
+pr: 100
 acceptance:
   - scripts/work-issues.ts provides bootstrap|new|claim|block|unblock|list|next|show|update|log|plan|inbox|check against GitHub Issues via gh
   - a single issue template defines the canonical body; the body is the entire spec and the CLI updates its sections in place
@@ -115,6 +116,9 @@ Trust model (this repo is public; issue comments are an untrusted input channel)
 - Untrusted comments are quarantined: `inbox`, `show`, and the cache expose author login,
   timestamp, and URL only. The content never enters agent context, so it cannot instruct or
   poison an agent. Quarantined items are listed so a human knows they exist.
+- Issue titles are attacker-controlled content too: an untrusted author's title is withheld
+  (replaced by a placeholder with the author login) everywhere until the author is trusted or a
+  member triages the issue.
 - Release paths: a trusted member replies `/allow <comment-url>` (the CLI verifies the /allow
   author's association before honoring it), or the user explicitly asks in-session to read a
   specific quarantined comment. Approval is per comment, never blanket.
@@ -228,8 +232,7 @@ Risks:
 
 ## Code review
 
-<!-- Populated after running /code-review ultra post-implementation. Leave empty until then.
-     Paste the summary findings here and note which were addressed before merge. -->
+Adversarial review (fresh-context code-reviewer agent, full branch diff): core trust architecture confirmed sound (/allow parsing unspoofable, cache and displays never receive untrusted bodies or comment content, offline paths degrade via Results). Findings and resolutions: (1) MAJOR untrusted issue titles bypassed quarantine into check/list/show/cache — fixed, titles now withheld until author trusted or issue triaged, regression-tested. (2) MAJOR triaged omitted issue type, letting type-less issues be claimed and body-trusted while check flagged them — fixed, type folded into the work shape when issue types are available, regression-tested. (3) minor non-atomic cache write could tear under concurrent worktree/hook readers — fixed with write-temp-then-rename. (4) minor collaborators-list may under-count org members, over-quarantining edited bodies — accepted as fail-safe residual (never under-quarantines). (5) minor double snapshot fetch in show for closed issues — fixed via preloaded snapshot. (6) minor non-numeric --phase silently matched nothing — fixed with validation. 43 tests green after fixes.
 
 ## Log
 
@@ -238,3 +241,4 @@ Risks:
 - 2026-07-03 spec revised: single work:v1 body template (body is the whole spec, edited in place), comments carry log/review/feedback only, member-only comment trust model with quarantine and /allow release.
 - 2026-07-03 spec revised: native fields over labels; type moves to org issue types, blocked_by to native dependencies (blocked status now fully derived), priority to the project Priority field; labels keep only area; board provisioning moves into bootstrap.
 - 2026-07-03 implemented: scripts/work-issues.ts + 8 modules, 41 vitest tests, root tsconfig/vitest wiring (Stop gate now covers root scripts), issue template. Probe results: GraphQL exposes dependencies as Issue.blockedBy (aliased in the query); REST dependencies endpoints also available; org issue types API works (all 6 types now exist, Feature/Bug/Task were org defaults); Projects v2 board #1 'Threadwick Work' created with p0..p3 Priority field. Live smoke test on issue #101 (created/claimed/planned/logged/blocked/unblocked/inbox/md/closed-as-abandoned) passed; check classifies the 53 legacy tw-tracker mirror issues as awaiting triage with 0 violations.
+- 2026-07-03 review fixes applied: titles quarantined until trusted or triaged; type folded into the triage shape; atomic cache write; show single-fetch; --phase validation. 43 tests green. Status: review, PR #100 marked ready.

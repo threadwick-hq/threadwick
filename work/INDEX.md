@@ -2,11 +2,11 @@
 
 Generated from `work/*.md` frontmatter by `scripts/work.ts`. Do not edit by hand; run `pnpm run work index`.
 
-Totals: backlog 19 · active 1 · review 6 · done 24 · blocked 0 · abandoned 5
+Totals: backlog 19 · active 0 · review 7 · done 24 · blocked 0 · abandoned 5
 
 | ID | Title | Type | Area | Phase | Status | Priority | Assignee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| TW-054 | Issue-first work CLI backed by GitHub Issues | chore | repo | 0 | active | p1 | agent |
+| TW-054 | Issue-first work CLI backed by GitHub Issues | chore | repo | 0 | review | p1 | agent |
 | TW-055 | Cut over work tracking to issue-first | chore | repo | 0 | backlog | p1 | - |
 | TW-051 | Migrate agent config from Cursor to generic + Claude Code | chore | repo | 0 | done | p2 | claude |
 | TW-052 | Add structured agent workflow enforcement | chore | repo | 0 | done | p1 | claude |
