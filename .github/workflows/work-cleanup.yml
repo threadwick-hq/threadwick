@@ -8,7 +8,7 @@ jobs:
   remind:
     if: >
       github.event.pull_request.merged == true &&
-      startsWith(github.event.pull_request.head.ref, 'feat/TW-')
+      startsWith(github.event.pull_request.head.ref, 'feat/')
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -19,7 +19,9 @@ jobs:
           BRANCH: ${{ github.event.pull_request.head.ref }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          TASK_ID=$(echo "$BRANCH" | grep -oE 'TW-[0-9]+' | head -1)
+          # Branch convention: feat/<issue-number>-slug (legacy: feat/TW-NNN-slug).
+          TASK_ID=$(echo "$BRANCH" | grep -oE '(TW-[0-9]+|^feat/[0-9]+)' | sed 's|^feat/||' | head -1)
+          [ -n "$TASK_ID" ] || exit 0
           gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body \
             "PR merged. Run locally to remove the linked worktree and branch:
           \`\`\`bash

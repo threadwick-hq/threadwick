@@ -11,8 +11,7 @@
 		"lint": "turbo run lint",
 		"test": "turbo run test",
 		"check": "turbo run typecheck lint test",
-		"work": "tsx scripts/work.ts",
-		"work2": "tsx scripts/work-issues.ts",
+		"work": "tsx scripts/work-issues.ts",
 		"test:scripts": "vitest run",
 		"typecheck:scripts": "tsc --noEmit"
 	},

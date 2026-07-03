@@ -10,17 +10,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          # Full history so the work/ derivation gate can see closing commits.
-          fetch-depth: 0
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Work tracking (validate + gates)
+      - name: Work tracking (issue shape)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm run work check
+      - name: Work tracking (PR gate)
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm run work gate --pr "${{ github.event.number }}"
+      - name: Work CLI (typecheck + tests)
+        run: |
+          pnpm run typecheck:scripts
+          pnpm run test:scripts
       - name: Build + typecheck (packages, apps)
         run: pnpm turbo run build typecheck --filter=./packages/* --filter=./apps/*
       - name: Biome (packages)

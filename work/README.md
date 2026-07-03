@@ -1,80 +1,35 @@
 # Work tracking
 
-Every unit of work in this repo is one markdown file in `work/`, tracked in git. The file is the
-spec, the documentation, and the audit trail. There is no external tracker to keep in sync: git is
-the source of truth, and GitHub is a read-only mirror generated from these files.
+**Work is tracked in GitHub Issues.** This directory is a frozen archive of the retired
+file-based ledger (TW-001 through TW-055); the files stay for history and are never edited.
+The TW-055 cutover migrated every open task to an issue (the legacy TW id survives in the
+issue title) and the git history of this directory remains the audit trail of that era.
 
-This is the system for an agent-built repo. An agent can claim, record, document, and close work
-with nothing but file edits and git. No credentials, no API, no network beyond `git push`.
+## The system (issue-first)
 
-## The unit of work
+One issue per unit of work. The `pnpm run work` CLI (`scripts/work-issues.ts`) is the
+interface agents use; humans use the GitHub UI and the "Threadwick Work" project board.
 
-One file per task: `work/TW-<NNN>-<kebab-slug>.md`. The id is monotonic and never reused. Status
-lives **only** in frontmatter; the file never moves. See `_TEMPLATE.md` for the full schema.
+- **The issue body is the entire spec** (`work:v1` template: Context, Scope, Acceptance,
+  Plan, Alternatives considered), edited in place via `work update` / `work plan`. Comments
+  carry the conversation: progress log, code review findings, human feedback — never spec.
+- **Status is derived, never stored**: done/abandoned from the closed state reason, blocked
+  from unresolved native blocked-by relationships, review from an open linked PR
+  (`Closes #N`), active from assignment, backlog otherwise. Nothing can go stale.
+- **Native fields, not labels**: org issue types (Feature/Bug/Chore/Refactor/Docs/Test),
+  milestones for MIGRATION.md phases, a p0..p3 Priority field on the project board. Labels
+  carry only `area:*`.
+- **Trust model (public repo)**: content from non-members (author association outside
+  OWNER/MEMBER/COLLABORATOR, and all bots) is quarantined — titles, bodies, and comments are
+  withheld from agent context until a member triages the issue (applies the work shape) or
+  releases a single comment by replying `/allow <comment-url>`. Never release in bulk.
+- **Lifecycle**: `work next` → `work claim <n>` (assign yourself) → `work plan <n>` → branch
+  `feat/<n>-slug` → draft PR with `Closes #<n>` → review → squash-merge auto-closes the
+  issue. CI gates on `work check` (shape) and `work gate --pr` (closed issue is assigned and
+  planned).
+- **Cache**: every command refreshes `<git-common-dir>/work-cache.json`; Claude Code hooks
+  read only that cache (session context, plan enforcement, pre-push), so the inner loop
+  never waits on the network.
 
-Key fields:
-
-- `id` — `TW-NNN`, immutable, matches the filename.
-- `type` — `feat | fix | refactor | chore | docs | test`.
-- `area` — one or more workspaces: `apps/studio apps/web packages/{config,core,editor,icons,org,types} repo` (`repo` = root/tooling/CI).
-- `phase` — `0..8`, the MIGRATION.md phase this belongs to.
-- `status` — `backlog | active | review | done | blocked | abandoned`.
-- `priority` — `p0` (highest) .. `p3`.
-- `acceptance` — testable criteria; mirrored as a checklist in the body.
-
-## Lifecycle
-
-```
-backlog -> active -> review -> done
-              |         |
-              v         v
-           blocked   (back to active on changes-requested)
-              |
-              v
-          abandoned   (terminal; crashed or superseded runs)
-```
-
-- `backlog` — spec exists, unclaimed.
-- `active` — an agent holds it (`assignee` + `started` set).
-- `review` — a PR is open (`pr` set), awaiting the owner.
-- `done` — merged (`completed` + `pr` set). Enforced, not trusted (see Gates).
-- `blocked` — waiting on `blocked_by` ids.
-- `abandoned` — terminal; a crashed or superseded run.
-
-## How an agent works a task
-
-1. **Pick up.** `pnpm run work next --area packages/core` prints the top claimable backlog task.
-   Claim with `pnpm run work claim TW-NNN [--assignee agent]`, or edit frontmatter to `status: active`,
-   set `assignee` and `started`, branch `feat/TW-NNN-slug`, commit `docs(work): claim TW-NNN`. Two agents
-   racing the same id collide at `git push`; the loser re-runs `next`.
-2. **Record.** The file travels on the branch. Tick the body checklist and append to `## Log` as you
-   go. End every commit with `Refs TW-NNN`.
-3. **Document.** The body is the durable record: context, scope, decisions, log. It is reviewed in
-   the PR diff alongside the code.
-4. **Close.** Set `status: review`, fill `pr`, open the PR with `Closes TW-NNN` in the body. The PR is
-   squash-merged with `Closes TW-NNN` in the squash commit message; set `status: done` and `completed`
-   in the same PR. CI enforces that the status and the closing commit agree.
-
-## Gates (`pnpm run work check`, hard-blocking in CI)
-
-- Frontmatter is valid: required fields present, enums correct, id matches filename, ids unique.
-- Status invariants: `active` has `started`; `review`/`done` have `pr`; `done` has `completed`;
-  `blocked` has `blocked_by`; every `blocked_by` id exists.
-- **Derivation gate (status is derived, not trusted):** a `done` task must be referenced by a real
-  commit, and any id a commit closes (`Closes TW-NNN`) must actually be `done`. You cannot mark
-  something done without shipping it, and you cannot ship a close without the status following.
-- `INDEX.md` is regenerated and must not be stale.
-
-## Visibility
-
-- `INDEX.md` (generated, committed) is the at-a-glance table. Never hand-edit it; run
-  `pnpm run work index`.
-- **GitHub Issues mirror** (read-only): [`.github/workflows/work-project-mirror.yml`](../.github/workflows/work-project-mirror.yml)
-  upserts one issue per `TW-NNN` from frontmatter on every push to `main` that touches `work/`.
-  Issues carry the `tw-tracker` label — do not edit them; change the `work/*.md` file instead.
-  Optional repo variable `WORK_PROJECT_NUMBER` (+ `WORK_PROJECT_OWNER`) adds new items to a GitHub
-  Project v2 board.
-- **Stale-active sweep**: [`.github/workflows/work-stale-sweep.yml`](../.github/workflows/work-stale-sweep.yml)
-  runs weekly and opens/updates an issue when `active` tasks exceed the `--days` threshold.
-
-The owner steers by editing `priority` / `phase` in a small PR, and by reviewing the PR queue.
+See `AGENTS.md` for the full lifecycle and `scripts/work-issues.ts --help` for commands.
+Provisioning (labels, milestones, issue types, board) is idempotent: `pnpm run work bootstrap`.

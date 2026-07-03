@@ -24,7 +24,9 @@ import {
 	WORK_TYPES,
 } from './config';
 import type { GhRunner } from './gh';
+import { ghFailureHint } from './gh';
 import { fetchSingleIssue, fetchSnapshot } from './github';
+import { getString, isRecord, parseJson } from './json';
 import {
 	addAssignee,
 	addBlockedBy,
@@ -174,6 +176,11 @@ export function runClaim(run: GhRunner, rest: string[]): void {
 	if (source.fromCache) {
 		fail('cannot claim while offline: a claim must reach GitHub');
 	}
+	if (source.snapshot.viewerLogin === '') {
+		fail(
+			'cannot resolve the viewer login (check `gh auth status`); claiming needs an identity',
+		);
+	}
 	const issue = findIssue(source.snapshot, number);
 	if (issue.status !== 'backlog') {
 		fail(
@@ -284,7 +291,7 @@ export function runNext(run: GhRunner, rest: string[]): void {
 		return;
 	}
 	console.log(formatIssueLine(top));
-	console.log(`  claim with: pnpm run work2 claim ${top.number}`);
+	console.log(`  claim with: pnpm run work claim ${top.number}`);
 }
 
 export function runShow(run: GhRunner, rest: string[]): void {
@@ -458,6 +465,54 @@ export function runCheck(run: GhRunner, rest: string[]): void {
 	if (violations.length > 0) process.exit(1);
 }
 
+/**
+ * CI gate for a pull request: the body must close at least one issue, and
+ * every closed issue must be assigned with a filled Plan section. Priority
+ * and full triage are validated by `check` where project access exists.
+ */
+export function runGate(run: GhRunner, rest: string[]): void {
+	const prRaw = getFlag(rest, '--pr');
+	const prNumber =
+		prRaw === undefined ? Number.NaN : Number.parseInt(prRaw, 10);
+	if (!Number.isSafeInteger(prNumber)) usage('work gate --pr <number>');
+	const view = run(['pr', 'view', String(prNumber), '--json', 'body']);
+	if (!view.ok) {
+		fail(`cannot read PR #${prNumber}: ${ghFailureHint(view.error)}`);
+	}
+	const parsed = parseJson(view.value);
+	const body = isRecord(parsed) ? (getString(parsed, 'body') ?? '') : '';
+	// GitHub's full auto-close keyword set; the documented convention is Closes.
+	const refs = [
+		...body.matchAll(/\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?) #(\d+)/gi),
+	].flatMap((match) =>
+		match[1] === undefined ? [] : [Number.parseInt(match[1], 10)],
+	);
+	if (refs.length === 0) {
+		fail(`PR #${prNumber} body has no "Closes #<issue>" reference`);
+	}
+	const problems: string[] = [];
+	for (const issueNumber of refs) {
+		const issue = fetchSingleIssue(run, issueNumber);
+		if (!issue.ok) {
+			problems.push(`#${issueNumber}: ${issue.error}`);
+			continue;
+		}
+		if (issue.value.assignees.length === 0) {
+			problems.push(`#${issueNumber} is unassigned — claim it first`);
+		}
+		if (!isPlanFilled(issue.value.body)) {
+			problems.push(
+				`#${issueNumber} Plan section is not filled — record it with \`work plan ${issueNumber}\``,
+			);
+		}
+	}
+	for (const problem of problems) console.error(`work: gate — ${problem}`);
+	if (problems.length > 0) process.exit(1);
+	console.log(
+		`work: gate ok — PR #${prNumber} closes ${refs.map((n) => `#${n}`).join(', ')}`,
+	);
+}
+
 // --- Snapshot loading (network with cache fallback) ---
 
 function loadSnapshot(
@@ -474,13 +529,14 @@ function loadSnapshot(
 				};
 	const fresh = fetchSnapshot(run, hints);
 	if (fresh.ok) {
-		const cache = nextCache(
+		const snapshot = withRetainedViewer(
 			fresh.value,
-			previous.ok ? previous.value : undefined,
+			previous.ok ? previous.value.snapshot : undefined,
 		);
+		const cache = nextCache(snapshot, previous.ok ? previous.value : undefined);
 		const written = writeCache(cache);
 		if (!written.ok) warn(written.error);
-		return { snapshot: fresh.value, cache, fromCache: false };
+		return { snapshot, cache, fromCache: false };
 	}
 	if (previous.ok) {
 		warn(
@@ -509,10 +565,31 @@ function refreshCache(run: GhRunner, options: { reprobe?: boolean }): void {
 		warn(`cache not refreshed: ${fresh.error}`);
 		return;
 	}
+	const snapshot = withRetainedViewer(
+		fresh.value,
+		previous.ok ? previous.value.snapshot : undefined,
+	);
 	const written = writeCache(
-		nextCache(fresh.value, previous.ok ? previous.value : undefined),
+		nextCache(snapshot, previous.ok ? previous.value : undefined),
 	);
 	if (!written.ok) warn(written.error);
+}
+
+/**
+ * A transient /user failure must not overwrite a known identity in the shared
+ * cache: hooks key on viewerLogin, and an empty one would fail-close them
+ * with a misleading "claim an issue" remedy.
+ */
+function withRetainedViewer(
+	fresh: WorkSnapshot,
+	previous: WorkSnapshot | undefined,
+): WorkSnapshot {
+	if (fresh.viewerLogin !== '') return fresh;
+	if (previous === undefined || previous.viewerLogin === '') return fresh;
+	warn(
+		`viewer login unavailable this run; keeping cached identity ${previous.viewerLogin}`,
+	);
+	return { ...fresh, viewerLogin: previous.viewerLogin };
 }
 
 // --- Body editing ---

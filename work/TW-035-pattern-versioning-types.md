@@ -5,11 +5,12 @@ type: feat
 area:
   - packages/types
 phase: 6
-status: review
+status: done
 priority: p2
 created: 2026-06-23
 assignee: agent
 started: 2026-06-28
+completed: 2026-06-28
 pr: 29
 acceptance:
   - @threadwick/types encodes whole-pattern versioning/publish/remix/lineage as a read contract

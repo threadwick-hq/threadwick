@@ -20,8 +20,9 @@
  *   log <number> "message"       append a progress comment
  *   inbox [<number>] [--peek]    trusted comments since the per-issue cursor
  *   check [--json]               validate open issues carry the work shape
+ *   gate --pr <number>           CI gate: PR closes an assigned, planned issue
  *
- * Runs via `pnpm run work2 <command>` until the TW-055 cutover renames it.
+ * Runs via `pnpm run work <command>`.
  */
 
 import {
@@ -29,6 +30,7 @@ import {
 	runBootstrap,
 	runCheck,
 	runClaim,
+	runGate,
 	runInbox,
 	runList,
 	runLog,
@@ -85,6 +87,9 @@ function main(): void {
 		case 'check':
 			runCheck(runGh, rest);
 			return;
+		case 'gate':
+			runGate(runGh, rest);
+			return;
 		default:
 			printUsage();
 			process.exit(command === undefined || command === 'help' ? 0 : 2);
@@ -106,5 +111,6 @@ function printUsage(): void {
   plan <number>                 fill the Plan section (stdin or --file)
   log <number> "message"        append a progress comment
   inbox [<number>] [--peek]     new trusted comments since last read
-  check [--json]                validate open issues carry the work shape`);
+  check [--json]                validate open issues carry the work shape
+  gate --pr <number>            CI gate: PR closes an assigned, planned issue`);
 }

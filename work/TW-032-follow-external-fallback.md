@@ -6,16 +6,17 @@ area:
   - apps/web
   - packages/editor
 phase: 6
-status: review
+status: done
 priority: p2
 created: 2026-06-23
-pr: 25
+pr: 37
 acceptance:
   - an external pattern follows via a plain round checklist or opens its source
   - progress is tracked for the external pattern in the project
   - the structured Follow view is used only when chart data exists
 assignee: agent
 started: 2026-06-27
+completed: 2026-06-28
 ---
 ## Context
 

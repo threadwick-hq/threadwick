@@ -77,18 +77,6 @@
 				]
 			}
 		],
-		"PostToolUse": [
-			{
-				"matcher": "Write|Edit",
-				"hooks": [
-					{
-						"type": "command",
-						"command": ".claude/hooks/work-index-reminder.sh",
-						"timeout": 60
-					}
-				]
-			}
-		],
 		"Stop": [
 			{
 				"hooks": [

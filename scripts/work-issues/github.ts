@@ -56,14 +56,15 @@ export function fetchSnapshot(
 	run: GhRunner,
 	hints: SnapshotHints = {},
 ): Result<WorkSnapshot> {
+	// CI tokens (GITHUB_TOKEN) cannot call /user; degrade to an empty viewer so
+	// read commands still work. Commands that act as the viewer must guard.
 	const viewer = fetchViewerLogin(run);
-	if (!viewer.ok) return viewer;
+	const viewerLogin = viewer.ok ? viewer.value : '';
 
 	const issuesQuery = fetchIssueNodes(run, hints);
 	if (!issuesQuery.ok) return issuesQuery;
 	const { nodes, issueTypesAvailable, blockedByInGraphql } = issuesQuery.value;
 
-	const collaborators = fetchCollaborators(run);
 	const projectNumber = resolveProjectNumber(run);
 
 	const parsedIssues = nodes.map((node) => parseIssueNode(node, projectNumber));
@@ -76,7 +77,7 @@ export function fetchSnapshot(
 	}
 
 	const issues = parsedIssues.map((issue) =>
-		finalizeIssue(issue, dependencyMode, collaborators, issueTypesAvailable),
+		finalizeIssue(issue, dependencyMode, issueTypesAvailable, projectNumber),
 	);
 
 	return {
@@ -84,11 +85,10 @@ export function fetchSnapshot(
 		value: {
 			fetchedAt: new Date().toISOString(),
 			repo: REPO,
-			viewerLogin: viewer.value,
+			viewerLogin,
 			dependencyMode,
 			issueTypesAvailable,
 			projectNumber,
-			collaborators,
 			issues,
 		},
 	};
@@ -119,8 +119,8 @@ export function fetchSingleIssue(
 		value: finalizeIssue(
 			parsed,
 			snapshot.value.dependencyMode,
-			snapshot.value.collaborators,
 			snapshot.value.issueTypesAvailable,
+			snapshot.value.projectNumber,
 		),
 	};
 }
@@ -466,8 +466,8 @@ function parseProjectPriority(
 function finalizeIssue(
 	parsed: ParsedIssue,
 	dependencyMode: DependencyMode,
-	collaborators: string[],
 	issueTypesAvailable: boolean,
+	projectNumber: number | undefined,
 ): WorkIssue {
 	const blockedBy =
 		parsed.graphqlBlockers ??
@@ -479,22 +479,27 @@ function finalizeIssue(
 				: 0
 			: blockedBy.filter((blocker) => blocker.state === 'OPEN').length;
 
+	// The shape requirements degrade with the environment: priority is only
+	// required when this token can see the project at all (CI tokens cannot),
+	// and the type only when the org exposes issue types.
 	const triaged =
 		parsed.issue.areas.length > 0 &&
 		parsed.issue.phase !== undefined &&
-		parsed.issue.priority !== undefined &&
+		(projectNumber === undefined || parsed.issue.priority !== undefined) &&
 		(!issueTypesAvailable || parsed.issue.type !== undefined);
 
 	const authorTrusted = isTrustedAuthor(
 		parsed.issue.authorAssociation,
 		parsed.authorIsBot,
 	);
+	// GitHub only lets the issue author or users with write access edit a body,
+	// so a non-author editor is trusted by platform enforcement. The dangerous
+	// case is an untrusted author re-editing their own issue after triage.
 	const editor = parsed.issue.lastEditedBy;
 	const editorTrusted =
 		editor === undefined ||
-		(editor === parsed.issue.authorLogin
-			? authorTrusted
-			: collaborators.includes(editor));
+		editor !== parsed.issue.authorLogin ||
+		authorTrusted;
 	const bodyTrusted = (authorTrusted || triaged) && editorTrusted;
 	// The title is attacker-controlled content too: withheld until the author
 	// is trusted or a member has triaged the issue (and thereby read it).
@@ -533,21 +538,6 @@ function fetchViewerLogin(run: GhRunner): Result<string> {
 	return login.length > 0
 		? { ok: true, value: login }
 		: { ok: false, error: 'could not resolve viewer login' };
-}
-
-function fetchCollaborators(run: GhRunner): string[] {
-	const result = run([
-		'api',
-		`repos/${REPO}/collaborators?per_page=100`,
-		'--paginate',
-		'--jq',
-		'.[].login',
-	]);
-	if (!result.ok) return [];
-	return result.value
-		.split('\n')
-		.map((line) => line.trim())
-		.filter((line) => line.length > 0);
 }
 
 /** Resolves the work project number by title; undefined when unavailable. */
