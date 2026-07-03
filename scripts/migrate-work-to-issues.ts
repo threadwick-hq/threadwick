@@ -197,12 +197,22 @@ function ledgerSection(file: string, name: string): string | undefined {
 	);
 	if (start === -1) return undefined;
 	const end = lines.findIndex((line, i) => i > start && /^## /.test(line));
-	const body = lines
+	const section = lines
 		.slice(start + 1, end === -1 ? undefined : end)
-		.join('\n')
-		.replace(/<!--[\s\S]*?-->/g, '')
-		.trim();
+		.join('\n');
+	const body = stripHtmlComments(section).trim();
 	return body.length > 0 ? body : undefined;
+}
+
+/** Removes HTML comments, re-scanning until stable so no `<!--` survives. */
+function stripHtmlComments(text: string): string {
+	let previous = text;
+	let current = text.replace(/<!--[\s\S]*?-->/g, '');
+	while (current !== previous) {
+		previous = current;
+		current = current.replace(/<!--[\s\S]*?-->/g, '');
+	}
+	return current;
 }
 
 // --- Issue map ---
