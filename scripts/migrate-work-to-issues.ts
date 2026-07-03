@@ -204,13 +204,27 @@ function ledgerSection(file: string, name: string): string | undefined {
 	return body.length > 0 ? body : undefined;
 }
 
-/** Removes HTML comments, looping until no comment delimiter survives. */
+/**
+ * Drops `<!-- ... -->` spans by scanning for delimiters. The input is the
+ * repo-owned ledger markdown (member-committed), so this only needs to strip
+ * the well-formed template placeholder comments; an unterminated comment
+ * drops the remainder of the text.
+ */
 function stripHtmlComments(text: string): string {
-	let current = text;
-	while (current.includes('<!--') || current.includes('-->')) {
-		current = current.replace(/<!--[\s\S]*?-->/g, '').replace(/<!--|-->/g, '');
+	const parts: string[] = [];
+	let index = 0;
+	while (index < text.length) {
+		const open = text.indexOf('<!--', index);
+		if (open === -1) {
+			parts.push(text.slice(index));
+			break;
+		}
+		parts.push(text.slice(index, open));
+		const close = text.indexOf('-->', open + 4);
+		if (close === -1) break;
+		index = close + 3;
 	}
-	return current;
+	return parts.join('');
 }
 
 // --- Issue map ---
