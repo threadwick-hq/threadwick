@@ -214,17 +214,17 @@ Risks:
 
 ## Acceptance
 
-- [ ] scripts/work-issues.ts provides bootstrap|new|claim|block|unblock|list|next|show|update|log|plan|inbox|check against GitHub Issues via gh
-- [ ] a single issue template defines the canonical body; the body is the entire spec and the CLI updates its sections in place
-- [ ] type, dependencies, phase, and priority use native fields (org issue type, blocked-by relationships, milestone, project Priority field); labels carry only area
-- [ ] status is derived from native signals (open/closed state and reason, assignee, linked PR, unresolved blocked-by relationships), never stored
-- [ ] bootstrap idempotently provisions area labels, Phase 0..8 milestones, the org issue types, and the Projects v2 board with its Priority field
-- [ ] comments and issue bodies from non-members are quarantined; inbox and the cache expose metadata only until released by a member /allow or explicit user approval
-- [ ] issues lacking the member-applied work shape (type, area label, milestone, priority) are never listed as claimable
-- [ ] every command refreshes a shared local cache under the common git dir; hooks read only the cache; offline or unauthenticated gh degrades to one clear warning
-- [ ] show --md renders a read-only markdown snapshot of an issue, marked as generated
-- [ ] status derivation, body-section editing, trust filtering, and cursor logic covered by vitest against fixture JSON
-- [ ] the existing file-based work.ts, hooks, and CI gates stay untouched and green (cutover is TW-055)
+- [x] scripts/work-issues.ts provides bootstrap|new|claim|block|unblock|list|next|show|update|log|plan|inbox|check against GitHub Issues via gh
+- [x] a single issue template defines the canonical body; the body is the entire spec and the CLI updates its sections in place
+- [x] type, dependencies, phase, and priority use native fields (org issue type, blocked-by relationships, milestone, project Priority field); labels carry only area
+- [x] status is derived from native signals (open/closed state and reason, assignee, linked PR, unresolved blocked-by relationships), never stored
+- [x] bootstrap idempotently provisions area labels, Phase 0..8 milestones, the org issue types, and the Projects v2 board with its Priority field
+- [x] comments and issue bodies from non-members are quarantined; inbox and the cache expose metadata only until released by a member /allow or explicit user approval
+- [x] issues lacking the member-applied work shape (type, area label, milestone, priority) are never listed as claimable
+- [x] every command refreshes a shared local cache under the common git dir; hooks read only the cache; offline or unauthenticated gh degrades to one clear warning
+- [x] show --md renders a read-only markdown snapshot of an issue, marked as generated
+- [x] status derivation, body-section editing, trust filtering, and cursor logic covered by vitest against fixture JSON
+- [x] the existing file-based work.ts, hooks, and CI gates stay untouched and green (cutover is TW-055)
 
 ## Code review
 
@@ -237,3 +237,4 @@ Risks:
 - 2026-07-03 created from the approved issue-first design discussion.
 - 2026-07-03 spec revised: single work:v1 body template (body is the whole spec, edited in place), comments carry log/review/feedback only, member-only comment trust model with quarantine and /allow release.
 - 2026-07-03 spec revised: native fields over labels; type moves to org issue types, blocked_by to native dependencies (blocked status now fully derived), priority to the project Priority field; labels keep only area; board provisioning moves into bootstrap.
+- 2026-07-03 implemented: scripts/work-issues.ts + 8 modules, 41 vitest tests, root tsconfig/vitest wiring (Stop gate now covers root scripts), issue template. Probe results: GraphQL exposes dependencies as Issue.blockedBy (aliased in the query); REST dependencies endpoints also available; org issue types API works (all 6 types now exist, Feature/Bug/Task were org defaults); Projects v2 board #1 'Threadwick Work' created with p0..p3 Priority field. Live smoke test on issue #101 (created/claimed/planned/logged/blocked/unblocked/inbox/md/closed-as-abandoned) passed; check classifies the 53 legacy tw-tracker mirror issues as awaiting triage with 0 violations.

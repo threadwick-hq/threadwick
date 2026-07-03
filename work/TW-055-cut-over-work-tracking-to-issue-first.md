@@ -133,3 +133,4 @@ Risks:
 - 2026-07-03 created from the approved issue-first design discussion; blocked on TW-054.
 - 2026-07-03 spec revised to match TW-054: hooks and CI check the body Plan section, migration bodies conform to work:v1, docs must cover the trust model.
 - 2026-07-03 spec revised to match: migration sets native type, dependencies, milestone, priority field; board automations only (board itself comes from TW-054 bootstrap).
+- 2026-07-03 discovery from TW-054: 53 open tw-tracker mirror issues (bot-authored) exist from the old one-way mirror. Migration must reconcile them: either retrofit them in place (keeps issue numbers and history) or close them and create fresh issues; decide at TW-055 planning.
