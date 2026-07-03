@@ -5,9 +5,10 @@ type: chore
 area:
   - repo
 phase: 0
-status: review
+status: done
 priority: p1
 created: 2026-07-03
+completed: 2026-07-03
 pr: 100
 acceptance:
   - scripts/work-issues.ts provides bootstrap|new|claim|block|unblock|list|next|show|update|log|plan|inbox|check against GitHub Issues via gh

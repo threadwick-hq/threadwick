@@ -2,15 +2,15 @@
 
 Generated from `work/*.md` frontmatter by `scripts/work.ts`. Do not edit by hand; run `pnpm run work index`.
 
-Totals: backlog 19 · active 0 · review 7 · done 24 · blocked 0 · abandoned 5
+Totals: backlog 19 · active 0 · review 6 · done 25 · blocked 0 · abandoned 5
 
 | ID | Title | Type | Area | Phase | Status | Priority | Assignee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| TW-054 | Issue-first work CLI backed by GitHub Issues | chore | repo | 0 | review | p1 | agent |
 | TW-055 | Cut over work tracking to issue-first | chore | repo | 0 | backlog | p1 | - |
 | TW-051 | Migrate agent config from Cursor to generic + Claude Code | chore | repo | 0 | done | p2 | claude |
 | TW-052 | Add structured agent workflow enforcement | chore | repo | 0 | done | p1 | claude |
 | TW-053 | AI-tooling audit: container config bootstrap, gate fixes, doc corrections | chore | repo | 0 | done | p1 | claude |
+| TW-054 | Issue-first work CLI backed by GitHub Issues | chore | repo | 0 | done | p1 | agent |
 | TW-007 | Promote Biome from report-only to a hard CI gate | chore | repo, packages/config | 3 | done | p2 | agent |
 | TW-030 | Build the Follow chart pane (state styling, follow-position, zoom, tap-to-inspect) | feat | apps/web, packages/editor | 6 | review | p1 | agent |
 | TW-031 | Wire the locked-responsive Follow shell across all five breakpoints plus Wake Lock | feat | apps/web, packages/core | 6 | review | p1 | agent |
