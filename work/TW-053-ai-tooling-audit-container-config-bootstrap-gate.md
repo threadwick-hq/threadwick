@@ -5,11 +5,12 @@ type: chore
 area:
   - repo
 phase: 0
-status: active
+status: review
 priority: p1
 created: 2026-07-03
 assignee: claude
 started: 2026-07-03
+pr: 46
 acceptance:
   - Container-level .claude/settings.json and CLAUDE.md exist (symlinked to tracked files in main/) so container-cwd sessions load repo config
   - All four hooks resolve the repo root correctly from both container and worktree cwds (pipe-tested)
@@ -110,3 +111,4 @@ permission key (Projects v2 needs a PAT anyway; the workflow guards that path be
 ## Log
 
 - 2026-07-03 created and claimed by claude (audit session).
+- 2026-07-03 opened PR #46; status review
