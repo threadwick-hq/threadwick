@@ -28,20 +28,6 @@
 			"Bash(pnpm --filter @threadwick/i18n test *)"
 		]
 	},
-	"worktree": {
-		"symlinkDirectories": [
-			"node_modules",
-			"apps/studio/node_modules",
-			"apps/web/node_modules",
-			"packages/config/node_modules",
-			"packages/core/node_modules",
-			"packages/editor/node_modules",
-			"packages/i18n/node_modules",
-			"packages/icons/node_modules",
-			"packages/org/node_modules",
-			"packages/types/node_modules"
-		]
-	},
 	"hooks": {
 		"SessionStart": [
 			{
@@ -49,7 +35,7 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": ".claude/hooks/session-start.sh",
+						"command": "\"$CLAUDE_PROJECT_DIR/main/.claude/hooks/session-start.sh\"",
 						"timeout": 30
 					}
 				]
@@ -59,7 +45,7 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": ".claude/hooks/session-start.sh",
+						"command": "\"$CLAUDE_PROJECT_DIR/main/.claude/hooks/session-start.sh\"",
 						"timeout": 30
 					}
 				]
@@ -71,7 +57,7 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": ".claude/hooks/require-plan.sh",
+						"command": "\"$CLAUDE_PROJECT_DIR/main/.claude/hooks/require-plan.sh\"",
 						"timeout": 15
 					}
 				]
@@ -83,7 +69,7 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": ".claude/hooks/work-index-reminder.sh",
+						"command": "\"$CLAUDE_PROJECT_DIR/main/.claude/hooks/work-index-reminder.sh\"",
 						"timeout": 60
 					}
 				]
@@ -94,7 +80,7 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": "node .claude/hooks/stop-quality-gate-repo.mjs",
+						"command": "node \"$CLAUDE_PROJECT_DIR/main/.claude/hooks/stop-quality-gate-repo.mjs\"",
 						"timeout": 240
 					}
 				]

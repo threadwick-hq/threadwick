@@ -52,13 +52,13 @@ Full source: [docs/BRAND.md](docs/BRAND.md).
 
 - Editor CSS grids: use modifier classes (`.editor.has-banner`), don't remove grid children.
 - antd v5: prefer `variant`, `destroyOnHidden`, `menu={{items}}`, `App.useApp()`.
-- Ant Design MCP: configured in [`.mcp.json`](.mcp.json) (studio-local) and the repo-root
-  [`.mcp.json`](../../.mcp.json).
+- The Ant Design docs MCP server was removed as unused; if TW-017 (drop AntD) needs it,
+  re-add temporarily with `claude mcp add antd -- npx -y @ant-design/cli mcp --version 5`.
 
 ## Dev commands
 
 ```sh
-pnpm --filter threadwick-studio dev      # port 5174
+pnpm --filter threadwick-studio dev      # port 5173 → http://localhost:5173/studio/ (bare / 404s)
 pnpm --filter threadwick-studio build
 pnpm --filter threadwick-studio test
 ```

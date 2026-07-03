@@ -31,10 +31,11 @@ type ClaudeOptions = {
 
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_VERSION = '2023-06-01';
-const DEFAULT_MODEL = 'claude-sonnet-4-6';
+const DEFAULT_MODEL = 'claude-sonnet-5';
 const MAX_TOKENS = 2048;
 const MAX_ATTEMPTS = 3;
 const RETRY_BASE_MS = 500;
+const REQUEST_TIMEOUT_MS = 60_000;
 
 /** A failure worth retrying: a network error or a 429/5xx from the API. */
 class TransientError extends Error {}
@@ -97,9 +98,13 @@ async function callClaude(
 				model,
 				// biome-ignore lint/style/useNamingConvention: the Anthropic API requires snake_case.
 				max_tokens: MAX_TOKENS,
+				// Sonnet 5 runs adaptive thinking when the field is omitted; a one-line
+				// UI translation gains nothing from it and it would eat the token budget.
+				thinking: { type: 'disabled' },
 				system: SYSTEM_PROMPT,
 				messages: [{ role: 'user', content: buildPrompt(request) }],
 			}),
+			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 		});
 	} catch (error) {
 		throw new TransientError(

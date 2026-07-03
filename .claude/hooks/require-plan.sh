@@ -1,13 +1,39 @@
 #!/usr/bin/env bash
-# PreToolUse — block Write/Edit of non-work files until an active task with a ## Plan exists.
+# PreToolUse — block Write/Edit of repo implementation files until an active task with a ## Plan exists.
+# Writes outside the repo container (plan-mode plan files, Claude memory, scratchpad), to work/
+# ledger files, and to .claude/ agent config are always allowed.
 set -euo pipefail
 
-ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+# Read the payload via stdin and extract only file_path in a first small node
+# pass (a Write payload carries whole file contents — too large for env/argv,
+# and a heredoc would shadow the payload on the main script's stdin).
+input="$(cat)"
+file_path="$(printf '%s' "$input" | node -e '
+	const fs = require("node:fs");
+	let raw = "";
+	try { raw = fs.readFileSync(0, "utf8"); } catch {}
+	let p = "";
+	try { p = (JSON.parse(raw).tool_input || {}).file_path || ""; } catch {}
+	process.stdout.write(p);
+')"
+
+# Resolve the repo root from either a worktree cwd (git works) or the
+# bare+worktree container cwd (show-toplevel fatals there; fall back to the
+# project dir and descend into main/, the canonical worktree).
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [ -z "$ROOT" ]; then ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"; fi
+if [ ! -d "$ROOT/work" ] && [ -d "$ROOT/main/work" ]; then ROOT="$ROOT/main"; fi
+
+# Enforcement scope is the whole container (every worktree), derived from the
+# shared git dir so it is correct from both container and worktree cwds.
+SCOPE="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
+if [ -n "$SCOPE" ]; then SCOPE="$(dirname "$SCOPE")"; else SCOPE="${CLAUDE_PROJECT_DIR:-$ROOT}"; fi
+
 cd "$ROOT"
 
-node <<'NODE'
+REQUIRE_PLAN_FILE="$file_path" REQUIRE_PLAN_SCOPE="$SCOPE" node <<'NODE'
 const { readFileSync, readdirSync, existsSync } = require('node:fs');
-const { join } = require('node:path');
+const { join, resolve, sep } = require('node:path');
 
 function block(reason) {
 	process.stdout.write(JSON.stringify({ decision: 'block', reason }));
@@ -15,12 +41,21 @@ function block(reason) {
 }
 
 try {
-	const stdin = readFileSync('/dev/stdin', 'utf8');
-	const payload = JSON.parse(stdin);
-	const filePath = payload?.tool_input?.file_path ?? '';
+	const filePath = process.env.REQUIRE_PLAN_FILE || '';
+	// A degenerate payload (no extractable file_path) must fail open — resolving
+	// '' would collapse to cwd, which sits inside the scope and could block.
+	if (filePath.length === 0) process.exit(0);
+	const scope = process.env.REQUIRE_PLAN_SCOPE || process.cwd();
+	const resolved = resolve(process.cwd(), filePath);
 
-	// Always allow writes to work/ files — agents fill ## Plan there.
-	if (/\/work\//.test(filePath)) {
+	// Outside the repo container — plan files, memory, scratchpad — never block.
+	if (resolved !== scope && !resolved.startsWith(scope + sep)) {
+		process.exit(0);
+	}
+
+	// work/ ledger files (agents fill ## Plan there) and .claude/ agent config
+	// are always writable.
+	if (/[\\/]work[\\/]/.test(resolved) || /[\\/]\.claude[\\/]/.test(resolved)) {
 		process.exit(0);
 	}
 
@@ -48,30 +83,32 @@ try {
 		);
 	}
 
-	const { file, content } = active[0];
-	const idMatch = content.match(/^id:\s*(TW-\d+)/m);
-	const taskId = idMatch?.[1] ?? file;
-
-	const lines = content.split('\n');
-	const planIdx = lines.findIndex((l) => /^## Plan\s*$/.test(l));
-
-	// Tasks created before TW-052 have no ## Plan section; allow them through.
-	if (planIdx === -1) {
-		process.exit(0);
+	// Tasks created before TW-052 have no ## Plan section; treat them as planned.
+	function hasPlan(content) {
+		const lines = content.split('\n');
+		const planIdx = lines.findIndex((l) => /^## Plan\s*$/.test(l));
+		if (planIdx === -1) return true;
+		const nextHeader = lines.findIndex((l, i) => i > planIdx && /^## /.test(l));
+		const body = lines
+			.slice(planIdx + 1, nextHeader === -1 ? undefined : nextHeader)
+			.join('\n')
+			.replace(/<!--[\s\S]*?-->/g, '')
+			.trim();
+		return body.length > 0;
 	}
 
-	const nextHeader = lines.findIndex((l, i) => i > planIdx && /^## /.test(l));
-	const planContent = lines
-		.slice(planIdx + 1, nextHeader === -1 ? undefined : nextHeader)
-		.join('\n')
-		.replace(/<!--[\s\S]*?-->/g, '')
-		.trim();
-
-	if (!planContent) {
+	// Writes are allowed as long as at least one active task is planned — with
+	// several active tasks, the planned one is the one being worked.
+	const unplanned = active.filter((t) => !hasPlan(t.content));
+	if (unplanned.length === active.length) {
+		const ids = active.map(({ file, content }) => {
+			const idMatch = content.match(/^id:\s*(TW-\d+)/m);
+			return idMatch?.[1] ?? file;
+		});
 		block(
-			`${taskId} has no ## Plan yet — fill it before writing implementation files.\n` +
-				'1. Use plan mode with claude-opus-4-8\n' +
-				`2. pnpm run work append-section ${taskId} plan "Chosen approach: ..."\n` +
+			`Active task(s) ${ids.join(', ')} have no ## Plan yet — fill one before writing implementation files.\n` +
+				'1. Use plan mode (Opus)\n' +
+				'2. pnpm run work append-section TW-NNN plan "Chosen approach: ..."\n' +
 				'3. This hook will then allow writes.',
 		);
 	}
