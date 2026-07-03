@@ -88,6 +88,17 @@
 					}
 				]
 			}
+		],
+		"Stop": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "node .claude/hooks/stop-quality-gate-repo.mjs",
+						"timeout": 240
+					}
+				]
+			}
 		]
 	}
 }

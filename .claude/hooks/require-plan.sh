@@ -42,6 +42,9 @@ function block(reason) {
 
 try {
 	const filePath = process.env.REQUIRE_PLAN_FILE || '';
+	// A degenerate payload (no extractable file_path) must fail open — resolving
+	// '' would collapse to cwd, which sits inside the scope and could block.
+	if (filePath.length === 0) process.exit(0);
 	const scope = process.env.REQUIRE_PLAN_SCOPE || process.cwd();
 	const resolved = resolve(process.cwd(), filePath);
 

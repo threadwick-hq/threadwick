@@ -5,7 +5,7 @@ type: chore
 area:
   - repo
 phase: 0
-status: review
+status: active
 priority: p1
 created: 2026-07-03
 assignee: claude

@@ -12,6 +12,10 @@
  * Failures exit 2, feeding output back to Claude for one fix round
  * (stop_hook_active caps the forced continuation). Exits 0 silently when
  * there is nothing to check or the environment is unusable — fail-open.
+ *
+ * Known gap (by design): files owned by the workspace-root package (e.g.
+ * scripts/*.ts) have no tsconfig or vitest there and are skipped; CI's
+ * `work check` and turbo gates cover them instead.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync } from 'node:fs';
@@ -20,8 +24,12 @@ import path from 'node:path';
 
 const TS_FILE_PATTERN = /\.(ts|tsx|mts|cts)$/;
 const OUTPUT_LIMIT_CHARS = 6000;
-const TYPECHECK_TIMEOUT_MS = 120_000;
-const TEST_TIMEOUT_MS = 180_000;
+// Per-run caps plus the overall deadline must fit inside the 240s hook timeout
+// in settings.json — a hook killed from outside loses failures it already found.
+const TYPECHECK_TIMEOUT_MS = 90_000;
+const TEST_TIMEOUT_MS = 120_000;
+const OVERALL_DEADLINE_MS = 200_000;
+const startedAt = Date.now();
 
 const input = readStdinJson();
 if (input?.stop_hook_active === true) process.exit(0); // one forced fix round max
@@ -30,10 +38,11 @@ const containerDir = resolveContainerDir(input);
 if (containerDir === undefined) process.exit(0);
 
 const failures = [];
-for (const worktree of listWorktrees(containerDir)) {
+outer: for (const worktree of listWorktrees(containerDir)) {
 	const changedTsFiles = listChangedTsFiles(worktree);
 	if (changedTsFiles.length === 0) continue;
 	for (const [packageRoot, files] of groupByPackage(worktree, changedTsFiles)) {
+		if (Date.now() - startedAt > OVERALL_DEADLINE_MS) break outer; // fail-open: report what we have
 		const typecheckOutput = runTypecheck(packageRoot);
 		if (typecheckOutput !== undefined) {
 			failures.push(
