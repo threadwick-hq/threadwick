@@ -11,11 +11,11 @@
 			"tsx *": "allow",
 			"git *": "allow",
 			"gh *": "allow",
-			"git push --force*": "deny",
-			"git push *--force*": "deny",
-			"git push -f *": "deny",
-			"git reset --hard*": "deny",
-			"rm -rf *": "deny"
+			"git*--force*": "deny",
+			"git*--force-with-lease*": "allow",
+			"git push*+*": "deny",
+			"git*--hard*": "deny",
+			"*rm -rf*": "deny"
 		}
 	}
 }
