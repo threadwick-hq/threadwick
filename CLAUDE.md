@@ -7,8 +7,6 @@ import below — keep the content there, not duplicated here.
 
 ## Claude Code specifics
 
-- **MCP servers:** [`.mcp.json`](.mcp.json) at the repo root provides the Ant Design v5 docs server.
-  Enable it when prompted, or run `claude mcp list`.
 - **Hooks:** [`.claude/settings.json`](.claude/settings.json) wires three hooks (scripts in
   [`.claude/hooks/`](.claude/hooks/)):
   - `SessionStart` → `session-start.sh` injects the active/next task, plan warning, and stale alert.

@@ -93,7 +93,6 @@ The numbered lifecycle above is the single flow — these are the git-side rules
 | [`.claude/container/settings.json`](.claude/container/settings.json) | Container-level Claude Code settings source (hooks + permission allow-list) — symlinked to `../.claude/settings.json` |
 | [`scripts/bootstrap-container.sh`](scripts/bootstrap-container.sh) | Creates/repairs the container-level symlinks (idempotent; run once per machine) |
 | [`scripts/cleanup-worktree.sh`](scripts/cleanup-worktree.sh) | Post-merge: removes the linked worktree directory and local branch for a completed task |
-| [`.mcp.json`](.mcp.json) | Project MCP servers (Ant Design v5 docs) |
 | [`.vscode/launch.json`](.vscode/launch.json) | Dev server launch configs (web, studio) |
 
 ## Environment & gotchas
