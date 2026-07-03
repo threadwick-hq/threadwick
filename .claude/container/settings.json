@@ -1,0 +1,90 @@
+{
+	"permissions": {
+		"allow": [
+			"Bash(pnpm check)",
+			"Bash(pnpm check *)",
+			"Bash(pnpm turbo run typecheck test lint --continue)",
+			"Bash(pnpm turbo run typecheck test lint --continue *)",
+			"Bash(pnpm turbo run build --filter=./packages/*)",
+			"Bash(pnpm turbo run build --filter=./packages/* *)",
+			"Bash(pnpm --filter threadwick-studio typecheck *)",
+			"Bash(pnpm --filter threadwick-studio test *)",
+			"Bash(pnpm --filter threadwick-studio lint *)",
+			"Bash(pnpm --filter threadwick-studio exec tsc --noEmit *)",
+			"Bash(pnpm --filter threadwick-web typecheck *)",
+			"Bash(pnpm --filter threadwick-web test *)",
+			"Bash(pnpm --filter threadwick-web lint *)",
+			"Bash(pnpm --filter threadwick-web exec tsc --noEmit *)",
+			"Bash(pnpm --filter @threadwick/core typecheck *)",
+			"Bash(pnpm --filter @threadwick/core test *)",
+			"Bash(pnpm --filter @threadwick/core lint *)",
+			"Bash(pnpm --filter @threadwick/core exec tsc --noEmit *)",
+			"Bash(pnpm --filter @threadwick/editor typecheck *)",
+			"Bash(pnpm --filter @threadwick/editor test *)",
+			"Bash(pnpm --filter @threadwick/editor lint *)",
+			"Bash(pnpm --filter @threadwick/icons typecheck *)",
+			"Bash(pnpm --filter @threadwick/icons test *)",
+			"Bash(pnpm --filter @threadwick/i18n typecheck *)",
+			"Bash(pnpm --filter @threadwick/i18n test *)"
+		]
+	},
+	"hooks": {
+		"SessionStart": [
+			{
+				"matcher": "startup",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "\"$CLAUDE_PROJECT_DIR/main/.claude/hooks/session-start.sh\"",
+						"timeout": 30
+					}
+				]
+			},
+			{
+				"matcher": "resume",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "\"$CLAUDE_PROJECT_DIR/main/.claude/hooks/session-start.sh\"",
+						"timeout": 30
+					}
+				]
+			}
+		],
+		"PreToolUse": [
+			{
+				"matcher": "Write|Edit",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "\"$CLAUDE_PROJECT_DIR/main/.claude/hooks/require-plan.sh\"",
+						"timeout": 15
+					}
+				]
+			}
+		],
+		"PostToolUse": [
+			{
+				"matcher": "Write|Edit",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "\"$CLAUDE_PROJECT_DIR/main/.claude/hooks/work-index-reminder.sh\"",
+						"timeout": 60
+					}
+				]
+			}
+		],
+		"Stop": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "node \"$CLAUDE_PROJECT_DIR/main/.claude/hooks/stop-quality-gate-repo.mjs\"",
+						"timeout": 240
+					}
+				]
+			}
+		]
+	}
+}

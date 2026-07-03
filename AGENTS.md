@@ -87,6 +87,10 @@ Never commit directly to `main`. Never merge while the PR is draft or before rev
 | [`.claude/hooks/require-plan.sh`](.claude/hooks/require-plan.sh) | PreToolUse guard: blocks Write/Edit of non-work files until an active task with a non-empty `## Plan` section exists |
 | [`.claude/hooks/work-index-reminder.sh`](.claude/hooks/work-index-reminder.sh) | PostToolUse: regenerates `work/INDEX.md` after a `work/TW-*.md` file changes |
 | [`.claude/hooks/pre-push`](.claude/hooks/pre-push) | Git pre-push hook (via `core.hooksPath`): blocks push when active task has no `## Plan` |
+| [`.claude/hooks/stop-quality-gate-repo.mjs`](.claude/hooks/stop-quality-gate-repo.mjs) | Stop gate: per-package `tsc --noEmit` + `vitest related` on changed TS files across all worktrees |
+| [`CLAUDE.container.md`](CLAUDE.container.md) | Container-level CLAUDE.md source — symlinked to `../CLAUDE.md` so sessions started at the worktree container load the repo map |
+| [`.claude/container/settings.json`](.claude/container/settings.json) | Container-level Claude Code settings source (hooks + permission allow-list) — symlinked to `../.claude/settings.json` |
+| [`scripts/bootstrap-container.sh`](scripts/bootstrap-container.sh) | Creates/repairs the container-level symlinks (idempotent; run once per machine) |
 | [`scripts/cleanup-worktree.sh`](scripts/cleanup-worktree.sh) | Post-merge: removes the linked worktree directory and local branch for a completed task |
 | [`.mcp.json`](.mcp.json) | Project MCP servers (Ant Design v5 docs) |
 | [`.vscode/launch.json`](.vscode/launch.json) | Dev server launch configs (web, studio) |
