@@ -5,11 +5,12 @@ type: chore
 area:
   - repo
 phase: 0
-status: active
+status: done
 priority: p1
 created: 2026-07-03
 assignee: claude
 started: 2026-07-03
+completed: 2026-07-03
 pr: 46
 acceptance:
   - Container-level .claude/settings.json and CLAUDE.md exist (symlinked to tracked files in main/) so container-cwd sessions load repo config
@@ -90,25 +91,25 @@ permission key (Projects v2 needs a PAT anyway; the workflow guards that path be
 
 ## Acceptance
 
-- [ ] Container-level .claude/settings.json and CLAUDE.md exist (symlinked to tracked files in main/) so container-cwd sessions load repo config
-- [ ] All four hooks resolve the repo root correctly from both container and worktree cwds (pipe-tested)
-- [ ] require-plan.sh no longer blocks writes outside the project (plan files, memory) and validates every active task
-- [ ] Repo Stop quality gate runs per-package tsc --noEmit and vitest related on changed TS files across worktrees (pipe-tested with a deliberate type error)
-- [ ] AGENTS.md biome/CI gotcha matches actual ci.yml behavior; duplicated lifecycle prose collapsed; triviality threshold stated
-- [ ] apps/studio/AGENTS.md dev port corrected to 5173
-- [ ] packages/core/CLAUDE.md redirect exists
-- [ ] Unused antd MCP configs (.mcp.json, apps/studio/.mcp.json) removed
-- [ ] work-project-mirror.yml no longer fails at parse time on every push
-- [ ] pnpm run work help prints usage instead of exiting 2
-- [ ] i18n translator uses claude-sonnet-5 with thinking disabled and a request timeout; i18n tests green
-- [ ] pnpm run work check and CI-parity gates green after every commit
+- [x] Container-level .claude/settings.json and CLAUDE.md exist (symlinked to tracked files in main/) so container-cwd sessions load repo config
+- [x] All four hooks resolve the repo root correctly from both container and worktree cwds (pipe-tested)
+- [x] require-plan.sh no longer blocks writes outside the project (plan files, memory) and validates every active task
+- [x] Repo Stop quality gate runs per-package tsc --noEmit and vitest related on changed TS files across worktrees (pipe-tested with a deliberate type error)
+- [x] AGENTS.md biome/CI gotcha matches actual ci.yml behavior; duplicated lifecycle prose collapsed; triviality threshold stated
+- [x] apps/studio/AGENTS.md dev port corrected to 5173
+- [x] packages/core/CLAUDE.md redirect exists
+- [x] Unused antd MCP configs (.mcp.json, apps/studio/.mcp.json) removed
+- [x] work-project-mirror.yml no longer fails at parse time on every push
+- [x] pnpm run work help prints usage instead of exiting 2
+- [x] i18n translator uses claude-sonnet-5 with thinking disabled and a request timeout; i18n tests green
+- [x] pnpm run work check and CI-parity gates green after every commit
 
 ## Code review
 
-<!-- Populated after running /code-review ultra post-implementation. Leave empty until then.
-     Paste the summary findings here and note which were addressed before merge. -->
+Independent adversarial review (fresh-context Opus, full branch diff, hooks pipe-tested including injection/scope/fail-open probes): merge-ready, no blocking findings. Three minor findings, all addressed in-branch before merge: (1) require-plan failed closed on degenerate payloads - empty file_path now fails open; (2) stop-gate internal caps exceeded the 240s outer timeout - caps lowered plus 200s overall deadline; (3) worktree-cwd sessions lacked Stop-gate coverage - gate wired into worktree settings too. Verified non-issues: no shell injection via file_path, sibling-prefix-safe scope checks, set -e safety, .bare exclusion, git fail-open at container, MCP removal complete. /code-review ultra not run (user-triggered only) - flagged for owner discretion.
 
 ## Log
 
 - 2026-07-03 created and claimed by claude (audit session).
 - 2026-07-03 opened PR #46; status review
+- 2026-07-03 review findings addressed; acceptance verified; status done ahead of squash-merge
