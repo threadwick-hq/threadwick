@@ -5,7 +5,7 @@ type: chore
 area:
   - repo
 phase: 0
-status: active
+status: done
 priority: p1
 created: 2026-07-03
 blocked_by:
@@ -22,6 +22,8 @@ acceptance:
   - AGENTS.md, work/README.md, and CLAUDE.md describe the issue-first lifecycle end to end
 assignee: agent
 started: 2026-07-03
+completed: 2026-07-03
+pr: 106
 ---
 ## Context
 
