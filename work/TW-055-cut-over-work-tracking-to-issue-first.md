@@ -5,7 +5,7 @@ type: chore
 area:
   - repo
 phase: 0
-status: backlog
+status: active
 priority: p1
 created: 2026-07-03
 blocked_by:
@@ -20,8 +20,9 @@ acceptance:
   - the mirror workflow, its sync script, and the stale sweep are deleted or rewritten to query issues directly
   - the Projects v2 board (created by TW-054 bootstrap) has built-in automations wired and documented
   - AGENTS.md, work/README.md, and CLAUDE.md describe the issue-first lifecycle end to end
+assignee: agent
+started: 2026-07-03
 ---
-
 ## Context
 
 Executes the cutover approved in the issue-first design discussion (2026-07-03). TW-054 lands the
@@ -130,6 +131,7 @@ Risks:
 
 ## Log
 
+- 2026-07-03 claimed by agent.
 - 2026-07-03 created from the approved issue-first design discussion; blocked on TW-054.
 - 2026-07-03 spec revised to match TW-054: hooks and CI check the body Plan section, migration bodies conform to work:v1, docs must cover the trust model.
 - 2026-07-03 spec revised to match: migration sets native type, dependencies, milestone, priority field; board automations only (board itself comes from TW-054 bootstrap).
