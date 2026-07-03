@@ -105,6 +105,9 @@ The numbered lifecycle above is the single flow — these are the git-side rules
 | [`.claude/hooks/require-plan.sh`](.claude/hooks/require-plan.sh) | PreToolUse guard: blocks Write/Edit of implementation files until the assigned issue's Plan section is filled (cache-based; fails open without a cache) |
 | [`.claude/hooks/pre-push`](.claude/hooks/pre-push) | Git pre-push hook (via `core.hooksPath`): blocks push when the assigned issue has an unfilled Plan |
 | [`.claude/hooks/stop-quality-gate-repo.mjs`](.claude/hooks/stop-quality-gate-repo.mjs) | Stop gate: per-package `tsc --noEmit` + `vitest related` on changed TS files across all worktrees |
+| [`docs/hybrid-agents.md`](docs/hybrid-agents.md) | Hybrid agent workflow: roles, task routing, handoff contract, and gate coverage when a second agent (e.g. OpenCode + a local model) joins the lifecycle |
+| [`opencode.json`](opencode.json) | OpenCode project config — instruction file globs + bash permission policy |
+| [`.opencode/plugins/workflow-gates.js`](.opencode/plugins/workflow-gates.js) | OpenCode port of the plan-before-edit and end-of-turn quality gates (reads the shared work cache; pure logic tested by [`scripts/workflow-gates.test.ts`](scripts/workflow-gates.test.ts)) |
 | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | CI: work shape check + PR gate, work-CLI tests, build/typecheck, biome |
 | [`.github/workflows/work-stale-sweep.yml`](.github/workflows/work-stale-sweep.yml) | Weekly stale sweep over assigned open issues (plain issue query) |
 | [`.github/ISSUE_TEMPLATE/task.md`](.github/ISSUE_TEMPLATE/task.md) | The single issue template (`work:v1` body); blank issues are disabled |
