@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# PreToolUse — block Write/Edit of repo implementation files until an active task with a ## Plan exists.
-# Writes outside the repo container (plan-mode plan files, Claude memory, scratchpad), to work/
-# ledger files, and to .claude/ agent config are always allowed.
+# PreToolUse — block Write/Edit of repo implementation files until the viewer
+# has an assigned open issue with a filled Plan section (read from the shared
+# work cache; no network). Writes outside the repo container (plan-mode plan
+# files, Claude memory, scratchpad), to work/ archive files, and to .claude/
+# agent config are always allowed. Fails open with a warning when no cache
+# exists yet — a missing cache must never block all edits.
 set -euo pipefail
 
 # Read the payload via stdin and extract only file_path in a first small node
@@ -17,23 +20,24 @@ file_path="$(printf '%s' "$input" | node -e '
 	process.stdout.write(p);
 ')"
 
-# Resolve the repo root from either a worktree cwd (git works) or the
-# bare+worktree container cwd (show-toplevel fatals there; fall back to the
-# project dir and descend into main/, the canonical worktree).
-ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
-if [ -z "$ROOT" ]; then ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"; fi
-if [ ! -d "$ROOT/work" ] && [ -d "$ROOT/main/work" ]; then ROOT="$ROOT/main"; fi
-
 # Enforcement scope is the whole container (every worktree), derived from the
 # shared git dir so it is correct from both container and worktree cwds.
-SCOPE="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
-if [ -n "$SCOPE" ]; then SCOPE="$(dirname "$SCOPE")"; else SCOPE="${CLAUDE_PROJECT_DIR:-$ROOT}"; fi
+COMMON_DIR="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
+if [ -z "$COMMON_DIR" ]; then
+	BASE="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+	COMMON_DIR="$(git -C "$BASE/main" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
+fi
+SCOPE=""
+CACHE_PATH=""
+if [ -n "$COMMON_DIR" ]; then
+	SCOPE="$(dirname "$COMMON_DIR")"
+	CACHE_PATH="$COMMON_DIR/work-cache.json"
+fi
+if [ -z "$SCOPE" ]; then SCOPE="${CLAUDE_PROJECT_DIR:-$(pwd)}"; fi
 
-cd "$ROOT"
-
-REQUIRE_PLAN_FILE="$file_path" REQUIRE_PLAN_SCOPE="$SCOPE" node <<'NODE'
-const { readFileSync, readdirSync, existsSync } = require('node:fs');
-const { join, resolve, sep } = require('node:path');
+REQUIRE_PLAN_FILE="$file_path" REQUIRE_PLAN_SCOPE="$SCOPE" WORK_CACHE_PATH="$CACHE_PATH" node <<'NODE'
+const { readFileSync } = require('node:fs');
+const { resolve, sep } = require('node:path');
 
 function block(reason) {
 	process.stdout.write(JSON.stringify({ decision: 'block', reason }));
@@ -53,62 +57,63 @@ try {
 		process.exit(0);
 	}
 
-	// work/ ledger files (agents fill ## Plan there) and .claude/ agent config
-	// are always writable.
+	// work/ archive files and .claude/ agent config are always writable.
 	if (/[\\/]work[\\/]/.test(resolved) || /[\\/]\.claude[\\/]/.test(resolved)) {
 		process.exit(0);
 	}
 
-	const root = process.cwd();
-	const workDir = join(root, 'work');
-
-	if (!existsSync(workDir)) {
+	let cache;
+	try {
+		cache = JSON.parse(
+			readFileSync(process.env.WORK_CACHE_PATH ?? '', 'utf8'),
+		);
+	} catch {
+		// Fail open, loudly: agents must run a work command to seed the cache.
+		process.stderr.write(
+			'require-plan: no work cache; run `pnpm run work list` to seed it.\n',
+		);
 		process.exit(0);
 	}
 
-	const files = readdirSync(workDir).filter((f) => /^TW-\d+-.*\.md$/.test(f));
-	const active = [];
-	for (const file of files) {
-		const content = readFileSync(join(workDir, file), 'utf8');
-		if (/^status:\s*active\s*$/m.test(content)) {
-			active.push({ file, content });
-		}
-	}
+	const snapshot = cache.snapshot ?? {};
+	const issues = Array.isArray(snapshot.issues) ? snapshot.issues : [];
+	const viewer = snapshot.viewerLogin ?? '';
+	const active = issues.filter(
+		(issue) =>
+			issue.state === 'OPEN' &&
+			Array.isArray(issue.assignees) &&
+			issue.assignees.includes(viewer),
+	);
 
 	if (active.length === 0) {
 		block(
-			'No active task — claim one before writing implementation files.\n' +
+			'No assigned issue — claim one before writing implementation files.\n' +
 				'  pnpm run work next\n' +
-				'  pnpm run work claim TW-NNN',
+				'  pnpm run work claim <number>',
 		);
 	}
 
-	// Tasks created before TW-052 have no ## Plan section; treat them as planned.
-	function hasPlan(content) {
-		const lines = content.split('\n');
-		const planIdx = lines.findIndex((l) => /^## Plan\s*$/.test(l));
-		if (planIdx === -1) return true;
-		const nextHeader = lines.findIndex((l, i) => i > planIdx && /^## /.test(l));
-		const body = lines
-			.slice(planIdx + 1, nextHeader === -1 ? undefined : nextHeader)
+	function planFilled(body) {
+		const lines = String(body ?? '').split('\n');
+		const start = lines.findIndex((l) => /^## Plan\s*$/.test(l));
+		if (start === -1) return false;
+		const end = lines.findIndex((l, i) => i > start && /^## /.test(l));
+		const section = lines
+			.slice(start + 1, end === -1 ? undefined : end)
 			.join('\n')
-			.replace(/<!--[\s\S]*?-->/g, '')
 			.trim();
-		return body.length > 0;
+		return section.length > 0 && !section.startsWith('_Filled');
 	}
 
-	// Writes are allowed as long as at least one active task is planned — with
-	// several active tasks, the planned one is the one being worked.
-	const unplanned = active.filter((t) => !hasPlan(t.content));
+	// Writes are allowed as long as at least one assigned issue is planned —
+	// with several assigned, the planned one is the one being worked.
+	const unplanned = active.filter((issue) => !planFilled(issue.body));
 	if (unplanned.length === active.length) {
-		const ids = active.map(({ file, content }) => {
-			const idMatch = content.match(/^id:\s*(TW-\d+)/m);
-			return idMatch?.[1] ?? file;
-		});
+		const refs = active.map((issue) => `#${issue.number}`).join(', ');
 		block(
-			`Active task(s) ${ids.join(', ')} have no ## Plan yet — fill one before writing implementation files.\n` +
-				'1. Use plan mode (Opus)\n' +
-				'2. pnpm run work append-section TW-NNN plan "Chosen approach: ..."\n' +
+			`Assigned issue(s) ${refs} have an unfilled Plan section — fill one before writing implementation files.\n` +
+				'1. Use plan mode (strong model)\n' +
+				'2. pnpm run work plan <number>  (plan text on stdin or --file)\n' +
 				'3. This hook will then allow writes.',
 		);
 	}

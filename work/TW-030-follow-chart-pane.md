@@ -6,7 +6,7 @@ area:
   - apps/web
   - packages/editor
 phase: 6
-status: review
+status: done
 pr: 35
 priority: p1
 created: 2026-06-23
@@ -16,6 +16,7 @@ acceptance:
   - the pane consumes editor read primitives, not studio internals
 assignee: agent
 started: 2026-06-27
+completed: 2026-06-28
 ---
 ## Context
 

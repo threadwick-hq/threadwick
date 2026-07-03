@@ -25,17 +25,19 @@ apps/
 
 ## Status & resuming work
 
-All work is tracked as `work/TW-NNN-*.md` files (the source of truth, not GitHub Issues) — see
-[work/README.md](work/README.md) and [AGENTS.md](AGENTS.md). To pick up where the last contributor left off:
+All work is tracked as GitHub Issues (the issue body is the spec; status is derived from native
+GitHub state) — see [work/README.md](work/README.md) and [AGENTS.md](AGENTS.md). To pick up where
+the last contributor left off:
 
 ```sh
 pnpm install
-pnpm run work next        # the next claimable task
-pnpm run work claim TW-NNN   # claim before implementing
+pnpm run work next        # the next claimable issue
+pnpm run work claim <n>   # claim (assign yourself) before implementing
 pnpm check                # typecheck + lint + test
 ```
 
-[`work/INDEX.md`](work/INDEX.md) is the at-a-glance status table; [MIGRATION.md](MIGRATION.md) is the
+The [issues list](https://github.com/threadwick-hq/threadwick/issues) and the "Threadwick Work"
+project board are the at-a-glance views; [MIGRATION.md](MIGRATION.md) is the
 phase plan and the decision record. Phases 0–5 (monorepo, packages, design system, marketing site)
 are done; the localization layer shipped; **Phase 6** (Studio app surface) is underway — sub-phase
 6a (extracting the editor into `@threadwick/editor`) is complete, and the chrome migration

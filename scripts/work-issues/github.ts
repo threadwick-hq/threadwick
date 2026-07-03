@@ -56,8 +56,10 @@ export function fetchSnapshot(
 	run: GhRunner,
 	hints: SnapshotHints = {},
 ): Result<WorkSnapshot> {
+	// CI tokens (GITHUB_TOKEN) cannot call /user; degrade to an empty viewer so
+	// read commands still work. Commands that act as the viewer must guard.
 	const viewer = fetchViewerLogin(run);
-	if (!viewer.ok) return viewer;
+	const viewerLogin = viewer.ok ? viewer.value : '';
 
 	const issuesQuery = fetchIssueNodes(run, hints);
 	if (!issuesQuery.ok) return issuesQuery;
@@ -84,7 +86,7 @@ export function fetchSnapshot(
 		value: {
 			fetchedAt: new Date().toISOString(),
 			repo: REPO,
-			viewerLogin: viewer.value,
+			viewerLogin,
 			dependencyMode,
 			issueTypesAvailable,
 			projectNumber,

@@ -15,6 +15,7 @@
 	"include": [
 		"scripts/work-issues.ts",
 		"scripts/work-issues/**/*.ts",
+		"scripts/migrate-work-to-issues.ts",
 		"vitest.config.ts"
 	]
 }

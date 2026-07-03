@@ -7,7 +7,7 @@ area:
   - packages/core
   - packages/types
 phase: 6
-status: review
+status: done
 priority: p2
 created: 2026-06-23
 acceptance:
@@ -16,6 +16,7 @@ acceptance:
   - offline (flag off) the screen stays complete
 assignee: agent
 started: 2026-06-28
+completed: 2026-06-28
 pr: 27
 ---
 ## Context

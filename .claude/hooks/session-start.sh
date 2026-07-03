@@ -1,118 +1,120 @@
 #!/usr/bin/env bash
-# SessionStart — inject active/next work task context for Claude Code.
+# SessionStart — inject active/next work-issue context for Claude Code.
+# Reads only the shared work cache (written by every `pnpm run work` command);
+# never touches the network, so sessions start fast and offline-safe.
 set -euo pipefail
 
-# Resolve the repo root from either a worktree cwd (git works) or the
-# bare+worktree container cwd (show-toplevel fatals there; fall back to the
-# project dir and descend into main/, the canonical worktree).
-ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
-if [ -z "$ROOT" ]; then ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"; fi
-if [ ! -d "$ROOT/work" ] && [ -d "$ROOT/main/work" ]; then ROOT="$ROOT/main"; fi
-cd "$ROOT"
+# Resolve the shared git dir from a worktree cwd, or descend into main/ when
+# the session starts at the bare+worktree container (git fatals there).
+COMMON_DIR="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
+if [ -z "$COMMON_DIR" ]; then
+	BASE="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+	COMMON_DIR="$(git -C "$BASE/main" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
+fi
+CACHE_PATH=""
+if [ -n "$COMMON_DIR" ]; then CACHE_PATH="$COMMON_DIR/work-cache.json"; fi
 
-node <<'NODE'
-const { execSync } = require('node:child_process');
-const { readFileSync, readdirSync, existsSync } = require('node:fs');
-const { join } = require('node:path');
+WORK_CACHE_PATH="$CACHE_PATH" node <<'NODE'
+const { readFileSync } = require('node:fs');
 
-const root = process.cwd();
-const work = (args) => {
-	try {
-		return execSync(`pnpm exec tsx scripts/work.ts ${args}`, {
-			encoding: 'utf8',
-			cwd: root,
-			stdio: ['ignore', 'pipe', 'ignore'],
-		}).trim();
-	} catch {
-		return '';
-	}
-};
+const out = ['## Work tracking (GitHub Issues)', ''];
 
-function readActiveTasks() {
-	const workDir = join(root, 'work');
-	if (!existsSync(workDir)) return [];
-	return readdirSync(workDir)
-		.filter((f) => /^TW-\d+-.*\.md$/.test(f))
-		.flatMap((file) => {
-			const content = readFileSync(join(workDir, file), 'utf8');
-			if (!/^status:\s*active\s*$/m.test(content)) return [];
-			const idMatch = content.match(/^id:\s*(TW-\d+)/m);
-			return [{ file, content, id: idMatch?.[1] ?? file }];
-		});
-}
-
-function hasPlan(content) {
-	const lines = content.split('\n');
-	const planIdx = lines.findIndex((l) => /^## Plan\s*$/.test(l));
-	if (planIdx === -1) return true; // Pre-TW-052 task; no plan section, don't warn.
-	const nextHeader = lines.findIndex((l, i) => i > planIdx && /^## /.test(l));
-	const body = lines
-		.slice(planIdx + 1, nextHeader === -1 ? undefined : nextHeader)
-		.join('\n')
-		.replace(/<!--[\s\S]*?-->/g, '')
-		.trim();
-	return body.length > 0;
-}
-
-const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
-const cutoff = new Date(Date.now() - THREE_DAYS_MS).toISOString().slice(0, 10);
-
-function isStale(content) {
-	const m = content.match(/^started:\s*(\d{4}-\d{2}-\d{2})/m);
-	return m?.[1] !== undefined && m[1] < cutoff;
-}
-
-const lines = ['## Work tracking', ''];
-const active = work('list --status active');
-if (/^TW-/m.test(active)) {
-	lines.push('**Active task(s):**', '```', active, '```', '');
-	lines.push(
-		'Continue the active task. Read the task file for Context, Scope, Plan, and Acceptance.',
+function emit() {
+	out.push('', 'See `AGENTS.md` for the lifecycle. Commands: `pnpm run work <cmd>`.');
+	console.log(
+		JSON.stringify({
+			hookSpecificOutput: {
+				hookEventName: 'SessionStart',
+				additionalContext: out.join('\n'),
+			},
+		}),
 	);
+}
 
-	const activeTasks = readActiveTasks();
+let cache;
+try {
+	cache = JSON.parse(readFileSync(process.env.WORK_CACHE_PATH ?? '', 'utf8'));
+} catch {
+	out.push(
+		'No work cache yet. Fetch the current work state first:',
+		'  pnpm run work list',
+	);
+	emit();
+	process.exit(0);
+}
 
-	const missingPlan = activeTasks.filter((t) => !hasPlan(t.content)).map((t) => t.id);
-	if (missingPlan.length > 0) {
-		lines.push('');
-		lines.push('**PLAN REQUIRED before writing implementation files.**');
-		for (const id of missingPlan) {
-			lines.push(`${id} has no ## Plan section.`);
-		}
-		lines.push('1. Use plan mode with claude-opus-4-8');
-		lines.push('2. pnpm run work append-section TW-NNN plan "Chosen approach: ..."');
-		lines.push('3. The require-plan hook blocks writes until this is done.');
+const snapshot = cache.snapshot ?? {};
+const issues = Array.isArray(snapshot.issues) ? snapshot.issues : [];
+const viewer = snapshot.viewerLogin ?? '';
+
+function planFilled(body) {
+	const lines = String(body ?? '').split('\n');
+	const start = lines.findIndex((l) => /^## Plan\s*$/.test(l));
+	if (start === -1) return false;
+	const end = lines.findIndex((l, i) => i > start && /^## /.test(l));
+	const section = lines
+		.slice(start + 1, end === -1 ? undefined : end)
+		.join('\n')
+		.trim();
+	return section.length > 0 && !section.startsWith('_Filled');
+}
+
+const active = issues.filter(
+	(issue) =>
+		issue.state === 'OPEN' &&
+		Array.isArray(issue.assignees) &&
+		issue.assignees.includes(viewer),
+);
+
+if (active.length > 0) {
+	out.push('**Active issue(s):**');
+	for (const issue of active) {
+		out.push(`- #${issue.number} ${issue.title} (${issue.status})`);
 	}
-
-	const stale = activeTasks.filter((t) => isStale(t.content)).map((t) => t.id);
+	out.push('', 'Continue the active issue. Read it with `pnpm run work show <number>`.');
+	const unplanned = active.filter((issue) => !planFilled(issue.body));
+	if (unplanned.length > 0) {
+		out.push('', '**PLAN REQUIRED before writing implementation files.**');
+		for (const issue of unplanned) {
+			out.push(`#${issue.number} has an unfilled Plan section.`);
+		}
+		out.push('1. Use plan mode (strong model)');
+		out.push('2. pnpm run work plan <number>  (plan text on stdin or --file)');
+		out.push('3. The require-plan hook blocks writes until this is done.');
+	}
+	const cutoff = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
+	const stale = active.filter((issue) => (issue.updatedAt ?? '') < cutoff);
 	if (stale.length > 0) {
-		lines.push('');
-		lines.push('**STALE ACTIVE TASK(S)** (active >3 days):');
-		for (const id of stale) lines.push(`  ${id}`);
-		lines.push('Consider completing, blocking, or abandoning before claiming new work.');
-		lines.push('Run `pnpm run work stale` for details.');
+		out.push('', '**STALE ACTIVE ISSUE(S)** (no update >3 days):');
+		for (const issue of stale) out.push(`  #${issue.number}`);
 	}
 } else {
-	const next = work('next');
-	if (/^TW-/m.test(next)) {
-		lines.push('**No active task.** Next claimable:', '```', next, '```', '');
-		lines.push('Claim with `pnpm run work claim TW-NNN` before implementing.');
+	const order = { p0: 0, p1: 1, p2: 2, p3: 3 };
+	const next = issues
+		.filter((issue) => issue.status === 'backlog' && issue.triaged === true)
+		.sort(
+			(a, b) =>
+				(order[a.priority] ?? 4) - (order[b.priority] ?? 4) ||
+				String(a.createdAt).localeCompare(String(b.createdAt)),
+		)[0];
+	if (next !== undefined) {
+		out.push(
+			'**No active issue.** Next claimable:',
+			`- #${next.number} ${next.title} (${next.priority ?? '?'})`,
+			'',
+			'Claim with `pnpm run work claim <number>` before implementing.',
+		);
 	} else {
-		lines.push('No claimable backlog task matches the default filter.');
-		lines.push('Options:');
-		lines.push('  Create new: pnpm run work new --title "..." --type feat --area repo');
-		lines.push('  Check blocked: pnpm run work list --status blocked');
-		lines.push('  Check all: pnpm run work list --status backlog');
+		out.push(
+			'No claimable backlog issue in the cache.',
+			'  Refresh: pnpm run work list',
+			'  Create:  pnpm run work new --title "..." --type feat --area repo',
+		);
 	}
 }
-lines.push('', 'See `AGENTS.md` and `work/README.md`.');
 
-console.log(
-	JSON.stringify({
-		hookSpecificOutput: {
-			hookEventName: 'SessionStart',
-			additionalContext: lines.join('\n'),
-		},
-	}),
-);
+if (typeof snapshot.fetchedAt === 'string') {
+	out.push('', `_Cache from ${snapshot.fetchedAt}; any work command refreshes it._`);
+}
+emit();
 NODE

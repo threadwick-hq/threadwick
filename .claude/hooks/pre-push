@@ -1,54 +1,54 @@
 #!/usr/bin/env bash
-# Git pre-push hook: blocks push when an active task has an empty ## Plan section.
+# Git pre-push hook: blocks push when the viewer's assigned issue has an
+# unfilled Plan section (read from the shared work cache; no network).
 # Wired via: git config core.hooksPath .claude/hooks  (relative to worktree root)
 set -euo pipefail
 
-ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-cd "$ROOT"
+CACHE_PATH="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
+if [ -z "$CACHE_PATH" ]; then exit 0; fi
+CACHE_PATH="$CACHE_PATH/work-cache.json"
+[ -f "$CACHE_PATH" ] || exit 0
 
-[ -d "work" ] || exit 0
+WORK_CACHE_PATH="$CACHE_PATH" node <<'NODE'
+const { readFileSync } = require('node:fs');
 
-node <<'NODE'
-const { readFileSync, readdirSync, existsSync } = require('node:fs');
-const { join } = require('node:path');
-
-const workDir = join(process.cwd(), 'work');
-
-if (!existsSync(workDir)) process.exit(0);
-
-const files = readdirSync(workDir).filter((f) => /^TW-\d+-.*\.md$/.test(f));
-const needsPlan = [];
-
-for (const file of files) {
-	const content = readFileSync(join(workDir, file), 'utf8');
-	if (!/^status:\s*active\s*$/m.test(content)) continue;
-
-	const idMatch = content.match(/^id:\s*(TW-\d+)/m);
-	const taskId = idMatch?.[1] ?? file;
-
-	const lines = content.split('\n');
-	const planIdx = lines.findIndex((l) => /^## Plan\s*$/.test(l));
-
-	// Pre-TW-052 tasks have no ## Plan section; allow them.
-	if (planIdx === -1) continue;
-
-	const nextHeader = lines.findIndex((l, i) => i > planIdx && /^## /.test(l));
-	const body = lines
-		.slice(planIdx + 1, nextHeader === -1 ? undefined : nextHeader)
-		.join('\n')
-		.replace(/<!--[\s\S]*?-->/g, '')
-		.trim();
-
-	if (!body) {
-		needsPlan.push(taskId);
-	}
+let cache;
+try {
+	cache = JSON.parse(readFileSync(process.env.WORK_CACHE_PATH ?? '', 'utf8'));
+} catch {
+	process.exit(0); // unreadable cache never blocks a push
 }
 
-if (needsPlan.length > 0) {
+const snapshot = cache.snapshot ?? {};
+const issues = Array.isArray(snapshot.issues) ? snapshot.issues : [];
+const viewer = snapshot.viewerLogin ?? '';
+
+function planFilled(body) {
+	const lines = String(body ?? '').split('\n');
+	const start = lines.findIndex((l) => /^## Plan\s*$/.test(l));
+	if (start === -1) return false;
+	const end = lines.findIndex((l, i) => i > start && /^## /.test(l));
+	const section = lines
+		.slice(start + 1, end === -1 ? undefined : end)
+		.join('\n')
+		.trim();
+	return section.length > 0 && !section.startsWith('_Filled');
+}
+
+const active = issues.filter(
+	(issue) =>
+		issue.state === 'OPEN' &&
+		Array.isArray(issue.assignees) &&
+		issue.assignees.includes(viewer),
+);
+if (active.length === 0) process.exit(0);
+
+const unplanned = active.filter((issue) => !planFilled(issue.body));
+if (unplanned.length === active.length) {
 	process.stderr.write(
-		'pre-push: active task(s) have no ## Plan — fill before pushing:\n' +
-			needsPlan
-				.map((id) => `  pnpm run work append-section ${id} plan "Chosen approach: ..."`)
+		'pre-push: assigned issue(s) have an unfilled Plan — fill before pushing:\n' +
+			unplanned
+				.map((issue) => `  pnpm run work plan ${issue.number}`)
 				.join('\n') +
 			'\n',
 	);

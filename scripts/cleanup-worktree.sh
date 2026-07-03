@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Post-merge cleanup: removes the linked worktree directory and local branch for a task.
-# Usage: bash scripts/cleanup-worktree.sh TW-NNN  (run from inside any worktree, e.g. main/)
+# Usage: bash scripts/cleanup-worktree.sh <issue-number|TW-NNN>  (run from inside any worktree, e.g. main/)
 set -euo pipefail
 
-TASK_ID="${1:?Usage: cleanup-worktree.sh TW-NNN}"
-echo "$TASK_ID" | grep -qE '^TW-[0-9]+$' || {
-	echo "error: expected TW-NNN format (e.g. TW-052)"
+TASK_ID="${1:?Usage: cleanup-worktree.sh <issue-number|TW-NNN>}"
+echo "$TASK_ID" | grep -qE '^(TW-)?[0-9]+$' || {
+	echo "error: expected an issue number (e.g. 103) or legacy TW-NNN id"
 	exit 1
 }
 

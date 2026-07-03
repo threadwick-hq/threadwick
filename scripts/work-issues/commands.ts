@@ -24,7 +24,9 @@ import {
 	WORK_TYPES,
 } from './config';
 import type { GhRunner } from './gh';
+import { ghFailureHint } from './gh';
 import { fetchSingleIssue, fetchSnapshot } from './github';
+import { getString, isRecord, parseJson } from './json';
 import {
 	addAssignee,
 	addBlockedBy,
@@ -173,6 +175,11 @@ export function runClaim(run: GhRunner, rest: string[]): void {
 	const source = loadSnapshot(run, {});
 	if (source.fromCache) {
 		fail('cannot claim while offline: a claim must reach GitHub');
+	}
+	if (source.snapshot.viewerLogin === '') {
+		fail(
+			'cannot resolve the viewer login (check `gh auth status`); claiming needs an identity',
+		);
 	}
 	const issue = findIssue(source.snapshot, number);
 	if (issue.status !== 'backlog') {
@@ -456,6 +463,51 @@ export function runCheck(run: GhRunner, rest: string[]): void {
 		`work: checked ${source.snapshot.issues.length} open issue(s): ${violations.length} violation(s), ${untriaged.length} awaiting triage`,
 	);
 	if (violations.length > 0) process.exit(1);
+}
+
+/**
+ * CI gate for a pull request: the body must close at least one issue, and
+ * every closed issue must be assigned with a filled Plan section. Priority
+ * and full triage are validated by `check` where project access exists.
+ */
+export function runGate(run: GhRunner, rest: string[]): void {
+	const prRaw = getFlag(rest, '--pr');
+	const prNumber =
+		prRaw === undefined ? Number.NaN : Number.parseInt(prRaw, 10);
+	if (!Number.isSafeInteger(prNumber)) usage('work gate --pr <number>');
+	const view = run(['pr', 'view', String(prNumber), '--json', 'body']);
+	if (!view.ok) {
+		fail(`cannot read PR #${prNumber}: ${ghFailureHint(view.error)}`);
+	}
+	const parsed = parseJson(view.value);
+	const body = isRecord(parsed) ? (getString(parsed, 'body') ?? '') : '';
+	const refs = [...body.matchAll(/\bCloses #(\d+)/gi)].flatMap((match) =>
+		match[1] === undefined ? [] : [Number.parseInt(match[1], 10)],
+	);
+	if (refs.length === 0) {
+		fail(`PR #${prNumber} body has no "Closes #<issue>" reference`);
+	}
+	const problems: string[] = [];
+	for (const issueNumber of refs) {
+		const issue = fetchSingleIssue(run, issueNumber);
+		if (!issue.ok) {
+			problems.push(`#${issueNumber}: ${issue.error}`);
+			continue;
+		}
+		if (issue.value.assignees.length === 0) {
+			problems.push(`#${issueNumber} is unassigned — claim it first`);
+		}
+		if (!isPlanFilled(issue.value.body)) {
+			problems.push(
+				`#${issueNumber} Plan section is not filled — record it with \`work plan ${issueNumber}\``,
+			);
+		}
+	}
+	for (const problem of problems) console.error(`work: gate — ${problem}`);
+	if (problems.length > 0) process.exit(1);
+	console.log(
+		`work: gate ok — PR #${prNumber} closes ${refs.map((n) => `#${n}`).join(', ')}`,
+	);
 }
 
 // --- Snapshot loading (network with cache fallback) ---

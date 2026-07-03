@@ -114,15 +114,15 @@ Risks:
 
 ## Acceptance
 
-- [ ] all open work items (backlog and review) exist as issues with native issue type, area label, milestone, priority field, blocked-by relationships, assignee, and the legacy TW id kept in the title
-- [ ] package.json `work` runs the issue-first CLI; scripts/work.ts and work/INDEX.md are deleted
-- [ ] work/ is frozen as a read-only archive with a README pointer to issues
-- [ ] session-start, require-plan, and pre-push hooks consume the trust-filtered work cache; work-index-reminder is deleted; settings.json updated
-- [ ] CI replaces `pnpm run work check` with an issue-aware gate (PR carries Closes #N, issue assigned, body Plan section non-empty)
-- [ ] AGENTS.md documents the comment trust model (member-only trust, quarantine, /allow release)
-- [ ] the mirror workflow, its sync script, and the stale sweep are deleted or rewritten to query issues directly
-- [ ] the Projects v2 board (created by TW-054 bootstrap) has built-in automations wired and documented
-- [ ] AGENTS.md, work/README.md, and CLAUDE.md describe the issue-first lifecycle end to end
+- [x] all open work items (backlog and review) exist as issues with native issue type, area label, milestone, priority field, blocked-by relationships, assignee, and the legacy TW id kept in the title
+- [x] package.json `work` runs the issue-first CLI; scripts/work.ts and work/INDEX.md are deleted
+- [x] work/ is frozen as a read-only archive with a README pointer to issues
+- [x] session-start, require-plan, and pre-push hooks consume the trust-filtered work cache; work-index-reminder is deleted; settings.json updated
+- [x] CI replaces `pnpm run work check` with an issue-aware gate (PR carries Closes #N, issue assigned, body Plan section non-empty)
+- [x] AGENTS.md documents the comment trust model (member-only trust, quarantine, /allow release)
+- [x] the mirror workflow, its sync script, and the stale sweep are deleted or rewritten to query issues directly
+- [x] the Projects v2 board (created by TW-054 bootstrap) has built-in automations wired and documented
+- [x] AGENTS.md, work/README.md, and CLAUDE.md describe the issue-first lifecycle end to end
 
 ## Code review
 
@@ -136,3 +136,4 @@ Risks:
 - 2026-07-03 spec revised to match TW-054: hooks and CI check the body Plan section, migration bodies conform to work:v1, docs must cover the trust model.
 - 2026-07-03 spec revised to match: migration sets native type, dependencies, milestone, priority field; board automations only (board itself comes from TW-054 bootstrap).
 - 2026-07-03 discovery from TW-054: 53 open tw-tracker mirror issues (bot-authored) exist from the old one-way mirror. Migration must reconcile them: either retrofit them in place (keeps issue numbers and history) or close them and create fresh issues; decide at TW-055 planning.
+- 2026-07-03 migration executed: 25 issues retrofitted in place (work:v1 bodies, native type/milestone/priority/area, log comments), 12 stale-open mirror issues closed with correct state reasons, 6 review tasks discovered already merged and corrected to done, dependencies wired natively. Cutover: CLI swapped to work-issues.ts, old work.ts/INDEX.md/mirror deleted, hooks rewritten cache-based, CI gates replaced (work check + work gate --pr), stale sweep rewritten as issue query, docs rewritten (AGENTS.md, work/README.md, CLAUDE.md, container docs, root README).
