@@ -10,10 +10,13 @@ on:
       - 'work/**'
   workflow_dispatch:
 
+# `projects` is not a valid GITHUB_TOKEN permission key — it made the whole
+# workflow file invalid, so every run failed at parse time (0s, on every push).
+# Projects v2 needs a PAT anyway; the optional board step is gated on the
+# WORK_PROJECT_NUMBER repo variable and degrades gracefully without one.
 permissions:
   contents: read
   issues: write
-  projects: write
 
 jobs:
   mirror:
