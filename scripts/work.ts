@@ -146,9 +146,21 @@ function main(): void {
 		case 'export':
 			runExport(rest);
 			break;
+		case 'validate-plan':
+			runValidatePlan(rest);
+			break;
+		case 'append-section':
+			runAppendSection(rest);
+			break;
+		case 'section-set':
+			runSectionSet(rest);
+			break;
+		case 'log':
+			runLog(rest);
+			break;
 		default:
 			console.error(
-				`work: unknown command "${command}". Use: check | index | next | list | new | claim | show | stale | export`,
+				`work: unknown command "${command}". Use: check | index | next | list | new | claim | show | stale | export | validate-plan | append-section | section-set | log`,
 			);
 			process.exit(2);
 	}
@@ -383,11 +395,179 @@ function runNew(rest: string[]): void {
 			/^priority:.*$/m,
 			`priority: ${getFlag(rest, '--priority') ?? 'p2'}`,
 		)
-		.replace(/^created:.*$/m, `created: ${today}`);
+		.replace(/^created:.*$/m, `created: ${today}`)
+		// Strip inline YAML comments so the parser accepts the scaffolded file as-is.
+		.replace(/^(status:\s*\w+)\s*#.*$/m, '$1')
+		.replace(/^(area:)\s*#.*$/m, '$1');
 	writeFileSync(file, filled, 'utf8');
 	console.log(
 		`work: created ${file}. Set the area, acceptance, and body, then run \`pnpm run work index\`.`,
 	);
+}
+
+function runValidatePlan(rest: string[]): void {
+	const id = rest.find((a) => !a.startsWith('--'));
+	if (id === undefined) {
+		console.error('work validate-plan: TW-NNN is required');
+		process.exit(2);
+	}
+	const { tasks } = loadTasks();
+	const task = tasks.find((t) => t.id === id);
+	if (task === undefined) {
+		console.error(`work validate-plan: ${id} not found`);
+		process.exit(1);
+	}
+	if (task.status !== 'active') {
+		console.error(
+			`work validate-plan: ${id} is "${task.status}" — must be active before validating plan`,
+		);
+		process.exit(1);
+	}
+	const content = readFileSync(join(WORK_DIR, task.file), 'utf8');
+	const lines = content.split('\n');
+	const bounds = findSection(lines, 'plan');
+	if (bounds === undefined) {
+		console.error(`work validate-plan: ${id} has no ## Plan section`);
+		process.exit(1);
+	}
+	const planContent = getSectionContent(lines, bounds);
+	if (!planContent) {
+		console.error(
+			`work validate-plan: ${id} ## Plan is empty — fill it in plan mode (claude-opus-4-8) first:\n` +
+				`  pnpm run work append-section ${id} plan "Chosen approach: ..."`,
+		);
+		process.exit(1);
+	}
+	console.log(`work: ${id} is active with a non-empty ## Plan. Ready for implementation.`);
+}
+
+function runAppendSection(rest: string[]): void {
+	const positionals = rest.filter((a) => !a.startsWith('--'));
+	const id = positionals[0];
+	const sectionPrefix = positionals[1];
+	const text = positionals.slice(2).join(' ');
+	if (id === undefined || sectionPrefix === undefined || text === '') {
+		console.error(
+			'work append-section: usage: TW-NNN <section> <text>\n' +
+				'  sections: plan | alternatives | review | log | scope | context | acceptance',
+		);
+		process.exit(2);
+	}
+	const { tasks } = loadTasks();
+	const task = tasks.find((t) => t.id === id);
+	if (task === undefined) {
+		console.error(`work append-section: ${id} not found`);
+		process.exit(1);
+	}
+	const filePath = join(WORK_DIR, task.file);
+	const content = readFileSync(filePath, 'utf8');
+	const lines = content.split('\n');
+	const bounds = findSection(lines, sectionPrefix);
+	if (bounds === undefined) {
+		console.error(
+			`work append-section: no section matching "${sectionPrefix}" in ${task.file}`,
+		);
+		process.exit(1);
+	}
+	const headingLabel = lines[bounds.headingIdx]?.slice(3) ?? sectionPrefix;
+	const existingContent = getSectionContent(lines, bounds);
+	let newBodyLines: string[];
+	if (existingContent === '') {
+		newBodyLines = ['', text, ''];
+	} else {
+		const bodyLines = lines.slice(bounds.bodyStart, bounds.bodyEnd);
+		while (bodyLines.length > 0 && bodyLines[bodyLines.length - 1]?.trim() === '') {
+			bodyLines.pop();
+		}
+		newBodyLines = [...bodyLines, text, ''];
+	}
+	const newLines = [
+		...lines.slice(0, bounds.bodyStart),
+		...newBodyLines,
+		...lines.slice(bounds.bodyEnd),
+	];
+	writeFileSync(filePath, newLines.join('\n'), 'utf8');
+	console.log(`work: appended to ## ${headingLabel} in ${task.file}`);
+}
+
+function runSectionSet(rest: string[]): void {
+	const positionals = rest.filter((a) => !a.startsWith('--'));
+	const id = positionals[0];
+	const sectionPrefix = positionals[1];
+	const text = positionals.slice(2).join(' ');
+	if (id === undefined || sectionPrefix === undefined || text === '') {
+		console.error(
+			'work section-set: usage: TW-NNN <section> <text>\n' +
+				'  sections: plan | alternatives | review | log | scope | context | acceptance',
+		);
+		process.exit(2);
+	}
+	const { tasks } = loadTasks();
+	const task = tasks.find((t) => t.id === id);
+	if (task === undefined) {
+		console.error(`work section-set: ${id} not found`);
+		process.exit(1);
+	}
+	const filePath = join(WORK_DIR, task.file);
+	const content = readFileSync(filePath, 'utf8');
+	const lines = content.split('\n');
+	const bounds = findSection(lines, sectionPrefix);
+	if (bounds === undefined) {
+		console.error(
+			`work section-set: no section matching "${sectionPrefix}" in ${task.file}`,
+		);
+		process.exit(1);
+	}
+	const headingLabel = lines[bounds.headingIdx]?.slice(3) ?? sectionPrefix;
+	const newLines = [
+		...lines.slice(0, bounds.bodyStart),
+		'',
+		text,
+		'',
+		...lines.slice(bounds.bodyEnd),
+	];
+	writeFileSync(filePath, newLines.join('\n'), 'utf8');
+	console.log(`work: set ## ${headingLabel} in ${task.file}`);
+}
+
+function runLog(rest: string[]): void {
+	const positionals = rest.filter((a) => !a.startsWith('--'));
+	const id = positionals[0];
+	const message = positionals.slice(1).join(' ');
+	if (id === undefined || message === '') {
+		console.error('work log: usage: TW-NNN <message>');
+		process.exit(2);
+	}
+	const { tasks } = loadTasks();
+	const task = tasks.find((t) => t.id === id);
+	if (task === undefined) {
+		console.error(`work log: ${id} not found`);
+		process.exit(1);
+	}
+	const today = new Date().toISOString().slice(0, 10);
+	const entry = `- ${today} ${message}`;
+	const filePath = join(WORK_DIR, task.file);
+	const content = readFileSync(filePath, 'utf8');
+	const lines = content.split('\n');
+	const bounds = findSection(lines, 'log');
+	if (bounds === undefined) {
+		writeFileSync(filePath, appendLogLine(content, `${today} ${message}`), 'utf8');
+	} else {
+		const existingContent = getSectionContent(lines, bounds);
+		const bodyLines = lines.slice(bounds.bodyStart, bounds.bodyEnd);
+		while (bodyLines.length > 0 && bodyLines[bodyLines.length - 1]?.trim() === '') {
+			bodyLines.pop();
+		}
+		const newBodyLines =
+			existingContent === '' ? ['', entry, ''] : [...bodyLines, entry, ''];
+		const newLines = [
+			...lines.slice(0, bounds.bodyStart),
+			...newBodyLines,
+			...lines.slice(bounds.bodyEnd),
+		];
+		writeFileSync(filePath, newLines.join('\n'), 'utf8');
+	}
+	console.log(`work: logged to ${task.id}: ${entry}`);
 }
 
 function loadTasks(): { tasks: Task[]; violations: Violation[] } {
@@ -1005,6 +1185,34 @@ function patchFrontmatter(
 		}
 	}
 	return `---\n${yaml}\n---${split.value.body}`;
+}
+
+type SectionBounds = { headingIdx: number; bodyStart: number; bodyEnd: number };
+
+function findSection(lines: string[], prefix: string): SectionBounds | undefined {
+	const p = prefix.toLowerCase();
+	const headingIdx = lines.findIndex(
+		(l) =>
+			/^## /.test(l) &&
+			l
+				.slice(3)
+				.toLowerCase()
+				.split(/\s+/)
+				.some((word) => word.startsWith(p)),
+	);
+	if (headingIdx === -1) return undefined;
+	const bodyStart = headingIdx + 1;
+	const nextHeading = lines.findIndex((l, i) => i > headingIdx && /^## /.test(l));
+	const bodyEnd = nextHeading === -1 ? lines.length : nextHeading;
+	return { headingIdx, bodyStart, bodyEnd };
+}
+
+function getSectionContent(lines: string[], bounds: SectionBounds): string {
+	return lines
+		.slice(bounds.bodyStart, bounds.bodyEnd)
+		.join('\n')
+		.replace(/<!--[\s\S]*?-->/g, '')
+		.trim();
 }
 
 function appendLogLine(content: string, line: string): string {

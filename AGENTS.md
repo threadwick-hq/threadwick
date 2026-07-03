@@ -12,13 +12,34 @@ status ledger. Git is the source of truth; there is no external issue tracker.
 2. Run `pnpm run work list --status active` — if a task is already active, continue it.
 3. Otherwise run `pnpm run work next [--area A] [--phase N]` and claim with
    `pnpm run work claim TW-NNN [--assignee agent]`.
-4. Branch `feat/TW-NNN-slug`, implement against the task file's acceptance criteria.
-5. End every commit with `Refs TW-NNN`; **open a draft PR on the first commit** with `gh pr create --draft` and push updates on every subsequent commit.
-6. After frontmatter changes, run `pnpm run work index`. Before each push, run `pnpm check` and
+4. **Plan (Opus — required).** Before writing any implementation files, use plan mode with
+   `claude-opus-4-8`. Fill `## Plan` (approach, sub-tasks, risks) and `## Alternatives considered`
+   (rejected options with one-line reasons) in the task file. Commit:
+   `docs(work): plan TW-NNN Refs TW-NNN`. The `require-plan` hook blocks Write/Edit of non-work
+   files until `## Plan` is non-empty. Record the plan with:
+   `pnpm run work append-section TW-NNN plan "Chosen approach: ..."`
+5. **Branch.** `git checkout -b feat/TW-NNN-slug` from main.
+6. **Implement** against the task file's acceptance criteria. **Open a draft PR on the first commit**
+   with `gh pr create --draft` and push updates on every subsequent commit.
+7. **Code review.** When implementation is complete, run `/code-review ultra` for an independent
+   Opus multi-agent review. Append findings to `## Code review` in the task file:
+   `pnpm run work append-section TW-NNN review "Findings: ..."`. Address critical findings before
+   marking the PR ready.
+8. After frontmatter changes, run `pnpm run work index`. Before each push, run `pnpm check` and
    `pnpm run work check`.
+9. **Finish.** Complete acceptance criteria; set `status: review`; mark PR ready (`gh pr ready`);
+   put `Closes TW-NNN` in the PR body.
+10. **Merge.** Squash-merge (`gh pr merge --squash`), pull main, set `status: done` + `completed`.
+11. **Cleanup.** Remove the local worktree: `bash scripts/cleanup-worktree.sh TW-NNN`
+    (run from inside `main/`). GitHub posts a reminder comment on the merged PR.
+
+Log progress entries with: `pnpm run work log TW-NNN "message"`.
+Replace a section entirely with: `pnpm run work section-set TW-NNN plan "Revised: ..."`.
+Verify plan is ready: `pnpm run work validate-plan TW-NNN`.
 
 Commands: `work check` · `work index` · `work next` · `work list` · `work new` · `work claim` ·
-`work show` · `work stale` · `work export`.
+`work show` · `work stale` · `work export` · `work validate-plan` · `work append-section` ·
+`work section-set` · `work log`.
 
 ## Repo map
 
@@ -61,8 +82,12 @@ Never commit directly to `main`. Never merge while the PR is draft or before rev
 | --- | --- |
 | [`CLAUDE.md`](CLAUDE.md) | Claude Code entry point — imports this file via `@AGENTS.md` |
 | [`apps/studio/CLAUDE.md`](apps/studio/CLAUDE.md) | Studio entry point — imports `apps/studio/AGENTS.md`; loaded when working under `apps/studio/**` |
-| [`.claude/settings.json`](.claude/settings.json) | Claude Code hooks (session bootstrap + work index regeneration) |
-| [`.claude/hooks/`](.claude/hooks/) | Hook scripts: `session-start.sh`, `work-index-reminder.sh` |
+| [`.claude/settings.json`](.claude/settings.json) | Claude Code hooks (session bootstrap + plan enforcement + work index regeneration) |
+| [`.claude/hooks/session-start.sh`](.claude/hooks/session-start.sh) | SessionStart: injects active/next task, plan warning, and stale task warning |
+| [`.claude/hooks/require-plan.sh`](.claude/hooks/require-plan.sh) | PreToolUse guard: blocks Write/Edit of non-work files until an active task with a non-empty `## Plan` section exists |
+| [`.claude/hooks/work-index-reminder.sh`](.claude/hooks/work-index-reminder.sh) | PostToolUse: regenerates `work/INDEX.md` after a `work/TW-*.md` file changes |
+| [`.claude/hooks/pre-push`](.claude/hooks/pre-push) | Git pre-push hook (via `core.hooksPath`): blocks push when active task has no `## Plan` |
+| [`scripts/cleanup-worktree.sh`](scripts/cleanup-worktree.sh) | Post-merge: removes the linked worktree directory and local branch for a completed task |
 | [`.mcp.json`](.mcp.json) | Project MCP servers (Ant Design v5 docs) |
 | [`.vscode/launch.json`](.vscode/launch.json) | Dev server launch configs (web, studio) |
 
@@ -89,5 +114,10 @@ below are the non-obvious gotchas.
   `/`.
   - Studio: `pnpm --filter threadwick-studio dev` → http://localhost:5173/studio/
   - Web: `pnpm --filter threadwick-web dev --port 3000` → http://localhost:3000/
+- **The git pre-push hook validates `## Plan` before every push.** It is wired via
+  `core.hooksPath = .claude/hooks` in the repo git config (set once; not tracked in git).
+  If the hook blocks your push, fill the plan first:
+  `pnpm run work append-section TW-NNN plan "Chosen approach: ..."`.
+  Verify readiness with `pnpm run work validate-plan TW-NNN`.
 - **The `esbuild` "Ignored build scripts" warning from `pnpm install` is harmless** — pnpm 10 blocks
   postinstall scripts by default, but esbuild/tsup/vite still work. No `pnpm approve-builds` needed.

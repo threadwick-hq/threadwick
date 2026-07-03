@@ -29,9 +29,24 @@ Why this exists. Link the MIGRATION.md phase if relevant.
 In: ...
 Out: ...
 
+## Plan
+
+<!-- Switch to plan mode (claude-opus-4-8) and fill this section before writing any implementation
+     files. Describe: chosen approach, sub-tasks in order, key technical decisions, known risks.
+     The require-plan hook blocks Write/Edit of non-work files until this section is non-empty. -->
+
+## Alternatives considered
+
+<!-- Ruled-out approaches and the one-line reason each was rejected. Bullets. -->
+
 ## Acceptance
 
 - [ ] <mirror of frontmatter acceptance, ticked as criteria pass>
+
+## Code review
+
+<!-- Populated after running /code-review ultra post-implementation. Leave empty until then.
+     Paste the summary findings here and note which were addressed before merge. -->
 
 ## Log
 

@@ -9,9 +9,11 @@ import below — keep the content there, not duplicated here.
 
 - **MCP servers:** [`.mcp.json`](.mcp.json) at the repo root provides the Ant Design v5 docs server.
   Enable it when prompted, or run `claude mcp list`.
-- **Hooks:** [`.claude/settings.json`](.claude/settings.json) wires two hooks (scripts in
+- **Hooks:** [`.claude/settings.json`](.claude/settings.json) wires three hooks (scripts in
   [`.claude/hooks/`](.claude/hooks/)):
-  - `SessionStart` → `session-start.sh` injects the active/next work task at session start.
+  - `SessionStart` → `session-start.sh` injects the active/next task, plan warning, and stale alert.
+  - `PreToolUse` (Write|Edit) → `require-plan.sh` blocks writes to non-work files until an active
+    task exists and its `## Plan` section is non-empty.
   - `PostToolUse` (Write|Edit) → `work-index-reminder.sh` regenerates `work/INDEX.md` after a
     `work/TW-*.md` file changes.
 - **Scoped guidance:** [`apps/studio/CLAUDE.md`](apps/studio/CLAUDE.md) imports the studio rules and

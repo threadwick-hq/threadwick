@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Git pre-push hook: blocks push when an active task has an empty ## Plan section.
+# Wired via: git config core.hooksPath .claude/hooks  (relative to worktree root)
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "$ROOT"
+
+[ -d "work" ] || exit 0
+
+node <<'NODE'
+const { readFileSync, readdirSync, existsSync } = require('node:fs');
+const { join } = require('node:path');
+
+const workDir = join(process.cwd(), 'work');
+
+if (!existsSync(workDir)) process.exit(0);
+
+const files = readdirSync(workDir).filter((f) => /^TW-\d+-.*\.md$/.test(f));
+const needsPlan = [];
+
+for (const file of files) {
+	const content = readFileSync(join(workDir, file), 'utf8');
+	if (!/^status:\s*active\s*$/m.test(content)) continue;
+
+	const idMatch = content.match(/^id:\s*(TW-\d+)/m);
+	const taskId = idMatch?.[1] ?? file;
+
+	const lines = content.split('\n');
+	const planIdx = lines.findIndex((l) => /^## Plan\s*$/.test(l));
+
+	// Pre-TW-052 tasks have no ## Plan section; allow them.
+	if (planIdx === -1) continue;
+
+	const nextHeader = lines.findIndex((l, i) => i > planIdx && /^## /.test(l));
+	const body = lines
+		.slice(planIdx + 1, nextHeader === -1 ? undefined : nextHeader)
+		.join('\n')
+		.replace(/<!--[\s\S]*?-->/g, '')
+		.trim();
+
+	if (!body) {
+		needsPlan.push(taskId);
+	}
+}
+
+if (needsPlan.length > 0) {
+	process.stderr.write(
+		'pre-push: active task(s) have no ## Plan — fill before pushing:\n' +
+			needsPlan
+				.map((id) => `  pnpm run work append-section ${id} plan "Chosen approach: ..."`)
+				.join('\n') +
+			'\n',
+	);
+	process.exit(1);
+}
+NODE
