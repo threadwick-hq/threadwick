@@ -18,7 +18,11 @@ if [[ ! "$file_path" =~ work/TW-[0-9]+-.+\.md$ ]]; then
 	exit 0
 fi
 
-ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+# Same container-aware root resolution as session-start.sh: worktree cwds
+# resolve via git; the container cwd falls back to the project dir + main/.
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [ -z "$ROOT" ]; then ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"; fi
+if [ ! -d "$ROOT/work" ] && [ -d "$ROOT/main/work" ]; then ROOT="$ROOT/main"; fi
 cd "$ROOT"
 
 index_output=""

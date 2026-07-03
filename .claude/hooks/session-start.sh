@@ -2,7 +2,12 @@
 # SessionStart — inject active/next work task context for Claude Code.
 set -euo pipefail
 
-ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+# Resolve the repo root from either a worktree cwd (git works) or the
+# bare+worktree container cwd (show-toplevel fatals there; fall back to the
+# project dir and descend into main/, the canonical worktree).
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [ -z "$ROOT" ]; then ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"; fi
+if [ ! -d "$ROOT/work" ] && [ -d "$ROOT/main/work" ]; then ROOT="$ROOT/main"; fi
 cd "$ROOT"
 
 node <<'NODE'
