@@ -58,7 +58,7 @@ Full source: [docs/BRAND.md](docs/BRAND.md).
 ## Dev commands
 
 ```sh
-pnpm --filter threadwick-studio dev      # port 5174
+pnpm --filter threadwick-studio dev      # port 5173 → http://localhost:5173/studio/ (bare / 404s)
 pnpm --filter threadwick-studio build
 pnpm --filter threadwick-studio test
 ```

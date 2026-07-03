@@ -6,7 +6,9 @@ tool-agnostic entry point for any agent (Claude Code and other agentic tools) be
 ## Work tracking (start here)
 
 Every unit of work is one markdown file in [`work/`](work/README.md) — the spec, audit trail, and
-status ledger. Git is the source of truth; there is no external issue tracker.
+status ledger. Git is the source of truth; there is no external issue tracker. One exception:
+a genuinely trivial fix (a typo, a one-line doc correction) may ship as a plain PR without a work
+item — anything touching behavior, config, or more than a few lines gets one.
 
 1. Read [`work/README.md`](work/README.md) for the lifecycle and schema.
 2. Run `pnpm run work list --status active` — if a task is already active, continue it.
@@ -29,7 +31,9 @@ status ledger. Git is the source of truth; there is no external issue tracker.
    `pnpm run work check`.
 9. **Finish.** Complete acceptance criteria; set `status: review`; mark PR ready (`gh pr ready`);
    put `Closes TW-NNN` in the PR body.
-10. **Merge.** Squash-merge (`gh pr merge --squash`), pull main, set `status: done` + `completed`.
+10. **Merge.** Set `status: done` + `completed` in the PR's final commit (branch commits carry
+    `Refs TW-NNN`, so the derivation gate stays green), then squash-merge (`gh pr merge --squash`)
+    with `Closes TW-NNN` in the squash message, and pull main.
 11. **Cleanup.** Remove the local worktree: `bash scripts/cleanup-worktree.sh TW-NNN`
     (run from inside `main/`). GitHub posts a reminder comment on the merged PR.
 
@@ -63,18 +67,15 @@ Commands: `work check` · `work index` · `work next` · `work list` · `work ne
 
 ## Git workflow
 
-Code review is **GitHub PR review** (owner or collaborators) plus CI.
+The numbered lifecycle above is the single flow — these are the git-side rules it relies on:
 
-Every change follows this loop:
-
-1. **Branch** — `git fetch origin && git checkout main && git pull --ff-only`, then a new branch from `main` (`feat/TW-NNN-slug` for task work).
-2. **Commit & draft PR** — run `pnpm check` (and `pnpm run work check` when touching `work/`), commit, then `git push -u origin HEAD` and `gh pr create --draft` on the first push. Repeat on every commit; never push without updating the draft PR.
-3. **Finish** — complete acceptance criteria; fill `pr` in the task file once the draft exists.
-4. **Mark ready** — `gh pr ready`; set `status: review`; put `Closes TW-NNN` in the PR body.
-5. **Review & fix loop** — wait for PR review comments and CI (`gh pr view --comments`, `gh pr checks`); fix with commit + push until clean. Re-draft with `gh pr ready --undo` if more implementation is needed.
-6. **Merge & done** — squash-merge with `gh pr merge --squash` (or GitHub UI / merge queue), then `git checkout main && git pull --ff-only`; set `status: done` + `completed`. Work ends at merge.
-
-Never commit directly to `main`. Never merge while the PR is draft or before review and CI pass.
+- Code review is **GitHub PR review** (owner or collaborators) plus CI.
+- Branch from a fresh main: `git fetch origin && git checkout main && git pull --ff-only` first.
+- Never push without updating the draft PR; never commit directly to `main`; never merge while
+  the PR is draft or before review and CI pass.
+- Review & fix loop: `gh pr view --comments` and `gh pr checks`; fix with commit + push until
+  clean. Re-draft with `gh pr ready --undo` if more implementation is needed.
+- After merge: `git checkout main && git pull --ff-only`. Work ends at merge.
 
 ## Agent tooling integration
 
@@ -106,12 +107,13 @@ below are the non-obvious gotchas.
   `pnpm turbo run build --filter=./packages/*`. The apps' Vite dev servers pre-bundle the built
   `dist` barrels (see `apps/web/vite.config.ts` `optimizeDeps`), so dev will fail to resolve
   `@threadwick/core/components` etc. without it. Turbo caches the build, so re-running is cheap.
-- **`pnpm check` fails fast and lint is intentionally red.** Biome/ESLint run report-only during the
-  staged style migration (see `.github/workflows/ci.yml`, which runs `pnpm biome check packages ||
-  true`). The real CI gates are `pnpm run work check`, plus `build` + `typecheck` on the packages —
-  those pass. To see the true state of every task instead of aborting on the first failure, use
-  `pnpm turbo run typecheck test lint --continue`. Typecheck and tests pass; pre-existing lint
-  failures are expected and not your job to fix unless asked.
+- **CI gates vs local `pnpm check`.** CI (`.github/workflows/ci.yml`) hard-gates on
+  `pnpm run work check`, `pnpm turbo run build typecheck` for packages *and* apps, and
+  `pnpm biome check packages` — all green today (biome reports warnings only; don't add errors).
+  Local `pnpm check` additionally runs ESLint, which crashes on Node < 20.12
+  (`util.styleText is not a function`, ESLint 10.5) — the studio `build` script chains ESLint
+  too, so it fails the same way. Use Node ≥ 20.12 (CI runs 22), or verify with the CI-parity
+  commands above plus `pnpm turbo run typecheck test --continue`.
 - **The two apps both default to Vite port 5173.** Run only one on 5173, or pass `--port` to the
   other. Studio is served under a `/studio/` base path — open
   `http://localhost:5173/studio/` (bare `/` 404s). Web is a React Router 7 streaming-SSR app served at
