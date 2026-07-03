@@ -6,16 +6,19 @@
  *    files until an issue is assigned to the viewer and its Plan section is
  *    filled. Same shared work cache and semantics as
  *    `.claude/hooks/require-plan.sh`.
- * 2. End-of-turn quality gate — on session idle, runs
+ * 2. End-of-turn quality gate — on the `session.idle` event, runs
  *    `.claude/hooks/stop-quality-gate-repo.mjs` (per-package `tsc --noEmit` +
  *    `vitest related` on changed files) and surfaces failures. Notify-only:
  *    OpenCode has no forced-continuation semantics, so the git pre-push hook,
  *    CI, and PR review remain the hard backstops.
  *
  * Fail-open policy mirrors the Claude Code hooks: a missing cache, unusable
- * git environment, or unexpected payload never blocks work.
+ * git environment, or unexpected payload never blocks work. The one place this
+ * plugin is deliberately fail-closed is a plan-gated edit tool that carries no
+ * resolvable file path (e.g. the multi-file `patch` tool): the plan condition
+ * still applies, so an unplanned patch cannot slip through the gate.
  *
- * The gate logic is exported as pure functions and covered by
+ * The gate decision logic is exported as pure functions and covered by
  * `scripts/workflow-gates.test.ts`.
  */
 
@@ -71,17 +74,31 @@ export const WorkflowGates = async ({ directory, worktree, client }) => {
 		 */
 		'tool.execute.before': async (input, output) => {
 			if (gitContext === undefined || !PLAN_GATED_TOOLS.has(input.tool)) return;
-			const filePath = output.args['filePath'];
-			if (typeof filePath !== 'string' || filePath.length === 0) return;
 			const cache = readWorkCache(gitContext.cachePath);
 			if (cache === undefined) return;
-			const resolvedPath = path.resolve(directory, filePath);
-			const reason = findBlockReason(cache, resolvedPath, gitContext.containerDir);
+			const filePath = output.args.filePath;
+			// write/edit carry a filePath (path-scoped exemptions apply); a
+			// gated tool without one (e.g. multi-file patch) still faces the
+			// path-independent plan condition, so it cannot bypass the gate.
+			const reason =
+				typeof filePath === 'string' && filePath.length > 0
+					? findBlockReason(
+							cache,
+							path.resolve(workingDir, filePath),
+							gitContext.containerDir,
+						)
+					: planBlockReason(cache);
 			if (reason !== undefined) throw new Error(reason);
 		},
 
-		/** End-of-turn quality gate (notify-only). */
-		'session.idle': async () => {
+		/**
+		 * OpenCode delivers session lifecycle signals through the generic event
+		 * hook; `session.idle` is our end-of-turn trigger (notify-only).
+		 *
+		 * @param {{ event: { type: string } }} input
+		 */
+		event: async (input) => {
+			if (input.event?.type !== 'session.idle') return;
 			if (isQualityGateRunning) return;
 			isQualityGateRunning = true;
 			try {
@@ -143,18 +160,15 @@ export function isPathExempt(resolvedPath, containerDir) {
 }
 
 /**
- * Decides whether a write should be blocked. Mirrors
- * `.claude/hooks/require-plan.sh`: block when the viewer has no assigned open
+ * Path-independent half of the gate: block when the viewer has no assigned open
  * issue, or when every assigned issue's Plan is unfilled; with several
- * assigned, one filled Plan is enough (that is the one being worked).
+ * assigned, one filled Plan is enough (that is the one being worked). Mirrors
+ * `.claude/hooks/require-plan.sh`.
  *
  * @param {WorkCache} cache
- * @param {string} resolvedPath
- * @param {string} containerDir
  * @returns {string | undefined} block reason, or undefined to allow
  */
-export function findBlockReason(cache, resolvedPath, containerDir) {
-	if (isPathExempt(resolvedPath, containerDir)) return undefined;
+export function planBlockReason(cache) {
 	const snapshot = cache.snapshot ?? {};
 	const issues = Array.isArray(snapshot.issues) ? snapshot.issues : [];
 	const viewer = snapshot.viewerLogin ?? '';
@@ -171,7 +185,9 @@ export function findBlockReason(cache, resolvedPath, containerDir) {
 			'  pnpm run work claim <number>',
 		].join('\n');
 	}
-	const unplannedIssues = activeIssues.filter((issue) => !planFilled(issue.body));
+	const unplannedIssues = activeIssues.filter(
+		(issue) => !planFilled(issue.body),
+	);
 	if (unplannedIssues.length === activeIssues.length) {
 		const refs = activeIssues.map((issue) => `#${issue.number}`).join(', ');
 		return [
@@ -185,6 +201,20 @@ export function findBlockReason(cache, resolvedPath, containerDir) {
 }
 
 /**
+ * Full gate decision for a path-carrying edit: exempt paths are always
+ * allowed; otherwise the plan condition applies.
+ *
+ * @param {WorkCache} cache
+ * @param {string} resolvedPath
+ * @param {string} containerDir
+ * @returns {string | undefined} block reason, or undefined to allow
+ */
+export function findBlockReason(cache, resolvedPath, containerDir) {
+	if (isPathExempt(resolvedPath, containerDir)) return undefined;
+	return planBlockReason(cache);
+}
+
+/**
  * Derives the enforcement scope and cache path from the shared git dir, so it
  * is correct from both the container and any linked worktree.
  *
@@ -195,7 +225,13 @@ function resolveGitContext(startDir) {
 	try {
 		const commonDir = execFileSync(
 			'git',
-			['-C', startDir, 'rev-parse', '--path-format=absolute', '--git-common-dir'],
+			[
+				'-C',
+				startDir,
+				'rev-parse',
+				'--path-format=absolute',
+				'--git-common-dir',
+			],
 			{ stdio: ['ignore', 'pipe', 'ignore'], timeout: GIT_TIMEOUT_MS },
 		)
 			.toString()
@@ -226,7 +262,9 @@ function readWorkCache(cachePath) {
 
 /**
  * Runs the repo stop gate and resolves with its failure output on exit 2,
- * undefined otherwise (fail open on spawn errors and timeouts).
+ * undefined otherwise (fail open on spawn errors and timeouts). Uses the
+ * current JS runtime (Bun under OpenCode, Node under tests) to avoid a hard
+ * dependency on a `node` binary being on PATH.
  *
  * @param {string} worktreeDir
  * @returns {Promise<string | undefined>}
@@ -240,7 +278,7 @@ function runStopQualityGate(worktreeDir) {
 	);
 	if (!existsSync(gateScript)) return Promise.resolve(undefined);
 	return new Promise((resolvePromise) => {
-		const child = spawn('node', [gateScript], {
+		const child = spawn(process.execPath, [gateScript], {
 			stdio: ['pipe', 'ignore', 'pipe'],
 			timeout: GATE_TIMEOUT_MS,
 		});
@@ -252,6 +290,9 @@ function runStopQualityGate(worktreeDir) {
 		child.on('close', (code) => {
 			resolvePromise(code === 2 ? stderrText : undefined);
 		});
+		// The child may exit before draining stdin; swallow the resulting EPIPE
+		// rather than let it surface as an unhandled stream error.
+		child.stdin?.on('error', () => {});
 		child.stdin?.write(JSON.stringify({ cwd: worktreeDir }));
 		child.stdin?.end();
 	});

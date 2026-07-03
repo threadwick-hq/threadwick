@@ -75,7 +75,7 @@ the `work` CLI; no side channels.
 | --- | --- | --- | --- | --- |
 | Plan before edits | shared work cache | `require-plan.sh` (PreToolUse) | `workflow-gates.js` (`tool.execute.before`) | implementing without a spec |
 | Plan before push | git pre-push hook via `core.hooksPath` | shared | shared | unplanned pushes |
-| Types + tests at turn end | changed-file `tsc --noEmit` + `vitest related` | `stop-quality-gate-repo.mjs` (Stop; one forced fix round) | same script via `session.idle` (notify-only) | broken TS or tests |
+| Types + tests at turn end | changed-file `tsc --noEmit` + `vitest related` | `stop-quality-gate-repo.mjs` (Stop; one forced fix round) | same script via the `session.idle` event (notify-only) | broken TS or tests |
 | Issue shape + PR gate | CI `work check`, `work gate --pr` | shared | shared | process drift |
 | Build, typecheck, lint | CI turbo + biome | shared | shared | mechanical errors |
 | Logic and design | PR review by the planner | n/a | n/a | implementer mistakes |
@@ -87,11 +87,19 @@ the pre-push hook, CI, and PR review are the hard backstops behind it.
 
 - [`opencode.json`](../opencode.json) loads the workspace-local `AGENTS.md` files (the root and
   container ones load via OpenCode's parent-directory traversal) and sets the bash permission
-  policy: allow the pnpm/git/gh loop, deny force-push, hard reset, and `rm -rf`, ask otherwise.
-  Bash rules are evaluated last-match-wins — keep the denies below the broad allows.
+  policy: allow the pnpm/git/gh loop, deny obviously destructive shapes (`--force` pushes, `+`
+  force-refspecs, `--hard` resets, `rm -rf`), ask otherwise. Rules are evaluated
+  last-match-wins, so the denies sit below the broad allows and the `--force-with-lease`
+  re-allow sits below the `--force` deny. This is an accident guardrail, not a security
+  boundary — glob command matching is inherently porous (an unusual quoting or a novel
+  destructive command can slip it); the real protections are the git pre-push hook, CI, and
+  human review.
 - [`.opencode/plugins/workflow-gates.js`](../.opencode/plugins/workflow-gates.js) ports the two
-  Claude-Code-specific gates; its pure logic is covered by
-  [`scripts/workflow-gates.test.ts`](../scripts/workflow-gates.test.ts).
+  Claude-Code-specific gates; its decision logic is covered by
+  [`scripts/workflow-gates.test.ts`](../scripts/workflow-gates.test.ts). The end-of-turn gate is
+  wired through OpenCode's generic `event` hook (branching on `session.idle`), since OpenCode has
+  no dedicated stop hook. An edit-class tool with no resolvable file path (e.g. the multi-file
+  `patch` tool) still faces the plan condition, so it cannot bypass the plan-before-edit gate.
 - Model and provider config is personal (endpoints, keys, model choice) and lives in
   `~/.config/opencode/opencode.json` — never in the repo.
 
