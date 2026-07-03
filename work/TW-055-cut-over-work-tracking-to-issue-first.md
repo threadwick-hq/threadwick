@@ -14,8 +14,9 @@ acceptance:
   - all open work items (backlog and review) exist as issues with correct labels, milestone, assignee, and the legacy TW id kept in the title
   - package.json `work` runs the issue-first CLI; scripts/work.ts and work/INDEX.md are deleted
   - work/ is frozen as a read-only archive with a README pointer to issues
-  - session-start, require-plan, and pre-push hooks consume the work cache; work-index-reminder is deleted; settings.json updated
-  - CI replaces `pnpm run work check` with an issue-aware gate (PR carries Closes #N, issue assigned, plan comment present)
+  - session-start, require-plan, and pre-push hooks consume the trust-filtered work cache; work-index-reminder is deleted; settings.json updated
+  - CI replaces `pnpm run work check` with an issue-aware gate (PR carries Closes #N, issue assigned, body Plan section non-empty)
+  - AGENTS.md documents the comment trust model (member-only trust, quarantine, /allow release)
   - the mirror workflow, its sync script, and the stale sweep are deleted or rewritten to query issues directly
   - a Projects v2 board exists with built-in automations and is documented
   - AGENTS.md, work/README.md, and CLAUDE.md describe the issue-first lifecycle end to end
@@ -49,20 +50,21 @@ Sub-tasks in order:
 2. Migration script (one-off, lives in the PR, deleted after use is acceptable but keeping it
    under scripts/ as a record is preferred): reads `work export --json`, creates one issue per
    backlog or review task via the TW-054 CLI primitives. Title keeps the legacy id:
-   "TW-016: Replace App.useApp() with a shadcn toast and confirm layer". Body carries context,
-   scope, and the acceptance checklist. Review tasks get their open PR linked by adding
-   "Closes #<issue>" to the PR body. Blocked tasks get the blocked representation chosen in
-   TW-054. The issue number to TW id mapping is posted as a table in the PR body for the audit
-   trail.
+   "TW-016: Replace App.useApp() with a shadcn toast and confirm layer". Bodies conform to the
+   `work:v1` template: context, scope, and the acceptance checklist mapped into the template
+   sections. Review tasks get their open PR linked by adding "Closes #<issue>" to the PR body.
+   Blocked tasks get the blocked representation chosen in TW-054. The issue number to TW id
+   mapping is posted as a table in the PR body for the audit trail.
 3. CLI swap: package.json `work` points at the issue-first CLI; delete scripts/work.ts and
    work/INDEX.md; rename work2 references.
-4. Hooks: session-start fetches the assigned issue and inbox via the cache (refresh if stale,
-   warn and continue offline); require-plan checks the cache for a plan comment on the active
-   (assigned) issue instead of a ## Plan section; pre-push mirrors that check; delete
-   work-index-reminder; update .claude/settings.json and the container settings source.
+4. Hooks: session-start fetches the assigned issue and trusted inbox via the cache (refresh if
+   stale, warn and continue offline; quarantined comments appear as counts, never content);
+   require-plan checks the cache for a non-empty Plan body section on the active (assigned)
+   issue; pre-push mirrors that check; delete work-index-reminder; update
+   .claude/settings.json and the container settings source.
 5. CI: replace the `pnpm run work check` job with the issue-aware gate using GITHUB_TOKEN
-   (PR body carries Closes #N, the issue is assigned, a plan comment exists, labels and
-   milestone valid via `work check`). Delete work-project-mirror.yml and
+   (PR body carries Closes #N, the issue is assigned, the body Plan section is non-empty,
+   labels and milestone valid via `work check`). Delete work-project-mirror.yml and
    .github/scripts/sync-work-project.mjs. Rewrite work-stale-sweep.yml as a direct issue query
    (assigned, open, no activity for N days), which shrinks it substantially.
 6. Archive: work/*.md files stay in place, work/README.md is rewritten to point at issues and
@@ -72,7 +74,10 @@ Sub-tasks in order:
    set the CLI status field sync where automations do not cover a column.
 8. Docs: rewrite the work-tracking sections of AGENTS.md (lifecycle steps 1 to 11 in issue
    terms), work/README.md, CLAUDE.md hook descriptions, and the branch naming convention
-   (feat/<issue-number>-slug for new work).
+   (feat/<issue-number>-slug for new work). Document the trust model explicitly: the body is
+   the spec and is edited in place; comments carry log, review findings, and feedback; only
+   OWNER/MEMBER/COLLABORATOR content reaches agent context; quarantined comments are released
+   per item via a member /allow reply or explicit user approval, never in bulk.
 
 Key decisions:
 
@@ -107,8 +112,9 @@ Risks:
 - [ ] all open work items (backlog and review) exist as issues with correct labels, milestone, assignee, and the legacy TW id kept in the title
 - [ ] package.json `work` runs the issue-first CLI; scripts/work.ts and work/INDEX.md are deleted
 - [ ] work/ is frozen as a read-only archive with a README pointer to issues
-- [ ] session-start, require-plan, and pre-push hooks consume the work cache; work-index-reminder is deleted; settings.json updated
-- [ ] CI replaces `pnpm run work check` with an issue-aware gate (PR carries Closes #N, issue assigned, plan comment present)
+- [ ] session-start, require-plan, and pre-push hooks consume the trust-filtered work cache; work-index-reminder is deleted; settings.json updated
+- [ ] CI replaces `pnpm run work check` with an issue-aware gate (PR carries Closes #N, issue assigned, body Plan section non-empty)
+- [ ] AGENTS.md documents the comment trust model (member-only trust, quarantine, /allow release)
 - [ ] the mirror workflow, its sync script, and the stale sweep are deleted or rewritten to query issues directly
 - [ ] a Projects v2 board exists with built-in automations and is documented
 - [ ] AGENTS.md, work/README.md, and CLAUDE.md describe the issue-first lifecycle end to end
@@ -121,3 +127,4 @@ Risks:
 ## Log
 
 - 2026-07-03 created from the approved issue-first design discussion; blocked on TW-054.
+- 2026-07-03 spec revised to match TW-054: hooks and CI check the body Plan section, migration bodies conform to work:v1, docs must cover the trust model.
