@@ -11,14 +11,14 @@ created: 2026-07-03
 blocked_by:
   - TW-054
 acceptance:
-  - all open work items (backlog and review) exist as issues with correct labels, milestone, assignee, and the legacy TW id kept in the title
+  - all open work items (backlog and review) exist as issues with native issue type, area label, milestone, priority field, blocked-by relationships, assignee, and the legacy TW id kept in the title
   - package.json `work` runs the issue-first CLI; scripts/work.ts and work/INDEX.md are deleted
   - work/ is frozen as a read-only archive with a README pointer to issues
   - session-start, require-plan, and pre-push hooks consume the trust-filtered work cache; work-index-reminder is deleted; settings.json updated
   - CI replaces `pnpm run work check` with an issue-aware gate (PR carries Closes #N, issue assigned, body Plan section non-empty)
   - AGENTS.md documents the comment trust model (member-only trust, quarantine, /allow release)
   - the mirror workflow, its sync script, and the stale sweep are deleted or rewritten to query issues directly
-  - a Projects v2 board exists with built-in automations and is documented
+  - the Projects v2 board (created by TW-054 bootstrap) has built-in automations wired and documented
   - AGENTS.md, work/README.md, and CLAUDE.md describe the issue-first lifecycle end to end
 ---
 
@@ -35,7 +35,7 @@ files stay behind as a frozen archive. The migration count is re-derived from
 ## Scope
 
 In: migration of open tasks to issues, CLI swap, hooks rework, CI gate swap, mirror and stale
-sweep removal, Projects board creation, full docs rewrite, freezing `work/` as archive.
+sweep removal, board automations and docs, full docs rewrite, freezing `work/` as archive.
 Out: the CLI itself (TW-054), migrating done/abandoned history, real-time webhook reactivity.
 
 ## Plan
@@ -50,11 +50,14 @@ Sub-tasks in order:
 2. Migration script (one-off, lives in the PR, deleted after use is acceptable but keeping it
    under scripts/ as a record is preferred): reads `work export --json`, creates one issue per
    backlog or review task via the TW-054 CLI primitives. Title keeps the legacy id:
-   "TW-016: Replace App.useApp() with a shadcn toast and confirm layer". Bodies conform to the
-   `work:v1` template: context, scope, and the acceptance checklist mapped into the template
-   sections. Review tasks get their open PR linked by adding "Closes #<issue>" to the PR body.
-   Blocked tasks get the blocked representation chosen in TW-054. The issue number to TW id
-   mapping is posted as a table in the PR body for the audit trail.
+   "TW-016: Replace App.useApp() with a shadcn toast and confirm layer". Each issue gets its
+   native fields set: issue type from `type`, milestone from `phase`, project Priority from
+   `priority`, area label, and assignee. Bodies conform to the `work:v1` template: context,
+   scope, and the acceptance checklist mapped into the template sections. `blocked_by` ids
+   become native blocked-by relationships between the migrated issues (second pass, once all
+   issue numbers exist). Review tasks get their open PR linked by adding "Closes #<issue>" to
+   the PR body. The issue number to TW id mapping is posted as a table in the PR body for the
+   audit trail.
 3. CLI swap: package.json `work` points at the issue-first CLI; delete scripts/work.ts and
    work/INDEX.md; rename work2 references.
 4. Hooks: session-start fetches the assigned issue and trusted inbox via the cache (refresh if
@@ -69,9 +72,10 @@ Sub-tasks in order:
    (assigned, open, no activity for N days), which shrinks it substantially.
 6. Archive: work/*.md files stay in place, work/README.md is rewritten to point at issues and
    marks the directory frozen; the derivation gate note moves to the new README as history.
-7. Board: create the org Projects v2 board (gh project create), wire built-in automations
-   (auto-add from the repo, closed to Done), document the PAT/project-scope requirement, and
-   set the CLI status field sync where automations do not cover a column.
+7. Board: the Projects v2 board and its Priority field already exist from TW-054 bootstrap.
+   Wire the built-in automations (auto-add from the repo, closed to Done), document the
+   PAT/project-scope requirement, and set the CLI status field sync where automations do not
+   cover a column.
 8. Docs: rewrite the work-tracking sections of AGENTS.md (lifecycle steps 1 to 11 in issue
    terms), work/README.md, CLAUDE.md hook descriptions, and the branch naming convention
    (feat/<issue-number>-slug for new work). Document the trust model explicitly: the body is
@@ -109,14 +113,14 @@ Risks:
 
 ## Acceptance
 
-- [ ] all open work items (backlog and review) exist as issues with correct labels, milestone, assignee, and the legacy TW id kept in the title
+- [ ] all open work items (backlog and review) exist as issues with native issue type, area label, milestone, priority field, blocked-by relationships, assignee, and the legacy TW id kept in the title
 - [ ] package.json `work` runs the issue-first CLI; scripts/work.ts and work/INDEX.md are deleted
 - [ ] work/ is frozen as a read-only archive with a README pointer to issues
 - [ ] session-start, require-plan, and pre-push hooks consume the trust-filtered work cache; work-index-reminder is deleted; settings.json updated
 - [ ] CI replaces `pnpm run work check` with an issue-aware gate (PR carries Closes #N, issue assigned, body Plan section non-empty)
 - [ ] AGENTS.md documents the comment trust model (member-only trust, quarantine, /allow release)
 - [ ] the mirror workflow, its sync script, and the stale sweep are deleted or rewritten to query issues directly
-- [ ] a Projects v2 board exists with built-in automations and is documented
+- [ ] the Projects v2 board (created by TW-054 bootstrap) has built-in automations wired and documented
 - [ ] AGENTS.md, work/README.md, and CLAUDE.md describe the issue-first lifecycle end to end
 
 ## Code review
@@ -128,3 +132,4 @@ Risks:
 
 - 2026-07-03 created from the approved issue-first design discussion; blocked on TW-054.
 - 2026-07-03 spec revised to match TW-054: hooks and CI check the body Plan section, migration bodies conform to work:v1, docs must cover the trust model.
+- 2026-07-03 spec revised to match: migration sets native type, dependencies, milestone, priority field; board automations only (board itself comes from TW-054 bootstrap).
