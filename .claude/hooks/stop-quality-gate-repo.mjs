@@ -18,9 +18,9 @@
  * `work check` and turbo gates cover them instead.
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, readdirSync } from 'node:fs';
-import { readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import { resolveGitCommonDir } from './lib/git.mjs';
 
 const TS_FILE_PATTERN = /\.(ts|tsx|mts|cts)$/;
 const OUTPUT_LIMIT_CHARS = 6000;
@@ -80,12 +80,8 @@ function readStdinJson() {
 function resolveContainerDir(hookInput) {
 	const workingDir =
 		typeof hookInput?.cwd === 'string' ? hookInput.cwd : process.cwd();
-	const commonDir = git(workingDir, [
-		'rev-parse',
-		'--path-format=absolute',
-		'--git-common-dir',
-	]);
-	if (commonDir !== undefined) return path.dirname(commonDir.trim());
+	const commonDir = resolveGitCommonDir({ cwd: workingDir });
+	if (commonDir !== undefined) return path.dirname(commonDir);
 	const projectDir = process.env.CLAUDE_PROJECT_DIR ?? workingDir;
 	return existsSync(projectDir) ? projectDir : undefined;
 }
