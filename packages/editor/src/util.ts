@@ -53,10 +53,14 @@ export function nowISO(): string {
 
 // A filesystem-friendly slug, for export filenames.
 export function slug(s: string | undefined, fallback = 'untitled'): string {
+	// The collapse step leaves no consecutive hyphens, so trimming a single
+	// hyphen per end is complete — and quantifier-free patterns cannot
+	// backtrack (CodeQL js/polynomial-redos flags `-+$`-style trims).
 	const out = String(s || '')
 		.toLowerCase()
 		.trim()
 		.replace(/[^a-z0-9]+/g, '-')
-		.replace(/^-+|-+$/g, '');
+		.replace(/^-/, '')
+		.replace(/-$/, '');
 	return out || fallback;
 }
