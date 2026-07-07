@@ -1,7 +1,7 @@
 import { cn } from '@threadwick/core/lib/utils';
 import {
-	type FollowMode,
 	type ChartPattern,
+	type FollowMode,
 	type PatternProgress,
 	resolveFollowChartContext,
 	stitchInspectInfo,
