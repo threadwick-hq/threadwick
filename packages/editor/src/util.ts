@@ -57,6 +57,7 @@ export function slug(s: string | undefined, fallback = 'untitled'): string {
 		.toLowerCase()
 		.trim()
 		.replace(/[^a-z0-9]+/g, '-')
-		.replace(/^-+|-+$/g, '');
+		.replace(/^-+/, '')
+		.replace(/-+$/, '');
 	return out || fallback;
 }
