@@ -1,5 +1,5 @@
 import { aggregateProjectProgress } from './progress';
-import type { Pattern, Project } from './types';
+import type { ChartPattern, Project } from './types';
 
 export type OverviewMaterialItem = {
 	id: string;
@@ -67,7 +67,7 @@ export function projectOverviewMaterials(
 
 export function projectOverviewKeyFacts(
 	project: Project,
-	resolvePattern: (patternId: string) => Pattern | undefined,
+	resolvePattern: (patternId: string) => ChartPattern | undefined,
 ): Array<{ label: string; value: string }> {
 	const aggregate = aggregateProjectProgress(project, resolvePattern);
 	const facts: Array<{ label: string; value: string }> = [];

@@ -1,7 +1,7 @@
 // Saving & loading: project files, image export, and the print/PDF composer.
 
 import QRCode from 'qrcode';
-import type { Pattern, Project } from './index';
+import type { ChartPattern, Project } from './index';
 import {
 	activeVersion,
 	chartToSVG,
@@ -65,7 +65,7 @@ export interface ImageExportOptions {
 	scale?: number; // PNG only
 }
 
-function chartSVG(pattern: Pattern, o: ImageExportOptions): string {
+function chartSVG(pattern: ChartPattern, o: ImageExportOptions): string {
 	return chartToSVG(pattern, {
 		title: o.title === false ? '' : pattern.name,
 		legend: o.legend !== false,
@@ -74,7 +74,7 @@ function chartSVG(pattern: Pattern, o: ImageExportOptions): string {
 }
 
 export function exportPatternSVG(
-	pattern: Pattern,
+	pattern: ChartPattern,
 	opts: ImageExportOptions = {},
 ): void {
 	download(
@@ -84,7 +84,7 @@ export function exportPatternSVG(
 }
 
 export function exportPatternPNG(
-	pattern: Pattern,
+	pattern: ChartPattern,
 	opts: ImageExportOptions = {},
 ): void {
 	const scale = opts.scale ?? 3;
@@ -119,7 +119,7 @@ export function exportPatternPNG(
 	img.src = url;
 }
 
-export function patternStartLabel(pattern: Pattern): string | null {
+export function patternStartLabel(pattern: ChartPattern): string | null {
 	const st = pattern.stitches.find((s) => isStart(s.type));
 	const type = st ? st.type : pattern.start;
 	return type && STITCHES[type] ? STITCHES[type].name : null;
@@ -153,7 +153,7 @@ const PRINT_CSS = `
 `;
 
 function patternSection(
-	pat: Pattern,
+	pat: ChartPattern,
 	opts: { title?: boolean; legend?: boolean; instructions?: boolean },
 ): string {
 	const chart = chartToSVG(pat, {
@@ -212,7 +212,7 @@ function writeAndPrint(win: Window, html: string): void {
 
 // A single pattern (chart + legend + written instructions), tailored for paper.
 export function printPattern(
-	pattern: Pattern,
+	pattern: ChartPattern,
 	opts: { title?: boolean; legend?: boolean; instructions?: boolean } = {},
 ): void {
 	const win = openPrintWindow();

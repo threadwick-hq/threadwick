@@ -10,7 +10,7 @@ import {
 import type {
 	Base,
 	FollowMode,
-	Pattern,
+	ChartPattern,
 	PatternReference,
 	Project,
 	ProjectVersion,
@@ -129,7 +129,7 @@ class Store {
 		const v = this.currentVersion();
 		return !!v && v.status === 'draft';
 	}
-	currentPattern(): Pattern | null {
+	currentPattern(): ChartPattern | null {
 		const v = this.currentVersion();
 		return v
 			? (v.patterns.find((x) => x.id === this.state.ui.patternId) ?? null)
@@ -138,7 +138,7 @@ class Store {
 	// Locate a pattern (current project's active version first, then anywhere).
 	private findPattern(
 		patternId: string,
-	): { prj: Project; version: ProjectVersion; pat: Pattern } | null {
+	): { prj: Project; version: ProjectVersion; pat: ChartPattern } | null {
 		const cur = this.currentProject();
 		if (cur) {
 			const v = activeVersion(cur);
@@ -463,7 +463,7 @@ class Store {
 	}
 
 	// ---- editor: history -----------------------------------------------------
-	private snap(pat: Pattern): PatternSnapshot {
+	private snap(pat: ChartPattern): PatternSnapshot {
 		return deepClone({
 			start: pat.start,
 			rounds: pat.rounds,
@@ -471,10 +471,10 @@ class Store {
 			stitches: pat.stitches,
 		});
 	}
-	private restoreSnap(pat: Pattern, snap: PatternSnapshot): void {
+	private restoreSnap(pat: ChartPattern, snap: PatternSnapshot): void {
 		Object.assign(pat, deepClone(snap));
 	}
-	private pushHistory(pat: Pattern): void {
+	private pushHistory(pat: ChartPattern): void {
 		if (this.histPatternId !== pat.id) {
 			this.undoStack = [];
 			this.redoStack = [];
@@ -484,7 +484,7 @@ class Store {
 		if (this.undoStack.length > 250) this.undoStack.shift();
 		this.redoStack.length = 0;
 	}
-	editTransact(fn: (pat: Pattern) => void): void {
+	editTransact(fn: (pat: ChartPattern) => void): void {
 		const pat = this.currentPattern();
 		if (!pat || !this.isDraftActive()) return; // published/outdated versions are read-only
 		this.pushHistory(pat);
@@ -514,7 +514,7 @@ class Store {
 		this.pruneSelection(pat);
 		this.emit();
 	}
-	private pruneSelection(pat: Pattern): void {
+	private pruneSelection(pat: ChartPattern): void {
 		const ids = new Set(pat.stitches.map((s) => s.id));
 		for (const id of [...this.selection])
 			if (!ids.has(id)) this.selection.delete(id);
@@ -641,7 +641,7 @@ class Store {
 	}
 
 	// ---- follow progress (TW-028) ------------------------------------------
-	resolveChartPattern(patternId: string): Pattern | undefined {
+	resolveChartPattern(patternId: string): ChartPattern | undefined {
 		const prj = this.currentProject();
 		if (!prj) return undefined;
 		return activeVersion(prj).patterns.find((p) => p.id === patternId);
@@ -1094,7 +1094,7 @@ class Store {
 
 // Evenly align every auto chain along the segment between its nearest non-chain
 // ancestor's head and nearest non-chain child's head.
-function autoLayoutChains(pat: Pattern): void {
+function autoLayoutChains(pat: ChartPattern): void {
 	const stitches = pat.stitches;
 	const byId = new Map(stitches.map((s) => [s.id, s]));
 	const childOf = new Map<string, Stitch>();

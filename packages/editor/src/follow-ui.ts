@@ -11,7 +11,7 @@ import {
 import { isStart, STITCHES } from './symbols';
 import type {
 	FollowMode,
-	Pattern,
+	ChartPattern,
 	PatternProgress,
 	PatternReference,
 } from './types';
@@ -46,7 +46,7 @@ export interface FollowSection {
 const STITCH_TOKEN =
 	/^(?:\d+\s+)?(?:ch(?:\s+\d+)?|sl\s*st|sc|hdc|dc|tr|dtr|mr|dmr)(?:\s+[a-z]+)?$/i;
 
-function patternStartLabel(pattern: Pattern): string | null {
+function patternStartLabel(pattern: ChartPattern): string | null {
 	const st = pattern.stitches.find((s) => isStart(s.type));
 	const type = st ? st.type : pattern.start;
 	return type && STITCHES[type] ? STITCHES[type].name : null;
@@ -102,7 +102,7 @@ export function followWhyComment(mode: FollowMode): string | null {
 
 export function deriveCounterPills(
 	progress: PatternProgress | undefined,
-	pattern: Pattern,
+	pattern: ChartPattern,
 	mode: FollowMode,
 ): CounterPill[] {
 	const display = deriveUnitDisplay(progress, pattern, mode);
@@ -138,14 +138,14 @@ export function deriveCounterPills(
 	return pills;
 }
 
-function workingRoundIds(pattern: Pattern): string[] {
+function workingRoundIds(pattern: ChartPattern): string[] {
 	const startId = startRowId(pattern);
 	return pattern.rounds.filter((r) => r.id !== startId).map((r) => r.id);
 }
 
 export function deriveFollowSections(
 	progress: PatternProgress | undefined,
-	pattern: Pattern,
+	pattern: ChartPattern,
 	mode: FollowMode,
 ): FollowSection[] {
 	const unitsDone = progress?.unitsDone ?? 0;
@@ -212,7 +212,7 @@ export function canUndoFollow(progress: PatternProgress | undefined): boolean {
 
 export function resolveFollowContext(
 	ref: PatternReference,
-	pattern: Pattern,
+	pattern: ChartPattern,
 ): {
 	mode: FollowMode;
 	display: UnitDisplay | null;

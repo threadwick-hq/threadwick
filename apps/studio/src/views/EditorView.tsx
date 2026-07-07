@@ -322,7 +322,7 @@ function HowItWorks() {
 
 // The palette is contextual: on the Start row you pick a starting stitch; on any
 // working row you pick a normal stitch.
-function Palette({ pat, chrome, ctrl }: { pat: import('@threadwick/editor').Pattern; chrome: Chrome; ctrl: React.MutableRefObject<CanvasController | null>; }) {
+function Palette({ pat, chrome, ctrl }: { pat: import('@threadwick/editor').ChartPattern; chrome: Chrome; ctrl: React.MutableRefObject<CanvasController | null>; }) {
   const s = useStore();
   const onStart = isStartRow(pat, pat.activeRound);
   if (onStart) {
@@ -356,7 +356,7 @@ function Palette({ pat, chrome, ctrl }: { pat: import('@threadwick/editor').Patt
   );
 }
 
-function Inspector({ pat, ctrl, readOnly }: { pat: import('@threadwick/editor').Pattern; ctrl: React.MutableRefObject<CanvasController | null>; readOnly?: boolean; }) {
+function Inspector({ pat, ctrl, readOnly }: { pat: import('@threadwick/editor').ChartPattern; ctrl: React.MutableRefObject<CanvasController | null>; readOnly?: boolean; }) {
   const s = useStore();
   const sel = [...s.selection];
   const items = sel.map((id) => pat.stitches.find((x) => x.id === id)).filter(Boolean) as Stitch[];
@@ -427,7 +427,7 @@ function Inspector({ pat, ctrl, readOnly }: { pat: import('@threadwick/editor').
   );
 }
 
-function Legend({ pat }: { pat: import('@threadwick/editor').Pattern }) {
+function Legend({ pat }: { pat: import('@threadwick/editor').ChartPattern }) {
   const seen = usedTypes(pat.stitches);
   if (!seen.length) return <p className="muted small">Place a stitch to build the legend.</p>;
   return (
@@ -439,7 +439,7 @@ function Legend({ pat }: { pat: import('@threadwick/editor').Pattern }) {
   );
 }
 
-function ExportModal({ pattern, onClose }: { pattern: import('@threadwick/editor').Pattern; onClose: () => void }) {
+function ExportModal({ pattern, onClose }: { pattern: import('@threadwick/editor').ChartPattern; onClose: () => void }) {
   const [format, setFormat] = useState<'svg' | 'png' | 'pdf'>('svg');
   const [title, setTitle] = useState(true);
   const [legend, setLegend] = useState(true);

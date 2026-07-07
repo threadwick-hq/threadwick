@@ -2,6 +2,10 @@
 // Public barrel: the DOM-free model, renderer, connectivity, symbols, geometry, palette,
 // sample, and the read primitives (chainOrder, spacesForRound, chartToSVG, stitchToSVG,
 // summarizeRound) the Studio editor and the Follow view consume.
+//
+// The name `Pattern` is deliberately NOT exported here: the chart model is `ChartPattern`,
+// and the freed name is the Phase 7 seam — once model unification lands, this barrel
+// re-exports the authoring `Pattern` from @threadwick/types under its own name.
 
 export * from './colors';
 export * from './connectivity';

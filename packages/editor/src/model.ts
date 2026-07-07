@@ -7,7 +7,7 @@ import type {
 	Base,
 	FollowMode,
 	MakerStatus,
-	Pattern,
+	ChartPattern,
 	PatternKind,
 	PatternProgress,
 	PatternReference,
@@ -68,7 +68,7 @@ export function newRound(name?: string): Round {
 export function newPattern(
 	name?: string,
 	type: PatternKind = 'granny',
-): Pattern {
+): ChartPattern {
 	const startRow: Round = { id: uid('rnd'), name: 'Start' };
 	const r1 = newRound('Round 1');
 	return {
@@ -200,7 +200,7 @@ function normalizeStitch(s: any): Stitch | null {
 	};
 }
 
-export function normalizePattern(p: any = {}): Pattern {
+export function normalizePattern(p: any = {}): ChartPattern {
 	const pat = newPattern(
 		p.name,
 		PATTERN_TYPES[p.type as PatternKind] ? p.type : 'granny',
@@ -551,19 +551,19 @@ export function normalizeProject(p: any = {}): Project {
 // rounds[0] is always the Start row: it exists from creation and holds only the
 // start marker; the working rows follow it. These helpers treat rounds[0] as
 // the Start row.
-export function startRowId(pat: Pattern): string | null {
+export function startRowId(pat: ChartPattern): string | null {
 	return pat.rounds[0] ? pat.rounds[0].id : null;
 }
-export function isStartRow(pat: Pattern, roundId: string | null): boolean {
+export function isStartRow(pat: ChartPattern, roundId: string | null): boolean {
 	return roundId != null && pat.rounds[0]?.id === roundId;
 }
-export function hasStart(pat: Pattern): boolean {
+export function hasStart(pat: ChartPattern): boolean {
 	return pat.stitches.some((s) => isStart(s.type));
 }
 
 // Guarantee a "Start" row at index 0 (holding only the start marker, if any),
 // plus at least one working row after it. Migrates older data.
-export function ensureStartRow(pat: Pattern): void {
+export function ensureStartRow(pat: ChartPattern): void {
 	const start = pat.stitches.find((s) => isStart(s.type));
 	if (start) {
 		const inSame = pat.stitches.filter((s) => s.round === start.round);

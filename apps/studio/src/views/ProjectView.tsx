@@ -24,7 +24,7 @@ import { VersionTag } from '../components/VersionTag';
 import { statusLabel } from '../components/versionStatus';
 import { exportProjectFile, printProject } from '@threadwick/editor/browser';
 import { PATTERN_TYPES, activeVersion, isPlaceholderName } from '@threadwick/editor';
-import type { ProjectVersion, Pattern, ResourceKind, Yarn, LinkRes, NoteRes, VariationRes } from '@threadwick/editor';
+import type { ProjectVersion, ChartPattern, ResourceKind, Yarn, LinkRes, NoteRes, VariationRes } from '@threadwick/editor';
 
 const RES_META: Record<ResourceKind, { title: string; add: string; empty: string; Icon: ComponentType }> = {
   yarns: { title: 'Yarns', add: 'Yarn', empty: 'Track the yarns you used — brand, weight, colour.', Icon: YarnIcon },
@@ -188,7 +188,7 @@ export function ProjectView() {
             </div>
           ) : (
             <div className="card-grid">
-              {ver.patterns.map((pat: Pattern) => (
+              {ver.patterns.map((pat: ChartPattern) => (
                 <Card key={pat.id} className="proj-card">
                   <div className="card-cover" onClick={() => s.openPattern(prj.id, pat.id)}><Thumb pattern={pat} /></div>
                   <CardContent className="p-[14px]">

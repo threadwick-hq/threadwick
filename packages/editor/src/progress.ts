@@ -15,7 +15,7 @@ import {
 	totalUnits,
 	unitAddressRow,
 } from './decomposition';
-import type { Pattern, Project } from './types';
+import type { ChartPattern, Project } from './types';
 import { nowISO } from './util';
 
 export interface ProjectProgressAggregate {
@@ -53,7 +53,7 @@ export function effectiveFollowMode(ref: PatternReference): FollowMode {
 
 /** Flatten all follow Units for a chart pattern at the given mode. */
 export function flattenFollowUnits(
-	pattern: Pattern,
+	pattern: ChartPattern,
 	mode: FollowMode,
 ): FollowUnit[] {
 	if (mode === 'checklist') {
@@ -82,7 +82,7 @@ function freshProgress(unitsTotal: number): PatternProgress {
 /** Derive counter-pill context for the cursor (never stored). */
 export function deriveUnitDisplay(
 	progress: PatternProgress | undefined,
-	pattern: Pattern,
+	pattern: ChartPattern,
 	mode: FollowMode,
 ): UnitDisplay | null {
 	if (progress?.completed) return null;
@@ -116,7 +116,7 @@ function withTimestamp(progress: PatternProgress): PatternProgress {
 /** Advance one Unit; returns a new progress snapshot (immutable). */
 export function advancePatternProgress(
 	progress: PatternProgress | undefined,
-	pattern: Pattern,
+	pattern: ChartPattern,
 	mode: FollowMode,
 ): PatternProgress {
 	if (progress?.completed) return progress;
@@ -171,7 +171,7 @@ export function advancePatternProgress(
 /** Undo one advance step; no-op at the start frontier. */
 export function undoPatternProgress(
 	progress: PatternProgress | undefined,
-	pattern: Pattern,
+	pattern: ChartPattern,
 	mode: FollowMode,
 ): PatternProgress {
 	if (!progress || progress.unitsDone <= 0) {
@@ -203,7 +203,7 @@ export function undoPatternProgress(
 
 function refUnitsDone(
 	ref: PatternReference,
-	_resolvePattern: (patternId: string) => Pattern | undefined,
+	_resolvePattern: (patternId: string) => ChartPattern | undefined,
 ): number {
 	if (ref.progress?.completed) {
 		return ref.progress.unitsTotal ?? ref.progress.unitsDone;
@@ -213,7 +213,7 @@ function refUnitsDone(
 
 function refUnitsTotal(
 	ref: PatternReference,
-	resolvePattern: (patternId: string) => Pattern | undefined,
+	resolvePattern: (patternId: string) => ChartPattern | undefined,
 ): number {
 	if (ref.progress?.unitsTotal != null) return ref.progress.unitsTotal;
 	if (ref.source !== 'threadwick') {
@@ -235,7 +235,7 @@ function refUnitsTotal(
 /** Sum per-pattern progress into project-level aggregates (derived, never stored). */
 export function aggregateProjectProgress(
 	project: Project,
-	resolvePattern: (patternId: string) => Pattern | undefined,
+	resolvePattern: (patternId: string) => ChartPattern | undefined,
 ): ProjectProgressAggregate {
 	const refs = project.makePatterns ?? [];
 	let unitsDone = 0;

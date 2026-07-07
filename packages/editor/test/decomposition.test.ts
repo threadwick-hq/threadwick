@@ -10,10 +10,10 @@ import {
 	totalUnits,
 } from '../src/index';
 import { activeVersion, newPattern } from '../src/model';
-import type { Pattern, Stitch } from '../src/types';
+import type { ChartPattern, Stitch } from '../src/types';
 import { uid } from '../src/util';
 
-function patFromSample(): Pattern {
+function patFromSample(): ChartPattern {
 	const prj = sampleProject();
 	return activeVersion(prj).patterns[0]!;
 }
