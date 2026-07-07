@@ -65,7 +65,6 @@ release it in bulk. Untriaged issues are invisible to `next`/`claim`.
 | `packages/editor` | Chart core (model, store, canvas, files I/O) |
 | `packages/core` | Design tokens, theme, shared UI — [`packages/core/AGENTS.md`](packages/core/AGENTS.md) |
 | `packages/types` | Pattern content model + JSON Schema |
-| `packages/org` | Org canon and vocabulary |
 
 ## Invariants
 
