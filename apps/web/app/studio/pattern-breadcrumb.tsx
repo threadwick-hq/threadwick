@@ -9,7 +9,11 @@ import {
 import { Icon } from '@threadwick/icons';
 import { Link } from 'react-router';
 
-export function PatternInteriorBreadcrumb({ patternName }: { patternName: string }) {
+export function PatternInteriorBreadcrumb({
+	patternName,
+}: {
+	patternName: string;
+}) {
 	return (
 		<Breadcrumb className="px-2 pb-1 pt-0.5">
 			<BreadcrumbList className="text-[11px]">

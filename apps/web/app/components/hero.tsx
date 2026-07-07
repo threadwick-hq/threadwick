@@ -3,7 +3,10 @@ import { OpenStudioButton } from './open-studio-button';
 
 export function Hero() {
 	return (
-		<section aria-labelledby="hero-title" className="mx-auto max-w-5xl px-6 py-20 sm:py-28">
+		<section
+			aria-labelledby="hero-title"
+			className="mx-auto max-w-5xl px-6 py-20 sm:py-28"
+		>
 			<div className="max-w-3xl">
 				<p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
 					Fair tools for fiber artists &amp; makers
@@ -17,8 +20,9 @@ export function Hero() {
 				</h1>
 
 				<p className="mt-5 max-w-xl text-lg text-muted-foreground">
-					Threadwick Studio is where you chart your designs stitch by stitch — and keep every
-					project&rsquo;s patterns, yarns, links and notes together in one tidy place.
+					Threadwick Studio is where you chart your designs stitch by stitch —
+					and keep every project&rsquo;s patterns, yarns, links and notes
+					together in one tidy place.
 				</p>
 
 				<div className="mt-8 flex flex-wrap items-center gap-4">
@@ -30,8 +34,12 @@ export function Hero() {
 				</div>
 
 				<p className="mt-5 text-sm text-muted-foreground">
-					Fair by design — free to use, no lock-in, and selling through us is always optional.{' '}
-					<a href="#promise" className="font-medium text-primary underline-offset-4 hover:underline">
+					Fair by design — free to use, no lock-in, and selling through us is
+					always optional.{' '}
+					<a
+						href="#promise"
+						className="font-medium text-primary underline-offset-4 hover:underline"
+					>
 						Our promise &rarr;
 					</a>
 				</p>

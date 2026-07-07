@@ -1,4 +1,3 @@
-import { Link, useParams } from 'react-router';
 import {
 	CounterPillRow,
 	ExternalSourcePane,
@@ -10,7 +9,6 @@ import {
 	useFollowSplitLayout,
 	useWakeLock,
 } from '@threadwick/core/components';
-import { FollowChartPane } from './follow-chart-pane';
 import {
 	activeVersion,
 	hasStructuredChartData,
@@ -20,6 +18,8 @@ import {
 	segmentsFromInstructionLine,
 } from '@threadwick/editor';
 import { Icon } from '@threadwick/icons';
+import { Link, useParams } from 'react-router';
+import { FollowChartPane } from './follow-chart-pane';
 import { useStudioStore } from './studio-store';
 
 /**
@@ -125,9 +125,7 @@ export function FollowMount() {
 						label={ref.label}
 						sourceLabel={ctx.sourceLabel}
 						sourceHref={ctx.sourceHref}
-						designer={
-							ref.designer ? `by ${ref.designer}` : undefined
-						}
+						designer={ref.designer ? `by ${ref.designer}` : undefined}
 						className="[@media(min-width:768px)_and_(orientation:landscape)]:h-full lg:h-full"
 					/>
 				}
@@ -144,9 +142,7 @@ export function FollowMount() {
 							onAction={() => store.advanceFollow(ref.id)}
 							onUndo={() => store.undoFollow(ref.id)}
 							className={
-								splitLayout
-									? 'px-4 pb-2 pt-0 md:px-0 md:pb-0'
-									: undefined
+								splitLayout ? 'px-4 pb-2 pt-0 md:px-0 md:pb-0' : undefined
 							}
 						/>
 						{(ref.progress?.unitsDone ?? 0) > 0 &&
@@ -258,11 +254,7 @@ export function FollowMount() {
 					layout={splitLayout ? 'inline' : 'stacked'}
 					onAction={() => store.advanceFollow(ref.id)}
 					onUndo={() => store.undoFollow(ref.id)}
-					className={
-						splitLayout
-							? 'px-4 pb-4 pt-0 md:px-0 md:pb-0'
-							: undefined
-					}
+					className={splitLayout ? 'px-4 pb-4 pt-0 md:px-0 md:pb-0' : undefined}
 				/>
 			}
 		/>

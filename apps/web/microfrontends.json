@@ -1,17 +1,17 @@
 {
-  "$schema": "https://openapi.vercel.sh/microfrontends.json",
-  "applications": {
-    "threadwick-home": {
-      "development": {
-        "fallback": "threadwick-home.vercel.app"
-      }
-    },
-    "threadwick-studio": {
-      "routing": [
-        {
-          "paths": ["/studio", "/studio/:path*"]
-        }
-      ]
-    }
-  }
+	"$schema": "https://openapi.vercel.sh/microfrontends.json",
+	"applications": {
+		"threadwick-home": {
+			"development": {
+				"fallback": "threadwick-home.vercel.app"
+			}
+		},
+		"threadwick-studio": {
+			"routing": [
+				{
+					"paths": ["/studio", "/studio/:path*"]
+				}
+			]
+		}
+	}
 }

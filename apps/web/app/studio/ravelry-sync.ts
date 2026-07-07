@@ -1,9 +1,9 @@
 import { isRavelryEnabled } from '@threadwick/core/capabilities';
 import {
-	makerStatusToRavelry,
-	ravelryStatusToMaker,
 	type MakerStatus,
+	makerStatusToRavelry,
 	type RavelryStatus,
+	ravelryStatusToMaker,
 } from '@threadwick/types';
 
 /** In-memory fixture store — live Ravelry API lands in a later task. */

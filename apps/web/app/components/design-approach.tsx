@@ -1,4 +1,10 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@threadwick/core/components';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@threadwick/core/components';
 import { Icon } from '@threadwick/icons';
 import { useState } from 'react';
 import type { CrochetRegion } from '../data/stitches';
@@ -15,7 +21,11 @@ export function DesignApproach() {
 	const [region, setRegion] = useState<CrochetRegion>('US');
 
 	return (
-		<section id="design-approach" aria-labelledby="approach-title" className="border-y border-border bg-card">
+		<section
+			id="design-approach"
+			aria-labelledby="approach-title"
+			className="border-y border-border bg-card"
+		>
 			<div className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
 				<div className="grid items-center gap-10 md:grid-cols-[13fr_11fr]">
 					{/* Text is first in the DOM (mobile reads heading-first); desktop puts the tiles left. */}
@@ -35,7 +45,9 @@ export function DesignApproach() {
 									>
 										<Icon name="confirm" label="" />
 									</span>
-									<span className="text-base text-muted-foreground">{point}</span>
+									<span className="text-base text-muted-foreground">
+										{point}
+									</span>
 								</li>
 							))}
 						</ul>
@@ -43,9 +55,19 @@ export function DesignApproach() {
 
 					<div className="md:order-1">
 						<div className="mb-3.5 flex flex-wrap items-center justify-between gap-3">
-							<h3 className="text-base font-medium text-foreground">The symbols you’ll see</h3>
-							<Select value={region} onValueChange={(value) => setRegion(value === 'UK' ? 'UK' : 'US')}>
-								<SelectTrigger className="w-28" aria-label="Choose crochet terminology">
+							<h3 className="text-base font-medium text-foreground">
+								The symbols you’ll see
+							</h3>
+							<Select
+								value={region}
+								onValueChange={(value) =>
+									setRegion(value === 'UK' ? 'UK' : 'US')
+								}
+							>
+								<SelectTrigger
+									className="w-28"
+									aria-label="Choose crochet terminology"
+								>
 									<SelectValue />
 								</SelectTrigger>
 								<SelectContent>
