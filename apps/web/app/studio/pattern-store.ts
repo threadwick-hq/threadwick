@@ -6,58 +6,52 @@ import {
 	setActivePatternVersion,
 } from '@threadwick/editor';
 import type { Pattern } from '@threadwick/types';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { createLocalStore } from '../lib/create-local-store';
 
 const STORAGE_KEY = 'threadwick.workbench.patterns.v1';
 
 type PatternLibrary = { patterns: Pattern[] };
 
-function loadPatterns(): PatternLibrary {
-	if (typeof localStorage === 'undefined') return { patterns: [] };
-	try {
-		const raw = localStorage.getItem(STORAGE_KEY);
-		if (!raw) return { patterns: [] };
-		const parsed = JSON.parse(raw) as PatternLibrary;
-		if (!parsed?.patterns || !Array.isArray(parsed.patterns))
-			return { patterns: [] };
-		return parsed;
-	} catch {
-		return { patterns: [] };
-	}
+function isPatternLibrary(value: unknown): value is PatternLibrary {
+	if (typeof value !== 'object' || value === null) return false;
+	if (!('patterns' in value)) return false;
+	return Array.isArray(value.patterns);
 }
 
-function savePatterns(library: PatternLibrary) {
-	localStorage.setItem(STORAGE_KEY, JSON.stringify(library));
-}
-
-let library = loadPatterns();
-const listeners = new Set<() => void>();
-
-function notify() {
-	for (const listener of listeners) listener();
-}
+const patternLibraryStore = createLocalStore<PatternLibrary>({
+	storageKey: STORAGE_KEY,
+	seed: () => ({ patterns: [] }),
+	isValid: isPatternLibrary,
+});
 
 function ensureSeed() {
-	if (library.patterns.length === 0) {
-		library = { patterns: [sampleWorkbenchPattern()] };
-		savePatterns(library);
+	if (patternLibraryStore.getSnapshot().patterns.length === 0) {
+		patternLibraryStore.update(
+			() => ({ patterns: [sampleWorkbenchPattern()] }),
+			{ notify: false },
+		);
 	}
 }
 
 export function getPattern(id: string): Pattern | undefined {
 	ensureSeed();
-	return library.patterns.find((p) => p.id === id);
+	return patternLibraryStore
+		.getSnapshot()
+		.patterns.find((pattern) => pattern.id === id);
 }
 
 export function updatePattern(id: string, patch: Partial<Omit<Pattern, 'id'>>) {
 	ensureSeed();
-	const index = library.patterns.findIndex((p) => p.id === id);
-	if (index < 0) return;
-	const current = library.patterns[index];
-	if (!current) return;
-	library.patterns[index] = { ...current, ...patch, id: current.id };
-	savePatterns(library);
-	notify();
+	const existing = patternLibraryStore
+		.getSnapshot()
+		.patterns.find((pattern) => pattern.id === id);
+	if (!existing) return;
+	patternLibraryStore.update((library) => ({
+		patterns: library.patterns.map((pattern) =>
+			pattern.id === id ? { ...existing, ...patch, id: existing.id } : pattern,
+		),
+	}));
 }
 
 export function updatePatternOverview(
@@ -88,9 +82,9 @@ export function startPatternDraft(id: string) {
 }
 
 function addRemixedPattern(remixed: Pattern): Pattern {
-	library = { patterns: [...library.patterns, remixed] };
-	savePatterns(library);
-	notify();
+	patternLibraryStore.update((library) => ({
+		patterns: [...library.patterns, remixed],
+	}));
 	return remixed;
 }
 
@@ -106,16 +100,10 @@ export function remixCatalogPattern(catalogPattern: Pattern): Pattern {
 
 /** Subscribe to workbench pattern library changes. */
 export function usePatternLibrary(): Pattern[] {
-	const [, bump] = useState(0);
 	useEffect(() => {
 		ensureSeed();
-		const listener = () => bump((n) => n + 1);
-		listeners.add(listener);
-		return () => {
-			listeners.delete(listener);
-		};
 	}, []);
-	return library.patterns;
+	return patternLibraryStore.use().patterns;
 }
 
 export function usePattern(id: string | undefined): Pattern | undefined {
