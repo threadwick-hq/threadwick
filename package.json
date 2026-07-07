@@ -12,7 +12,7 @@
 		"test": "turbo run test",
 		"check": "turbo run typecheck lint test",
 		"work": "tsx scripts/work-issues.ts",
-		"test:scripts": "vitest run",
+		"test:scripts": "vitest run --config vitest.config.scripts.ts",
 		"typecheck:scripts": "tsc --noEmit"
 	},
 	"devDependencies": {

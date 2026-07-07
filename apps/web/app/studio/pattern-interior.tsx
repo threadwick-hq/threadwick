@@ -12,8 +12,6 @@ import {
 	activePatternVersion,
 	componentArtifactLinks,
 	formatPatternPrice,
-	patternMakerPrimaryAction,
-	patternMakerPrimaryActionLabel,
 	patternMeetsPublishFloor,
 	patternPublishAction,
 	patternPublishActionLabel,
@@ -21,13 +19,13 @@ import {
 	patternVersionStatusLabel,
 	patternVisibilityLabel,
 } from '@threadwick/editor';
-import type { Pattern, PatternOwnership } from '@threadwick/types';
 import { Icon } from '@threadwick/icons';
+import type { Pattern, PatternOwnership } from '@threadwick/types';
 import { useCallback, useMemo } from 'react';
 import { Link, Outlet, useNavigate, useParams } from 'react-router';
 import { InteriorChromeSlot } from './interior-chrome';
-import { usePatternInteriorMode, usePatternPaidDemo } from './pattern-mode';
 import { PatternInteriorBreadcrumb } from './pattern-breadcrumb';
+import { usePatternInteriorMode, usePatternPaidDemo } from './pattern-mode';
 import {
 	getPatternListing,
 	getPatternOwnership,
@@ -46,12 +44,12 @@ import {
 	usePattern,
 } from './pattern-store';
 import { PatternViewBreadcrumb } from './pattern-view-breadcrumb';
-import { startMakingFromPattern } from './start-making';
 import {
 	ProjectRailAddButton,
 	ProjectRailLink,
 	ProjectRailSectionLabel,
 } from './project-rail';
+import { startMakingFromPattern } from './start-making';
 
 export type PatternInteriorOutletContext = {
 	mode: 'view' | 'edit';
@@ -62,7 +60,9 @@ export type PatternInteriorOutletContext = {
 };
 
 function visibilityDotClass(pattern: Pattern): string {
-	return pattern.versioning?.visibility === 'published' ? 'bg-emerald-500' : 'bg-muted-foreground';
+	return pattern.versioning?.visibility === 'published'
+		? 'bg-emerald-500'
+		: 'bg-muted-foreground';
 }
 
 function viewPricePillLabel(
@@ -105,10 +105,15 @@ function PatternViewIdentityTile({
 					{pattern.overview.name}
 				</span>
 				{handle ? (
-					<span className="block truncate text-[11px] text-muted-foreground">{handle}</span>
+					<span className="block truncate text-[11px] text-muted-foreground">
+						{handle}
+					</span>
 				) : null}
 			</span>
-			<Badge variant="secondary" className="h-5 shrink-0 px-1.5 text-[10.5px] font-normal">
+			<Badge
+				variant="secondary"
+				className="h-5 shrink-0 px-1.5 text-[10.5px] font-normal"
+			>
 				{viewPricePillLabel(listing, ownership)}
 			</Badge>
 			<Button
@@ -140,7 +145,9 @@ function PatternVersionSwitcherTile({
 	const navigate = useNavigate();
 	const version = activePatternVersion(pattern);
 	const versionLabel = version?.label ?? 'v1';
-	const versionStatus = version ? patternVersionStatusLabel(version.status) : 'draft';
+	const versionStatus = version
+		? patternVersionStatusLabel(version.status)
+		: 'draft';
 	const publishAction = patternPublishAction(pattern);
 	const publishLabel = patternPublishActionLabel(publishAction);
 	const canPublish =
@@ -193,7 +200,9 @@ function PatternVersionSwitcherTile({
 			versionStatus={versionStatus}
 			versions={versions}
 			activeVersionId={pattern.versioning?.activeVersionId}
-			onVersionChange={(versionId) => setPatternActiveVersion(patternId, versionId)}
+			onVersionChange={(versionId) =>
+				setPatternActiveVersion(patternId, versionId)
+			}
 			primaryAction={
 				canPublish || floorMissing.length === 0 ? (
 					publishButton
@@ -232,9 +241,16 @@ function PatternInteriorRail({
 	viewMode: boolean;
 }) {
 	return (
-		<nav aria-label="Pattern sections" className="flex min-h-0 flex-1 flex-col px-2 py-2">
+		<nav
+			aria-label="Pattern sections"
+			className="flex min-h-0 flex-1 flex-col px-2 py-2"
+		>
 			<ProjectRailLink
-				to={viewMode ? `/studio/patterns/${patternId}?view=1` : `/studio/patterns/${patternId}`}
+				to={
+					viewMode
+						? `/studio/patterns/${patternId}?view=1`
+						: `/studio/patterns/${patternId}`
+				}
 				icon="home"
 				label="Overview"
 				end
@@ -242,7 +258,9 @@ function PatternInteriorRail({
 			<ProjectRailSectionLabel>
 				<span className="flex w-full items-center">
 					Components
-					<span className="ml-auto tabular-nums">{pattern.components.length}</span>
+					<span className="ml-auto tabular-nums">
+						{pattern.components.length}
+					</span>
 					{viewMode ? null : (
 						<Icon name="add" label="" className="ml-1.5 size-3.5 opacity-60" />
 					)}
@@ -327,10 +345,22 @@ function PatternEditChrome({
 					}
 				/>
 			),
-			breadcrumb: <PatternInteriorBreadcrumb patternName={pattern.overview.name} />,
-			rail: <PatternInteriorRail pattern={pattern} patternId={patternId} viewMode={false} />,
+			breadcrumb: (
+				<PatternInteriorBreadcrumb patternName={pattern.overview.name} />
+			),
+			rail: (
+				<PatternInteriorRail
+					pattern={pattern}
+					patternId={patternId}
+					viewMode={false}
+				/>
+			),
 			pinnedTile: (
-				<PatternVersionSwitcherTile pattern={pattern} patternId={patternId} showActions />
+				<PatternVersionSwitcherTile
+					pattern={pattern}
+					patternId={patternId}
+					showActions
+				/>
 			),
 		}),
 		[pattern, patternId],
@@ -368,7 +398,9 @@ function PatternViewChrome({
 				/>
 			),
 			breadcrumb: <PatternViewBreadcrumb patternName={pattern.overview.name} />,
-			rail: <PatternInteriorRail pattern={pattern} patternId={patternId} viewMode />,
+			rail: (
+				<PatternInteriorRail pattern={pattern} patternId={patternId} viewMode />
+			),
 			pinnedTile: (
 				<PatternVersionSwitcherTile
 					pattern={pattern}
@@ -400,7 +432,8 @@ export function PatternInteriorMount() {
 	usePatternMarketplaceState();
 
 	const workbenchPattern = usePattern(mode === 'edit' ? patternId : undefined);
-	const viewPattern = mode === 'view' && patternId ? resolveViewPattern(patternId) : undefined;
+	const viewPattern =
+		mode === 'view' && patternId ? resolveViewPattern(patternId) : undefined;
 	const pattern = mode === 'view' ? viewPattern : workbenchPattern;
 
 	const listing =
@@ -419,7 +452,9 @@ export function PatternInteriorMount() {
 	const onRemix = useCallback(() => {
 		if (!pattern) return;
 		const remixed =
-			mode === 'view' ? remixCatalogPattern(pattern) : remixWorkbenchPattern(pattern.id);
+			mode === 'view'
+				? remixCatalogPattern(pattern)
+				: remixWorkbenchPattern(pattern.id);
 		if (remixed) navigate(`/studio/patterns/${remixed.id}`);
 	}, [mode, navigate, pattern]);
 
@@ -444,7 +479,9 @@ export function PatternInteriorMount() {
 
 	if (!patternId) {
 		return (
-			<div className="px-6 py-8 text-sm text-muted-foreground">Missing pattern id.</div>
+			<div className="px-6 py-8 text-sm text-muted-foreground">
+				Missing pattern id.
+			</div>
 		);
 	}
 

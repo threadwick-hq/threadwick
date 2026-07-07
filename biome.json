@@ -5,8 +5,8 @@
 		"ignoreUnknown": true,
 		"includes": [
 			"**",
-			"!apps/web/**",
 			"!apps/studio/**",
+			"!apps/web/public/**",
 			"!packages/core/src/styles/theme.css"
 		]
 	},
@@ -25,6 +25,9 @@
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab"
+	},
+	"css": {
+		"parser": { "tailwindDirectives": true }
 	},
 	"javascript": {
 		"formatter": {

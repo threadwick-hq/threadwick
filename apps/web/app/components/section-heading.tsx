@@ -9,12 +9,20 @@ type SectionHeadingProps = {
 };
 
 /** Consistent section header: eyebrow + <h2> (anchor target) + optional lead. */
-export function SectionHeading({ id, eyebrow, title, lead, align = 'left' }: SectionHeadingProps) {
+export function SectionHeading({
+	id,
+	eyebrow,
+	title,
+	lead,
+	align = 'left',
+}: SectionHeadingProps) {
 	const centered = align === 'center';
 	return (
 		<div className={cn('mb-10', centered && 'mx-auto max-w-2xl text-center')}>
 			{eyebrow ? (
-				<p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-primary">{eyebrow}</p>
+				<p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-primary">
+					{eyebrow}
+				</p>
 			) : null}
 			<h2
 				id={id}
@@ -23,7 +31,14 @@ export function SectionHeading({ id, eyebrow, title, lead, align = 'left' }: Sec
 				{title}
 			</h2>
 			{lead ? (
-				<p className={cn('mt-3.5 max-w-xl text-lg text-muted-foreground', centered && 'mx-auto')}>{lead}</p>
+				<p
+					className={cn(
+						'mt-3.5 max-w-xl text-lg text-muted-foreground',
+						centered && 'mx-auto',
+					)}
+				>
+					{lead}
+				</p>
 			) : null}
 		</div>
 	);

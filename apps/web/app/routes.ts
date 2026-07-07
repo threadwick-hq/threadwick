@@ -1,4 +1,9 @@
-import { type RouteConfig, index, layout, route } from '@react-router/dev/routes';
+import {
+	index,
+	layout,
+	type RouteConfig,
+	route,
+} from '@react-router/dev/routes';
 
 export default [
 	// Public marketing site (streaming SSR) under its own header/footer chrome.

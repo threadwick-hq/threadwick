@@ -1,6 +1,6 @@
+import { Button } from '@threadwick/core/components';
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router';
-import { Button } from '@threadwick/core/components';
 import { ensureStudioStore, useStudioStore } from './studio-store';
 
 function FollowEntry() {
@@ -35,7 +35,10 @@ export function EditorMount() {
 		let dispose = () => {};
 
 		void (async () => {
-			const [store, browser] = await Promise.all([ensureStudioStore(), import('@threadwick/editor/browser')]);
+			const [store, browser] = await Promise.all([
+				ensureStudioStore(),
+				import('@threadwick/editor/browser'),
+			]);
 			if (!active) return;
 			const { initCanvas } = browser;
 
@@ -43,14 +46,18 @@ export function EditorMount() {
 			// (only when nothing is open yet — a re-mount keeps the current pattern).
 			const project = store.state.library.projects[0];
 			if (project && store.state.ui.view !== 'editor') {
-				const version = project.versions.find((v) => v.id === project.activeVersionId);
+				const version = project.versions.find(
+					(v) => v.id === project.activeVersionId,
+				);
 				const pattern = version?.patterns[0];
 				if (pattern) store.openPattern(project.id, pattern.id);
 			}
 
 			// Seed a make ref when the sample project has none yet.
 			if (project?.makePatterns?.length === 0) {
-				const version = project.versions.find((v) => v.id === project.activeVersionId);
+				const version = project.versions.find(
+					(v) => v.id === project.activeVersionId,
+				);
 				const pattern = version?.patterns[0];
 				if (pattern) store.addMakePatternRef(pattern.id);
 			}
