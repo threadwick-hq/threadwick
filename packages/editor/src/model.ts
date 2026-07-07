@@ -5,9 +5,9 @@
 import { isStart } from './symbols';
 import type {
 	Base,
+	ChartPattern,
 	FollowMode,
 	MakerStatus,
-	ChartPattern,
 	PatternKind,
 	PatternProgress,
 	PatternReference,

@@ -10,8 +10,8 @@ import {
 } from './progress';
 import { isStart, STITCHES } from './symbols';
 import type {
-	FollowMode,
 	ChartPattern,
+	FollowMode,
 	PatternProgress,
 	PatternReference,
 } from './types';

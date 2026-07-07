@@ -66,7 +66,10 @@ function roundById(pat: ChartPattern, roundId: string): Round | undefined {
 }
 
 /** Working stitches for a round in chain order (excludes start markers). */
-export function roundStitchOrder(pattern: ChartPattern, roundId: string): Stitch[] {
+export function roundStitchOrder(
+	pattern: ChartPattern,
+	roundId: string,
+): Stitch[] {
 	return chainOrder(pattern.stitches, roundId).filter((s) => !isStart(s.type));
 }
 

@@ -9,8 +9,8 @@ import {
 } from './external-follow';
 import type {
 	Base,
-	FollowMode,
 	ChartPattern,
+	FollowMode,
 	PatternReference,
 	Project,
 	ProjectVersion,

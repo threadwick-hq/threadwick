@@ -6,7 +6,7 @@ import { startRowId } from './model';
 import { flattenFollowUnits } from './progress';
 import { contentBounds, stitchToSVG } from './render';
 import { STITCHES } from './symbols';
-import type { FollowMode, ChartPattern, PatternProgress } from './types';
+import type { ChartPattern, FollowMode, PatternProgress } from './types';
 import { round } from './util';
 
 export type FollowStitchState =
