@@ -72,10 +72,7 @@ export function ErrorBoundary() {
 								Reload the studio
 							</button>
 						)}
-						<a
-							href="/studio"
-							className="text-sm underline underline-offset-4"
-						>
+						<a href="/studio" className="text-sm underline underline-offset-4">
 							Back to the studio home
 						</a>
 					</div>
