@@ -1,9 +1,9 @@
 import { chartToSVG, glyphSVG } from '@threadwick/editor';
-import type { Pattern } from '@threadwick/editor';
+import type { ChartPattern } from '@threadwick/editor';
 
 // A small, chrome-free chart preview for a card (or a placeholder glyph).
 // Decorative — the card's title carries the accessible name, so hide from AT.
-export function Thumb({ pattern }: { pattern?: Pattern }) {
+export function Thumb({ pattern }: { pattern?: ChartPattern }) {
   if (pattern && pattern.stitches.length) {
     const svg = chartToSVG(pattern, { legend: false, title: '', background: null, padding: 12 });
     return <div className="thumb" aria-hidden dangerouslySetInnerHTML={{ __html: svg }} />;

@@ -5,7 +5,14 @@
 import { INK } from './colors';
 import { rotatePoint } from './geometry';
 import { STITCHES } from './symbols';
-import type { Built, Pattern, Point, Shape, Stitch, StitchType } from './types';
+import type {
+	Built,
+	ChartPattern,
+	Point,
+	Shape,
+	Stitch,
+	StitchType,
+} from './types';
 import { escapeXML, round } from './util';
 
 export { INK };
@@ -284,7 +291,10 @@ export interface ChartOpts {
 	scale?: number;
 }
 
-export function chartToSVG(pattern: Pattern, opts: ChartOpts = {}): string {
+export function chartToSVG(
+	pattern: ChartPattern,
+	opts: ChartOpts = {},
+): string {
 	const {
 		padding = 30,
 		background = '#ffffff',
