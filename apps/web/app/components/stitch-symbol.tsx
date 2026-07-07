@@ -10,7 +10,12 @@ export function StitchGlyph({
 	color?: string;
 	strokeWidth?: number;
 }) {
-	const stroke = { stroke: color, strokeWidth, strokeLinecap: 'round' as const, fill: 'none' };
+	const stroke = {
+		stroke: color,
+		strokeWidth,
+		strokeLinecap: 'round' as const,
+		fill: 'none',
+	};
 
 	if (type === 'chain') {
 		return <ellipse cx={0} cy={0} rx={8} ry={5} {...stroke} />;
@@ -37,7 +42,15 @@ export function StitchGlyph({
 			<line x1={-5} y1={-8} x2={5} y2={-8} />
 			{Array.from({ length: slashes }).map((_, i) => {
 				const yc = start + i * gap;
-				return <line key={`${type}-${i}`} x1={-4.5} y1={yc - 2.4} x2={4.5} y2={yc + 2.4} />;
+				return (
+					<line
+						key={`slash-${yc}`}
+						x1={-4.5}
+						y1={yc - 2.4}
+						x2={4.5}
+						y2={yc + 2.4}
+					/>
+				);
 			})}
 		</g>
 	);

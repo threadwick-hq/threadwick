@@ -39,7 +39,11 @@ const FEATURES: Feature[] = [
 
 export function Features() {
 	return (
-		<section id="features" aria-labelledby="features-title" className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
+		<section
+			id="features"
+			aria-labelledby="features-title"
+			className="mx-auto max-w-5xl px-6 py-16 sm:py-20"
+		>
 			<SectionHeading
 				id="features-title"
 				eyebrow="What you get"
@@ -56,8 +60,12 @@ export function Features() {
 						>
 							<Icon name={feature.icon} label="" />
 						</span>
-						<h3 className="font-display text-lg font-medium text-foreground">{feature.title}</h3>
-						<p className="mt-2 text-sm leading-relaxed text-muted-foreground">{feature.body}</p>
+						<h3 className="font-display text-lg font-medium text-foreground">
+							{feature.title}
+						</h3>
+						<p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+							{feature.body}
+						</p>
 					</Card>
 				))}
 			</div>

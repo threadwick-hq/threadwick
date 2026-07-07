@@ -1,4 +1,4 @@
-import { STITCHES, type CrochetRegion, stitchName } from '../data/stitches';
+import { type CrochetRegion, STITCHES, stitchName } from '../data/stitches';
 import { StitchSymbol } from './stitch-symbol';
 
 /** A small grid pairing each crochet symbol with its name (US or UK term). */
