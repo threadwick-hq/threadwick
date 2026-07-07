@@ -12,9 +12,9 @@ human feedback) — never spec. Status is **derived from native GitHub state, ne
 closed reason (done/abandoned), unresolved blocked-by relationships (blocked), an open linked PR
 (review), assignment (active), otherwise backlog. The `pnpm run work` CLI
 ([`scripts/work-issues.ts`](scripts/work-issues.ts)) is the agent interface; humans use the
-GitHub UI and the "Threadwick Work" project board. One exception: a genuinely trivial fix (a
-typo, a one-line doc correction) may ship as a plain PR without an issue — anything touching
-behavior, config, or more than a few lines gets one.
+GitHub UI and the "Threadwick Work" project board. There are no exceptions: every PR carries a
+`Closes #<issue>` reference and CI's `work gate` enforces it — for a genuinely trivial fix,
+`work new` is one command and keeps the record intact.
 
 1. Run `pnpm run work list` — if an issue is already assigned to you, continue it
    (`pnpm run work show <n>`).
