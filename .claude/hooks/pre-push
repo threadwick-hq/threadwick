@@ -2,4 +2,5 @@
 # Git pre-push hook entry point — thin shim; the logic lives in pre-push.mjs
 # (shared helpers in lib/). Wired via: git config core.hooksPath .claude/hooks
 set -euo pipefail
-exec node "$(cd "$(dirname "$0")" && pwd)/pre-push.mjs"
+HOOK_SELF="$(command -v realpath >/dev/null 2>&1 && realpath "$0" || echo "$0")"
+exec node "$(cd "$(dirname "$HOOK_SELF")" && pwd)/pre-push.mjs"

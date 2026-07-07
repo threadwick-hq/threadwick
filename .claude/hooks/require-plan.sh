@@ -3,4 +3,5 @@
 # (shared helpers in lib/). The hook payload flows through on stdin.
 # Kept as .sh so settings.json wiring stays stable.
 set -euo pipefail
-exec node "$(cd "$(dirname "$0")" && pwd)/require-plan.mjs"
+HOOK_SELF="$(command -v realpath >/dev/null 2>&1 && realpath "$0" || echo "$0")"
+exec node "$(cd "$(dirname "$HOOK_SELF")" && pwd)/require-plan.mjs"
