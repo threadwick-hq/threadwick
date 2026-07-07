@@ -475,12 +475,28 @@ export function runGate(run: GhRunner, rest: string[]): void {
 	const prNumber =
 		prRaw === undefined ? Number.NaN : Number.parseInt(prRaw, 10);
 	if (!Number.isSafeInteger(prNumber)) usage('work gate --pr <number>');
-	const view = run(['pr', 'view', String(prNumber), '--json', 'body']);
+	const view = run(['pr', 'view', String(prNumber), '--json', 'body,author']);
 	if (!view.ok) {
 		fail(`cannot read PR #${prNumber}: ${ghFailureHint(view.error)}`);
 	}
 	const parsed = parseJson(view.value);
 	const body = isRecord(parsed) ? (getString(parsed, 'body') ?? '') : '';
+	// Bot-authored PRs (Dependabot bumps) are self-describing — the issue-first
+	// rule governs agent/human work, so the linkage requirement is waived. All
+	// other CI checks still gate them.
+	const author = isRecord(parsed) ? parsed['author'] : undefined;
+	const authorLogin = isRecord(author)
+		? (getString(author, 'login') ?? '')
+		: '';
+	const isBotAuthor =
+		(isRecord(author) && author['is_bot'] === true) ||
+		authorLogin.endsWith('[bot]');
+	if (isBotAuthor) {
+		console.log(
+			`work: gate ok — PR #${prNumber} is bot-authored (${authorLogin || 'unknown bot'}); issue linkage not required`,
+		);
+		return;
+	}
 	// GitHub's full auto-close keyword set; the documented convention is Closes.
 	const refs = [
 		...body.matchAll(/\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?) #(\d+)/gi),
