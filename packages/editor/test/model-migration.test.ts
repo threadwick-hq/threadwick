@@ -330,7 +330,7 @@ test('normalizeProject throws when a version carries resources: null (default pa
 			name: 'M',
 			versions: [{ label: 'v1', resources: null }],
 		});
-	});
+	}, TypeError); // pin the ACCIDENTAL crash specifically — a deliberate Phase 7 validation error would (rightly) fail this
 });
 
 test('normalizeProject enforces at most one Published version, demoting all but the most recent to Outdated', () => {
