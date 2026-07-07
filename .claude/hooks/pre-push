@@ -1,57 +1,6 @@
 #!/usr/bin/env bash
-# Git pre-push hook: blocks push when the viewer's assigned issue has an
-# unfilled Plan section (read from the shared work cache; no network).
-# Wired via: git config core.hooksPath .claude/hooks  (relative to worktree root)
+# Git pre-push hook entry point — thin shim; the logic lives in pre-push.mjs
+# (shared helpers in lib/). Wired via: git config core.hooksPath .claude/hooks
 set -euo pipefail
-
-CACHE_PATH="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
-if [ -z "$CACHE_PATH" ]; then exit 0; fi
-CACHE_PATH="$CACHE_PATH/work-cache.json"
-[ -f "$CACHE_PATH" ] || exit 0
-
-WORK_CACHE_PATH="$CACHE_PATH" node <<'NODE'
-const { readFileSync } = require('node:fs');
-
-let cache;
-try {
-	cache = JSON.parse(readFileSync(process.env.WORK_CACHE_PATH ?? '', 'utf8'));
-} catch {
-	process.exit(0); // unreadable cache never blocks a push
-}
-
-const snapshot = cache.snapshot ?? {};
-const issues = Array.isArray(snapshot.issues) ? snapshot.issues : [];
-const viewer = snapshot.viewerLogin ?? '';
-
-function planFilled(body) {
-	const lines = String(body ?? '').split('\n');
-	const start = lines.findIndex((l) => /^## Plan\s*$/.test(l));
-	if (start === -1) return false;
-	const end = lines.findIndex((l, i) => i > start && /^## /.test(l));
-	const section = lines
-		.slice(start + 1, end === -1 ? undefined : end)
-		.join('\n')
-		.trim();
-	return section.length > 0 && !section.startsWith('_Filled');
-}
-
-const active = issues.filter(
-	(issue) =>
-		issue.state === 'OPEN' &&
-		Array.isArray(issue.assignees) &&
-		issue.assignees.includes(viewer),
-);
-if (active.length === 0) process.exit(0);
-
-const unplanned = active.filter((issue) => !planFilled(issue.body));
-if (unplanned.length === active.length) {
-	process.stderr.write(
-		'pre-push: assigned issue(s) have an unfilled Plan — fill before pushing:\n' +
-			unplanned
-				.map((issue) => `  pnpm run work plan ${issue.number}`)
-				.join('\n') +
-			'\n',
-	);
-	process.exit(1);
-}
-NODE
+HOOK_SELF="$(command -v realpath >/dev/null 2>&1 && realpath "$0" || echo "$0")"
+exec node "$(cd "$(dirname "$HOOK_SELF")" && pwd)/pre-push.mjs"
