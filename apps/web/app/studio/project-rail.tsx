@@ -38,16 +38,24 @@ export function ProjectRailLink({
 			<Icon name={icon} label="" />
 			<span className="min-w-0 flex-1 truncate">{label}</span>
 			{meta ? (
-				<span className="max-w-[4.5rem] truncate text-[10px] text-muted-foreground/80">{meta}</span>
+				<span className="max-w-[4.5rem] truncate text-[10px] text-muted-foreground/80">
+					{meta}
+				</span>
 			) : null}
 			{count !== undefined ? (
-				<span className="text-[11px] tabular-nums text-muted-foreground/80">{count}%</span>
+				<span className="text-[11px] tabular-nums text-muted-foreground/80">
+					{count}%
+				</span>
 			) : null}
 		</NavLink>
 	);
 }
 
-export function ProjectRailSectionLabel({ children }: { children: React.ReactNode }) {
+export function ProjectRailSectionLabel({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
 	return (
 		<p className="px-2 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80">
 			{children}

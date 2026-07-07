@@ -20,13 +20,17 @@ type InteriorChromeContextValue = {
 	setChrome: (chrome: InteriorChrome | null) => void;
 };
 
-const InteriorChromeContext = createContext<InteriorChromeContextValue | null>(null);
+const InteriorChromeContext = createContext<InteriorChromeContextValue | null>(
+	null,
+);
 
 export function InteriorChromeProvider({ children }: { children: ReactNode }) {
 	const [chrome, setChrome] = useState<InteriorChrome | null>(null);
 	const value = useMemo(() => ({ chrome, setChrome }), [chrome]);
 	return (
-		<InteriorChromeContext.Provider value={value}>{children}</InteriorChromeContext.Provider>
+		<InteriorChromeContext.Provider value={value}>
+			{children}
+		</InteriorChromeContext.Provider>
 	);
 }
 

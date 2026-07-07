@@ -1,8 +1,7 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+@import "@threadwick/core/tokens.css";
+@import "@threadwick/core/theme.css";
 
 /* Scan @threadwick/core's components so Tailwind generates the utilities baked into them
    (workspace deps in node_modules are not auto-detected). */
-@source '../../../packages/core/src';
-
-@import '@threadwick/core/tokens.css';
-@import '@threadwick/core/theme.css';
+@source "../../../packages/core/src";

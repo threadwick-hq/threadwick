@@ -18,7 +18,8 @@ function loadPatterns(): PatternLibrary {
 		const raw = localStorage.getItem(STORAGE_KEY);
 		if (!raw) return { patterns: [] };
 		const parsed = JSON.parse(raw) as PatternLibrary;
-		if (!parsed?.patterns || !Array.isArray(parsed.patterns)) return { patterns: [] };
+		if (!parsed?.patterns || !Array.isArray(parsed.patterns))
+			return { patterns: [] };
 		return parsed;
 	} catch {
 		return { patterns: [] };

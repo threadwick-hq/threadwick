@@ -37,10 +37,24 @@ const FAQS: Faq[] = [
 
 export function Faq() {
 	return (
-		<section id="faq" aria-labelledby="faq-title" className="border-t border-border bg-card">
+		<section
+			id="faq"
+			aria-labelledby="faq-title"
+			className="border-t border-border bg-card"
+		>
 			<div className="mx-auto max-w-2xl px-6 py-16 sm:py-20">
-				<SectionHeading id="faq-title" eyebrow="Questions" title="Good to know" align="center" />
-				<Accordion type="single" collapsible defaultValue="faq-0" className="w-full">
+				<SectionHeading
+					id="faq-title"
+					eyebrow="Questions"
+					title="Good to know"
+					align="center"
+				/>
+				<Accordion
+					type="single"
+					collapsible
+					defaultValue="faq-0"
+					className="w-full"
+				>
 					{FAQS.map((faq, index) => (
 						<AccordionItem key={faq.q} value={`faq-${index}`}>
 							<AccordionTrigger>{faq.q}</AccordionTrigger>

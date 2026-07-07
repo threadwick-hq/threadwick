@@ -8,10 +8,10 @@ import {
 import {
 	aggregateProjectProgress,
 	continueMakingRef,
+	type Project,
 	projectOverviewKeyFacts,
 	projectOverviewMaterials,
 	projectOverviewSubtitle,
-	type Project,
 } from '@threadwick/editor';
 import { Link, useParams } from 'react-router';
 import {
@@ -24,7 +24,9 @@ import { useStudioStore } from '../../../studio/studio-store';
 
 function resolvePatternInProject(project: Project, patternId: string) {
 	for (const version of project.versions) {
-		const pattern = version.patterns.find((candidate) => candidate.id === patternId);
+		const pattern = version.patterns.find(
+			(candidate) => candidate.id === patternId,
+		);
 		if (pattern) return pattern;
 	}
 	return undefined;
@@ -33,16 +35,21 @@ function resolvePatternInProject(project: Project, patternId: string) {
 export default function ProjectOverview() {
 	const store = useStudioStore();
 	const { projectId } = useParams<{ projectId: string }>();
-	const project = store?.state.library.projects.find((candidate) => candidate.id === projectId);
+	const project = store?.state.library.projects.find(
+		(candidate) => candidate.id === projectId,
+	);
 	const status = project?.makerStatus ?? 'draft';
 
 	if (!store || !project || !projectId) {
 		return (
-			<div className="px-6 py-8 text-sm text-muted-foreground">Loading overview…</div>
+			<div className="px-6 py-8 text-sm text-muted-foreground">
+				Loading overview…
+			</div>
 		);
 	}
 
-	const resolvePattern = (patternId: string) => resolvePatternInProject(project, patternId);
+	const resolvePattern = (patternId: string) =>
+		resolvePatternInProject(project, patternId);
 	const aggregate = aggregateProjectProgress(project, resolvePattern);
 	const continueRef = continueMakingRef(project);
 	const continueHref = continueRef

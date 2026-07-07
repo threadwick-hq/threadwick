@@ -1,13 +1,13 @@
+import { cn } from '@threadwick/core/lib/utils';
 import {
-	resolveFollowChartContext,
-	stitchInspectInfo,
 	type FollowMode,
 	type Pattern,
 	type PatternProgress,
+	resolveFollowChartContext,
+	stitchInspectInfo,
 } from '@threadwick/editor';
 import { Icon } from '@threadwick/icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { cn } from '@threadwick/core/lib/utils';
 
 export type FollowChartPaneProps = {
 	pattern: Pattern;
@@ -102,6 +102,7 @@ export function FollowChartPane({
 
 	const progressKey = `${progress?.unitsDone ?? 0}:${progress?.cursor?.unitAddress ?? ''}`;
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: progressKey/mode are intentional triggers — progress or mode changes release a manual zoom back to auto-fit
 	useEffect(() => {
 		setUserAdjusted(false);
 	}, [progressKey, mode]);
@@ -124,6 +125,7 @@ export function FollowChartPane({
 		return () => ro.disconnect();
 	}, [applyFit, userAdjusted]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: chartCtx.svg is an intentional trigger — the innerHTML swap replaces the <svg> node, so the viewBox must be re-applied to the new element
 	useEffect(() => {
 		const svg = chartRef.current?.querySelector('svg');
 		if (!svg || !viewBox) return;
@@ -215,6 +217,8 @@ export function FollowChartPane({
 				role="application"
 				aria-label="Pattern chart — scroll to zoom, drag to pan, tap a stitch to inspect"
 			>
+				{/* biome-ignore lint/a11y/noStaticElementInteractions: click-delegation surface inside the role="application" wrapper above, which owns the interaction semantics */}
+				{/* biome-ignore lint/a11y/useKeyWithClickEvents: stitch inspection is pointer-driven today; a keyboard path needs chart-navigation design (Follow-view a11y follow-up) */}
 				<div
 					ref={chartRef}
 					className="h-full w-full [&_svg]:block [&_svg]:h-full [&_svg]:w-full [&_.stitch]:cursor-pointer"
@@ -227,7 +231,9 @@ export function FollowChartPane({
 						className="pointer-events-none absolute bottom-2 left-2 right-2 rounded-md border border-border bg-background/95 px-3 py-2 shadow-sm backdrop-blur-sm"
 						role="status"
 					>
-						<p className="text-xs text-muted-foreground">{inspected.roundName}</p>
+						<p className="text-xs text-muted-foreground">
+							{inspected.roundName}
+						</p>
 						<p className="text-sm font-medium text-foreground">
 							{inspected.name}
 							{inspected.abbr ? (

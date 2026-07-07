@@ -1,5 +1,8 @@
 import { Link } from 'react-router';
-import { makerStatusDotClass, makerStatusLabel } from '../../studio/maker-status';
+import {
+	makerStatusDotClass,
+	makerStatusLabel,
+} from '../../studio/maker-status';
 import { useStudioStore } from '../../studio/studio-store';
 
 /** Workbench projects list — links into the project interior drill-in. */
@@ -8,7 +11,9 @@ export default function StudioProjectsIndex() {
 
 	if (!store) {
 		return (
-			<div className="px-6 py-8 text-sm text-muted-foreground">Loading projects…</div>
+			<div className="px-6 py-8 text-sm text-muted-foreground">
+				Loading projects…
+			</div>
 		);
 	}
 
@@ -17,13 +22,16 @@ export default function StudioProjectsIndex() {
 	return (
 		<div className="px-6 py-8">
 			<h1 className="text-2xl font-medium tracking-tight">Projects</h1>
-			<p className="mt-1 text-sm text-muted-foreground">Your makes — open one to pick up where you left off.</p>
+			<p className="mt-1 text-sm text-muted-foreground">
+				Your makes — open one to pick up where you left off.
+			</p>
 			{projects.length === 0 ? (
 				<p className="mt-6 text-sm text-muted-foreground">No projects yet.</p>
 			) : (
 				<ul className="mt-6 space-y-2">
 					{projects.map((project) => {
 						const status = project.makerStatus ?? 'draft';
+						const patternCount = project.makePatterns?.length ?? 0;
 						return (
 							<li key={project.id}>
 								<Link
@@ -35,11 +43,13 @@ export default function StudioProjectsIndex() {
 										aria-hidden
 									/>
 									<span className="min-w-0 flex-1">
-										<span className="block truncate font-medium">{project.name}</span>
+										<span className="block truncate font-medium">
+											{project.name}
+										</span>
 										<span className="text-xs text-muted-foreground">
 											{makerStatusLabel(status)}
-											{(project.makePatterns?.length ?? 0) > 0
-												? ` · ${project.makePatterns!.length} pattern${project.makePatterns!.length === 1 ? '' : 's'}`
+											{patternCount > 0
+												? ` · ${patternCount} pattern${patternCount === 1 ? '' : 's'}`
 												: ''}
 										</span>
 									</span>

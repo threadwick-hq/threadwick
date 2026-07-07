@@ -14,9 +14,9 @@ import {
 	continueMakingRef,
 	type Project,
 } from '@threadwick/editor';
-import type { MakerStatus, PatternReference } from '@threadwick/types';
 import { Icon } from '@threadwick/icons';
-import { useEffect, useMemo } from 'react';
+import type { MakerStatus, PatternReference } from '@threadwick/types';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Link, Outlet, useParams } from 'react-router';
 import { InteriorChromeSlot } from './interior-chrome';
 import {
@@ -27,16 +27,22 @@ import {
 	refProgressPercent,
 } from './maker-status';
 import { ProjectInteriorBreadcrumb } from './project-breadcrumb';
-import { ProjectRailAddButton, ProjectRailLink, ProjectRailSectionLabel } from './project-rail';
+import {
+	ProjectRailAddButton,
+	ProjectRailLink,
+	ProjectRailSectionLabel,
+} from './project-rail';
 import {
 	pullProjectStatusFromRavelry,
 	pushProjectStatusToRavelry,
 } from './ravelry-sync';
-import { useStudioStore } from './studio-store';
+import { type StudioStore, useStudioStore } from './studio-store';
 
 function resolvePatternInProject(project: Project, patternId: string) {
 	for (const version of project.versions) {
-		const pattern = version.patterns.find((candidate) => candidate.id === patternId);
+		const pattern = version.patterns.find(
+			(candidate) => candidate.id === patternId,
+		);
 		if (pattern) return pattern;
 	}
 	return undefined;
@@ -50,7 +56,10 @@ function ProjectStatusSelector({
 	onStatusChange: (status: MakerStatus) => void;
 }) {
 	return (
-		<Select value={status} onValueChange={(value) => onStatusChange(value as MakerStatus)}>
+		<Select
+			value={status}
+			onValueChange={(value) => onStatusChange(value as MakerStatus)}
+		>
 			<SelectTrigger
 				className="h-8 border-0 bg-transparent px-0 shadow-none focus:ring-0"
 				aria-label="Project status"
@@ -83,7 +92,9 @@ function PatternRailLinks({
 }) {
 	if (patterns.length === 0) {
 		return (
-			<p className="px-2 py-1 text-[12px] text-muted-foreground">No patterns in this make yet.</p>
+			<p className="px-2 py-1 text-[12px] text-muted-foreground">
+				No patterns in this make yet.
+			</p>
 		);
 	}
 	return (
@@ -112,16 +123,36 @@ function ProjectInteriorChrome({
 }) {
 	const store = useStudioStore();
 	if (!store) return null;
+	return (
+		<ProjectInteriorChromeContent
+			store={store}
+			project={project}
+			projectId={projectId}
+		/>
+	);
+}
 
+function ProjectInteriorChromeContent({
+	store,
+	project,
+	projectId,
+}: {
+	store: StudioStore;
+	project: Project;
+	projectId: string;
+}) {
 	const status: MakerStatus = project.makerStatus ?? 'draft';
 
-	const handleStatusChange = (next: MakerStatus) => {
-		store.updateProject(projectId, { makerStatus: next });
-		if (isRavelryEnabled() && project.ravelryProjectId) {
-			pushProjectStatusToRavelry(project.ravelryProjectId, next);
-		}
-		store.saveLocal();
-	};
+	const handleStatusChange = useCallback(
+		(next: MakerStatus) => {
+			store.updateProject(projectId, { makerStatus: next });
+			if (isRavelryEnabled() && project.ravelryProjectId) {
+				pushProjectStatusToRavelry(project.ravelryProjectId, next);
+			}
+			store.saveLocal();
+		},
+		[project.ravelryProjectId, projectId, store],
+	);
 
 	useEffect(() => {
 		if (!isRavelryEnabled() || !project.ravelryProjectId) return;
@@ -133,7 +164,8 @@ function ProjectInteriorChrome({
 	}, [project.makerStatus, project.ravelryProjectId, projectId, store]);
 
 	const patterns = project.makePatterns ?? [];
-	const resolvePattern = (patternId: string) => resolvePatternInProject(project, patternId);
+	const resolvePattern = (patternId: string) =>
+		resolvePatternInProject(project, patternId);
 	const aggregate = aggregateProjectProgress(project, resolvePattern);
 	const continueRef = continueMakingRef(project);
 	const continueHref = continueRef
@@ -151,7 +183,10 @@ function ProjectInteriorChrome({
 			),
 			breadcrumb: <ProjectInteriorBreadcrumb projectName={project.name} />,
 			rail: (
-				<nav aria-label="Project sections" className="flex min-h-0 flex-1 flex-col px-2 py-2">
+				<nav
+					aria-label="Project sections"
+					className="flex min-h-0 flex-1 flex-col px-2 py-2"
+				>
 					<ProjectRailLink
 						to={`/studio/projects/${projectId}`}
 						icon="home"
@@ -217,11 +252,11 @@ function ProjectInteriorChrome({
 			aggregate.unitsDone,
 			aggregate.unitsTotal,
 			continueHref,
+			handleStatusChange,
 			patterns,
 			project.name,
 			projectId,
 			status,
-			store,
 		],
 	);
 
@@ -234,17 +269,23 @@ export function ProjectInteriorMount() {
 
 	if (!store) {
 		return (
-			<div className="px-6 py-8 text-sm text-muted-foreground">Loading project…</div>
+			<div className="px-6 py-8 text-sm text-muted-foreground">
+				Loading project…
+			</div>
 		);
 	}
 
 	if (!projectId) {
 		return (
-			<div className="px-6 py-8 text-sm text-muted-foreground">Missing project id.</div>
+			<div className="px-6 py-8 text-sm text-muted-foreground">
+				Missing project id.
+			</div>
 		);
 	}
 
-	const project = store.state.library.projects.find((candidate) => candidate.id === projectId);
+	const project = store.state.library.projects.find(
+		(candidate) => candidate.id === projectId,
+	);
 	if (!project) {
 		return (
 			<div className="px-6 py-8">

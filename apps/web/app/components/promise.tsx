@@ -28,10 +28,16 @@ const PLEDGES: Pledge[] = [
 /** "Our promise" — the fairness manifesto, set as a full-bleed ink band (statement piece). */
 export function OurPromise() {
 	return (
-		<section id="promise" aria-labelledby="promise-title" className="bg-foreground text-background">
+		<section
+			id="promise"
+			aria-labelledby="promise-title"
+			className="bg-foreground text-background"
+		>
 			<div className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
 				<div className="mx-auto mb-10 max-w-2xl text-center">
-					<p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-brand">Our promise</p>
+					<p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-brand">
+						Our promise
+					</p>
 					<h2
 						id="promise-title"
 						className="font-display text-[clamp(1.625rem,3.6vw,2.25rem)] font-medium tracking-tight"
@@ -39,9 +45,11 @@ export function OurPromise() {
 						Fair tools for fiber artists &amp; makers
 					</h2>
 					<p className="mt-3.5 text-base leading-relaxed opacity-80">
-						This isn’t a tagline — it’s how we make decisions. The tools are free; paying only ever
-						enters the picture if you choose to sell through the platform. That’s how we’re building
-						Threadwick to be fair to the artists who design patterns and the makers who follow them.
+						This isn’t a tagline — it’s how we make decisions. The tools are
+						free; paying only ever enters the picture if you choose to sell
+						through the platform. That’s how we’re building Threadwick to be
+						fair to the artists who design patterns and the makers who follow
+						them.
 					</p>
 				</div>
 				<ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -53,8 +61,12 @@ export function OurPromise() {
 							>
 								<Icon name={pledge.icon} label="" />
 							</span>
-							<h3 className="font-display text-lg font-medium">{pledge.title}</h3>
-							<p className="mt-2 text-sm leading-relaxed opacity-75">{pledge.body}</p>
+							<h3 className="font-display text-lg font-medium">
+								{pledge.title}
+							</h3>
+							<p className="mt-2 text-sm leading-relaxed opacity-75">
+								{pledge.body}
+							</p>
 						</li>
 					))}
 				</ul>
