@@ -596,11 +596,9 @@ describe('ensureIssueTypes', () => {
 		const bugCall = calls.find((call) => {
 			const payload =
 				call.stdin === undefined ? undefined : JSON.parse(call.stdin);
-			return (
-				payload !== null &&
-				typeof payload === 'object' &&
-				(payload as Record<string, unknown>).name === 'Bug'
-			);
+			if (payload === null || typeof payload !== 'object') return false;
+			const name: unknown = Reflect.get(payload, 'name');
+			return name === 'Bug';
 		});
 		expect(parseStdin(bugCall?.stdin)).toEqual({
 			name: 'Bug',

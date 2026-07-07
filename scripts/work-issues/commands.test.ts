@@ -294,8 +294,12 @@ describe('runClaim', () => {
 		expect(logSpy.mock.calls.flat().join('\n')).toContain(
 			'claimed #24 for eiluviann',
 		);
-		// refreshCache re-fetches a snapshot and writes it.
-		expect(writeCacheMock).toHaveBeenCalled();
+		// refreshCache re-fetches a snapshot and writes it — pin the written
+		// payload (not just "was called": loadSnapshot also writes).
+		const lastWrite = writeCacheMock.mock.calls.at(-1)?.[0];
+		expect(lastWrite?.snapshot.issues.map((issue) => issue.number)).toEqual([
+			24,
+		]);
 	});
 });
 
@@ -541,6 +545,12 @@ describe('runBlock / runUnblock', () => {
 		expect(labelCall).toBeDefined();
 		expect(JSON.parse(labelCall?.stdin ?? '{}')).toEqual({
 			labels: ['blocked'],
+		});
+		const commentCall = calls.find((call) =>
+			(call.args[3] ?? '').endsWith('/comments'),
+		);
+		expect(JSON.parse(commentCall?.stdin ?? '{}')).toEqual({
+			body: 'Blocked by #5.',
 		});
 		const dependencyCall = calls.find((call) =>
 			(call.args[3] ?? '').endsWith('/dependencies/blocked_by'),
