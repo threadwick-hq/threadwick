@@ -291,7 +291,7 @@ function decomposeGranularMode(
 
 /**
  * Decompose one round into follow Units at the requested granularity.
- * ChartPattern/granular modes fall back to a single per-row unit when marks are absent.
+ * Pattern/granular modes fall back to a single per-row unit when marks are absent.
  */
 export function decomposeRound(
 	pattern: ChartPattern,
