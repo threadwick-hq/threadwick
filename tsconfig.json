@@ -15,11 +15,6 @@
 	"include": [
 		"scripts/work-issues.ts",
 		"scripts/work-issues/**/*.ts",
-<<<<<<< HEAD
-		"scripts/migrate-work-to-issues.ts",
 		"vitest.config.scripts.ts"
-=======
-		"vitest.config.ts"
->>>>>>> b771ba0 (chore(repo): delete dead packages/config and packages/org, stop typechecking the dead migrate script)
 	]
 }
