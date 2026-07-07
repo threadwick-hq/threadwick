@@ -5,9 +5,8 @@ dark), the Ant Design theme, the **brand** wordmark, and shared UI primitives. T
 by AI agents, so this repo is optimised for machine consumption and **machine-enforced correctness**
 — "wrong" should fail to compile or fail a check, not rely on you reading prose.
 
-> **Sibling packages** (split out so the foundation stays crochet-agnostic): **`@threadwick/types`**
-> (the Pattern content model), **`@threadwick/org`** (the org canon), **`@threadwick/config`**
-> (tsconfig/eslint/prettier). The crochet stitch renderers are app-local for now — a future
+> **Sibling package** (split out so the foundation stays crochet-agnostic): **`@threadwick/types`**
+> (the Pattern content model). The crochet stitch renderers are app-local for now — a future
 > **`@threadwick/domain`** when a second surface needs them.
 
 ## What this is (and is not)
@@ -41,8 +40,8 @@ by AI agents, so this repo is optimised for machine consumption and **machine-en
    non-token-colour / off-grid px / missing-aria / AA failures. Both run in `npm run check`.
 5. **Accessibility is WCAG 2.1 AA, baked in.** Never colour-only (keep stitch symbols). `tokens.css`
    ships the `:focus-visible` ring + a `prefers-reduced-motion` guard; consumers inherit them.
-6. **Controlled vocabulary.** Use the glossary in **`@threadwick/org`** — `Component`, never
-   "motif/piece". One canonical name per concept.
+6. **Controlled vocabulary.** `Component`, never "motif/piece" — one canonical name per concept
+   (the org canon vocabulary).
 
 ## How to change a token
 Edit `src/tokens/tokens.json` (the OKLCH `$extensions["com.threadwick"].oklch` triple is
@@ -71,4 +70,4 @@ import '@threadwick/core/tokens.css';
 ```
 Apps **import, never redefine** — delete local `tokens.*` / `theme.*` and re-export from core.
 
-See `llms.txt` (machine manifest), `docs/principles.md` (the "why"), and `@threadwick/org` (org canon).
+See `llms.txt` (machine manifest) and `docs/principles.md` (the "why").
