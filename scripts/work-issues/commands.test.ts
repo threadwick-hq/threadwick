@@ -411,6 +411,43 @@ describe('runGate --pr', () => {
 		expect(stderrText()).toContain('no "Closes #<issue>" reference');
 	});
 
+	it('waives the linkage requirement for bot-authored PRs', () => {
+		const run: GhRunner = (args) => {
+			if (args[0] === 'pr' && args[1] === 'view') {
+				return {
+					ok: true,
+					value: JSON.stringify({
+						body: 'Bumps vitest from 2.1.9 to 3.2.6.',
+						// biome-ignore lint/style/useNamingConvention: GitHub API wire format
+						author: { login: 'dependabot', is_bot: true },
+					}),
+				};
+			}
+			return { ok: false, error: { message: 'unexpected call', exitCode: 1 } };
+		};
+		runGate(run, ['--pr', '105']);
+		expect(exitSpy).not.toHaveBeenCalled();
+		expect(logSpy.mock.calls.flat().join('\n')).toContain('bot-authored');
+	});
+
+	it('does not waive the requirement for a human author object', () => {
+		const run: GhRunner = (args) => {
+			if (args[0] === 'pr' && args[1] === 'view') {
+				return {
+					ok: true,
+					value: JSON.stringify({
+						body: 'No linkage here.',
+						// biome-ignore lint/style/useNamingConvention: GitHub API wire format
+						author: { login: 'eiluviann', is_bot: false },
+					}),
+				};
+			}
+			return { ok: false, error: { message: 'unexpected call', exitCode: 1 } };
+		};
+		expect(() => runGate(run, ['--pr', '99'])).toThrow(ProcessExitSentinel);
+		expect(stderrText()).toContain('no "Closes #<issue>" reference');
+	});
+
 	it('validates every referenced issue is assigned and planned', () => {
 		const unassigned = issueNode({
 			number: 7,
