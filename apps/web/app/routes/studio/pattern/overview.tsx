@@ -25,7 +25,10 @@ import { Link, useOutletContext, useParams } from 'react-router';
 import type { PatternInteriorOutletContext } from '../../../studio/pattern-interior';
 import { usePatternInteriorMode } from '../../../studio/pattern-mode';
 import { resolveViewPattern } from '../../../studio/pattern-ownership-store';
-import { updatePatternOverview, usePattern } from '../../../studio/pattern-store';
+import {
+	updatePatternOverview,
+	usePattern,
+} from '../../../studio/pattern-store';
 
 function PatternViewOverview({
 	pattern,
@@ -39,7 +42,9 @@ function PatternViewOverview({
 	const { listing, ownership, onStartMaking, onRemix } = ctx;
 	if (!listing || !ownership || !onStartMaking || !onRemix) {
 		return (
-			<div className="px-6 py-8 text-sm text-muted-foreground">Loading marketplace view…</div>
+			<div className="px-6 py-8 text-sm text-muted-foreground">
+				Loading marketplace view…
+			</div>
 		);
 	}
 
@@ -60,9 +65,14 @@ function PatternViewOverview({
 			<ProgressPhotoGallery className="gap-2" photos={photos} />
 
 			<div className="mt-4 flex flex-wrap items-center gap-3">
-				<h1 className="text-[22px] font-medium tracking-tight">{pattern.overview.name}</h1>
+				<h1 className="text-[22px] font-medium tracking-tight">
+					{pattern.overview.name}
+				</h1>
 				{listing.rating != null && listing.reviewCount != null ? (
-					<PatternViewRating rating={listing.rating} reviewCount={listing.reviewCount} />
+					<PatternViewRating
+						rating={listing.rating}
+						reviewCount={listing.reviewCount}
+					/>
 				) : null}
 			</div>
 
@@ -107,7 +117,9 @@ function PatternViewOverview({
 			/>
 
 			<section id="reviews" className="mt-8 max-w-xl scroll-mt-6">
-				<h2 className="text-[11px] uppercase tracking-wide text-muted-foreground">Reviews</h2>
+				<h2 className="text-[11px] uppercase tracking-wide text-muted-foreground">
+					Reviews
+				</h2>
 				<p className="mt-2 text-sm text-muted-foreground">
 					{listing.reviewCount != null
 						? `${listing.reviewCount.toLocaleString()} reviews — full reviews land with marketplace auth in Phase 7.`
@@ -189,12 +201,16 @@ export default function PatternOverview() {
 
 	if (!pattern || !patternId) {
 		return (
-			<div className="px-6 py-8 text-sm text-muted-foreground">Loading overview…</div>
+			<div className="px-6 py-8 text-sm text-muted-foreground">
+				Loading overview…
+			</div>
 		);
 	}
 
 	if (mode === 'view') {
-		return <PatternViewOverview pattern={pattern} patternId={patternId} ctx={ctx} />;
+		return (
+			<PatternViewOverview pattern={pattern} patternId={patternId} ctx={ctx} />
+		);
 	}
 
 	return <PatternEditOverview pattern={pattern} patternId={patternId} />;

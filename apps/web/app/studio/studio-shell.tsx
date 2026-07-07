@@ -45,7 +45,9 @@ export function StudioShell({ children }: { children: ReactNode }) {
 								<InteriorSlot>{interior.identityTile}</InteriorSlot>
 								{interior.breadcrumb}
 								{interior.rail}
-								<div className="mt-auto border-t border-border p-2">{interior.pinnedTile}</div>
+								<div className="mt-auto border-t border-border p-2">
+									{interior.pinnedTile}
+								</div>
 							</>
 						) : (
 							<>

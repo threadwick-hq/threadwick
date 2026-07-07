@@ -19,7 +19,11 @@ const STEPS: Step[] = [
 
 export function HowItWorks() {
 	return (
-		<section id="how-it-works" aria-labelledby="how-it-works-title" className="border-y border-border bg-card">
+		<section
+			id="how-it-works"
+			aria-labelledby="how-it-works-title"
+			className="border-y border-border bg-card"
+		>
 			<div className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
 				<SectionHeading
 					id="how-it-works-title"
@@ -29,15 +33,22 @@ export function HowItWorks() {
 				/>
 				<div className="grid gap-6 md:grid-cols-3">
 					{STEPS.map((step, index) => (
-						<div key={step.title} className="h-full rounded-xl border border-border bg-background p-6">
+						<div
+							key={step.title}
+							className="h-full rounded-xl border border-border bg-background p-6"
+						>
 							<span
 								aria-hidden
 								className="mb-4 grid size-11 place-items-center rounded-full bg-primary font-display text-lg font-bold text-primary-foreground"
 							>
 								{index + 1}
 							</span>
-							<h3 className="font-display text-lg font-medium text-foreground">{step.title}</h3>
-							<p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.body}</p>
+							<h3 className="font-display text-lg font-medium text-foreground">
+								{step.title}
+							</h3>
+							<p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+								{step.body}
+							</p>
 						</div>
 					))}
 				</div>

@@ -7,7 +7,7 @@ declare global {
 	}
 }
 
-type StudioStore = Awaited<ReturnType<typeof loadStudioStore>>;
+export type StudioStore = Awaited<ReturnType<typeof loadStudioStore>>;
 
 let storePromise: ReturnType<typeof loadStudioStore> | null = null;
 
@@ -42,7 +42,10 @@ export function useStudioStore(): StudioStore | null {
 }
 
 async function loadStudioStore() {
-	const [core, browser] = await Promise.all([import('@threadwick/editor'), import('@threadwick/editor/browser')]);
+	const [core, browser] = await Promise.all([
+		import('@threadwick/editor'),
+		import('@threadwick/editor/browser'),
+	]);
 	const { initStudioCapabilities } = await import('./capabilities');
 	initStudioCapabilities();
 	const { store } = browser;

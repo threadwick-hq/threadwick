@@ -137,8 +137,16 @@ function FollowAlongStrip() {
 			{(['chain', 'sc', 'dc'] as const).map((type) => (
 				<StitchSymbol key={type} type={type} size={26} className="text-brand" />
 			))}
-			<StitchSymbol type="dc" size={26} className="text-background opacity-35" />
-			<StitchSymbol type="tr" size={26} className="text-background opacity-35" />
+			<StitchSymbol
+				type="dc"
+				size={26}
+				className="text-background opacity-35"
+			/>
+			<StitchSymbol
+				type="tr"
+				size={26}
+				className="text-background opacity-35"
+			/>
 			<span className="ml-2 text-xs text-background/60">Round 3 of 5</span>
 		</div>
 	);
@@ -163,7 +171,11 @@ function Tile({ feature }: { feature: PlannedFeature }) {
 					aria-hidden
 					className={cn(
 						'grid size-10 flex-none place-items-center rounded-lg [&_svg]:size-5',
-						ink ? 'bg-brand text-primary-foreground' : wash ? 'bg-card text-primary' : 'bg-accent text-accent-foreground',
+						ink
+							? 'bg-brand text-primary-foreground'
+							: wash
+								? 'bg-card text-primary'
+								: 'bg-accent text-accent-foreground',
 					)}
 				>
 					<Icon name={feature.icon} label="" />
@@ -180,13 +192,20 @@ function Tile({ feature }: { feature: PlannedFeature }) {
 			<h3
 				className={cn(
 					'font-display font-medium leading-tight',
-					feature.size === 'hero' ? 'text-[clamp(1.375rem,2.6vw,1.6875rem)]' : 'text-lg',
+					feature.size === 'hero'
+						? 'text-[clamp(1.375rem,2.6vw,1.6875rem)]'
+						: 'text-lg',
 					ink ? 'text-background' : 'text-foreground',
 				)}
 			>
 				{feature.title}
 			</h3>
-			<p className={cn('text-sm leading-relaxed', ink ? 'text-background/75' : 'text-muted-foreground')}>
+			<p
+				className={cn(
+					'text-sm leading-relaxed',
+					ink ? 'text-background/75' : 'text-muted-foreground',
+				)}
+			>
 				{feature.body}
 			</p>
 			{feature.size === 'hero' && <FollowAlongStrip />}
@@ -196,7 +215,11 @@ function Tile({ feature }: { feature: PlannedFeature }) {
 
 export function Roadmap() {
 	return (
-		<section id="roadmap" aria-labelledby="roadmap-title" className="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+		<section
+			id="roadmap"
+			aria-labelledby="roadmap-title"
+			className="mx-auto max-w-6xl px-6 py-16 sm:py-20"
+		>
 			<SectionHeading
 				id="roadmap-title"
 				eyebrow="Planned · On the roadmap"

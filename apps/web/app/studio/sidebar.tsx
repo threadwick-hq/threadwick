@@ -1,7 +1,7 @@
+import { InteriorSlot } from '@threadwick/core/components';
 import { cn } from '@threadwick/core/lib/utils';
 import { Icon, type IconName } from '@threadwick/icons';
 import { NavLink } from 'react-router';
-import { InteriorSlot } from '@threadwick/core/components';
 import { useStudioStore } from './studio-store';
 
 type NavItem = {
@@ -29,7 +29,9 @@ export function Sidebar() {
 	const store = useStudioStore();
 	const projects = store?.state.library.projects ?? [];
 	const patternCount = projects.reduce((total, project) => {
-		const version = project.versions.find((candidate) => candidate.id === project.activeVersionId);
+		const version = project.versions.find(
+			(candidate) => candidate.id === project.activeVersionId,
+		);
 		return total + (version?.patterns.length ?? 0);
 	}, 0);
 
@@ -38,44 +40,85 @@ export function Sidebar() {
 		{
 			label: 'Workbench',
 			items: [
-				{ to: '/studio/patterns', icon: 'patterns', label: 'Patterns', count: patternCount },
-				{ to: '/studio/projects', icon: 'projects', label: 'Projects', count: projects.length },
+				{
+					to: '/studio/patterns',
+					icon: 'patterns',
+					label: 'Patterns',
+					count: patternCount,
+				},
+				{
+					to: '/studio/projects',
+					icon: 'projects',
+					label: 'Projects',
+					count: projects.length,
+				},
 			],
 		},
 		{
 			label: 'Library',
 			items: [
-				{ to: '/studio/library/patterns', icon: 'view', label: 'Patterns', count: 0 },
+				{
+					to: '/studio/library/patterns',
+					icon: 'view',
+					label: 'Patterns',
+					count: 0,
+				},
 				{ to: '/studio/library/yarns', icon: 'yarn', label: 'Yarns', count: 0 },
-				{ to: '/studio/library/tools', icon: 'tools', label: 'Tools', count: 0 },
+				{
+					to: '/studio/library/tools',
+					icon: 'tools',
+					label: 'Tools',
+					count: 0,
+				},
 			],
 		},
 		{
 			label: 'Marketplace',
 			items: [
-				{ to: '/studio/marketplace', icon: 'marketplace', label: 'Home', end: true },
+				{
+					to: '/studio/marketplace',
+					icon: 'marketplace',
+					label: 'Home',
+					end: true,
+				},
 				{ to: '/studio/marketplace/browse', icon: 'browse', label: 'Browse' },
-				{ to: '/studio/marketplace/following', icon: 'community', label: 'Following', count: 0 },
+				{
+					to: '/studio/marketplace/following',
+					icon: 'community',
+					label: 'Following',
+					count: 0,
+				},
 				{ to: '/studio/marketplace/free', icon: 'gift', label: 'Free' },
-				{ to: '/studio/marketplace/wishlist', icon: 'wishlist', label: 'Wishlist', count: 0 },
+				{
+					to: '/studio/marketplace/wishlist',
+					icon: 'wishlist',
+					label: 'Wishlist',
+					count: 0,
+				},
 			],
 		},
 	];
 
 	return (
 		<div className="flex min-h-0 flex-1 flex-col">
-			<nav aria-label="Studio sections" className="flex-1 overflow-y-auto px-2 py-2">
+			<nav
+				aria-label="Studio sections"
+				className="flex-1 overflow-y-auto px-2 py-2"
+			>
 				{sections.map((section, index) => {
 					// Associate each group with its label so the duplicate link names ("Patterns" under
 					// both Workbench and Library, "Home" under both top-level and Marketplace) resolve in
 					// context for screen readers, instead of reading as identical, ambiguous links.
-					const labelId = section.label ? `nav-section-${section.label.toLowerCase()}` : undefined;
+					const labelId = section.label
+						? `nav-section-${section.label.toLowerCase()}`
+						: undefined;
 					return (
 						<div
 							key={section.label ?? `section-${index}`}
 							className={index > 0 ? 'mt-3' : undefined}
-							role={section.label ? 'group' : undefined}
-							aria-labelledby={labelId}
+							{...(section.label && labelId
+								? { role: 'group', 'aria-labelledby': labelId }
+								: {})}
 						>
 							{section.label && (
 								<p
@@ -94,9 +137,16 @@ export function Sidebar() {
 			</nav>
 			<div className="border-t border-border p-2">
 				<div className="flex items-center gap-2 rounded-md border border-border px-2.5 py-2 text-xs text-muted-foreground">
-					<span className="size-2 shrink-0 rounded-full bg-yarn-fern" aria-hidden="true" />
+					<span
+						className="size-2 shrink-0 rounded-full bg-yarn-fern"
+						aria-hidden="true"
+					/>
 					<span className="flex-1">Saved in this browser</span>
-					<Icon name="chevron-down" label="" className="shrink-0 opacity-60 [&_svg]:size-3" />
+					<Icon
+						name="chevron-down"
+						label=""
+						className="shrink-0 opacity-60 [&_svg]:size-3"
+					/>
 				</div>
 			</div>
 		</div>
@@ -113,7 +163,11 @@ export function CraftPickerSlot() {
 				disabled
 			>
 				<span>All my crafts</span>
-				<Icon name="chevron-down" label="" className="opacity-60 [&_svg]:size-3" />
+				<Icon
+					name="chevron-down"
+					label=""
+					className="opacity-60 [&_svg]:size-3"
+				/>
 			</button>
 		</InteriorSlot>
 	);
@@ -138,7 +192,14 @@ function SidebarLink({ to, icon, label, end, count }: NavItem) {
 					<Icon name={icon} label="" />
 					<span className="min-w-0 flex-1 truncate">{label}</span>
 					{count !== undefined && (
-						<span className={cn('text-[11px] tabular-nums', isActive ? 'text-accent-foreground' : 'text-muted-foreground/70')}>
+						<span
+							className={cn(
+								'text-[11px] tabular-nums',
+								isActive
+									? 'text-accent-foreground'
+									: 'text-muted-foreground/70',
+							)}
+						>
 							{count}
 						</span>
 					)}
