@@ -1,7 +1,7 @@
 import { cn } from '@threadwick/core/lib/utils';
 import {
+	type ChartPattern,
 	type FollowMode,
-	type Pattern,
 	type PatternProgress,
 	resolveFollowChartContext,
 	stitchInspectInfo,
@@ -10,7 +10,7 @@ import { Icon } from '@threadwick/icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export type FollowChartPaneProps = {
-	pattern: Pattern;
+	pattern: ChartPattern;
 	progress?: PatternProgress;
 	mode: FollowMode;
 	className?: string;

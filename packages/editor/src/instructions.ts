@@ -3,9 +3,9 @@
 
 import { chainOrder } from './connectivity';
 import { isStart, STITCHES } from './symbols';
-import type { Pattern } from './types';
+import type { ChartPattern } from './types';
 
-export function summarizeRound(pattern: Pattern, roundId: string): string {
+export function summarizeRound(pattern: ChartPattern, roundId: string): string {
 	const order = chainOrder(pattern.stitches, roundId).filter(
 		(s) => !isStart(s.type),
 	);

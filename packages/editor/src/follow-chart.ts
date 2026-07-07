@@ -6,7 +6,7 @@ import { startRowId } from './model';
 import { flattenFollowUnits } from './progress';
 import { contentBounds, stitchToSVG } from './render';
 import { STITCHES } from './symbols';
-import type { FollowMode, Pattern, PatternProgress } from './types';
+import type { ChartPattern, FollowMode, PatternProgress } from './types';
 import { round } from './util';
 
 export type FollowStitchState =
@@ -48,7 +48,7 @@ export const FOLLOW_CHART_STYLES: Record<FollowStitchState, FollowChartStyle> =
 		ghosted: { color: INK, opacity: 0.16 },
 	};
 
-function workingRoundIds(pattern: Pattern): string[] {
+function workingRoundIds(pattern: ChartPattern): string[] {
 	const startId = startRowId(pattern);
 	return pattern.rounds.filter((r) => r.id !== startId).map((r) => r.id);
 }
@@ -83,7 +83,7 @@ function roundIndex(roundIds: string[], roundId: string): number {
 
 /** Derive per-stitch visual state and the focus set for pan/zoom. */
 export function deriveFollowChartModel(
-	pattern: Pattern,
+	pattern: ChartPattern,
 	progress: PatternProgress | undefined,
 	mode: FollowMode,
 ): FollowChartModel {
@@ -144,7 +144,7 @@ export function deriveFollowChartModel(
 }
 
 export function stitchInspectInfo(
-	pattern: Pattern,
+	pattern: ChartPattern,
 	stitchId: string,
 ): StitchInspectInfo | null {
 	const st = pattern.stitches.find((s) => s.id === stitchId);
@@ -161,7 +161,7 @@ export function stitchInspectInfo(
 
 /** Bounding box for a stitch subset (pan/zoom target). */
 export function boundsForStitches(
-	pattern: Pattern,
+	pattern: ChartPattern,
 	stitchIds: string[],
 ): ReturnType<typeof contentBounds> {
 	if (!stitchIds.length) return contentBounds(pattern.stitches);
@@ -175,7 +175,7 @@ function styleForState(state: FollowStitchState): FollowChartStyle {
 
 /** Interactive follow chart SVG with completed / lit / ghosted styling. */
 export function followChartToSVG(
-	pattern: Pattern,
+	pattern: ChartPattern,
 	model: FollowChartModel,
 	opts: FollowChartOpts = {},
 ): string {
@@ -216,7 +216,7 @@ export function followChartToSVG(
 }
 
 export function resolveFollowChartContext(
-	pattern: Pattern,
+	pattern: ChartPattern,
 	progress: PatternProgress | undefined,
 	mode: FollowMode,
 ): {

@@ -5,7 +5,7 @@
 import { chainOrder } from './connectivity';
 import { isStart } from './symbols';
 import type {
-	Pattern,
+	ChartPattern,
 	RepeatMark,
 	Round,
 	RoundFollowMarks,
@@ -61,12 +61,15 @@ export function hasFollowMarks(marks: RoundFollowMarks | undefined): boolean {
 	return marks.corners.length > 0 || marks.repeats.length > 0;
 }
 
-function roundById(pat: Pattern, roundId: string): Round | undefined {
+function roundById(pat: ChartPattern, roundId: string): Round | undefined {
 	return pat.rounds.find((r) => r.id === roundId);
 }
 
 /** Working stitches for a round in chain order (excludes start markers). */
-export function roundStitchOrder(pattern: Pattern, roundId: string): Stitch[] {
+export function roundStitchOrder(
+	pattern: ChartPattern,
+	roundId: string,
+): Stitch[] {
 	return chainOrder(pattern.stitches, roundId).filter((s) => !isStart(s.type));
 }
 
@@ -294,7 +297,7 @@ function decomposeGranularMode(
  * Pattern/granular modes fall back to a single per-row unit when marks are absent.
  */
 export function decomposeRound(
-	pattern: Pattern,
+	pattern: ChartPattern,
 	roundId: string,
 	mode: DecomposeMode,
 ): RoundDecomposition {
@@ -333,7 +336,7 @@ export function decomposeRound(
 
 /** Decompose every working round (skips the Start row). */
 export function decomposePattern(
-	pattern: Pattern,
+	pattern: ChartPattern,
 	mode: DecomposeMode,
 ): RoundDecomposition[] {
 	const startId = pattern.rounds[0]?.id;
@@ -351,7 +354,7 @@ export function findUnit(
 
 /** Total units across all working rounds at the given mode. */
 export function pruneFollowMarks(
-	pattern: Pattern,
+	pattern: ChartPattern,
 	removedIds: Set<string>,
 ): void {
 	for (const round of pattern.rounds) {
@@ -366,7 +369,7 @@ export function pruneFollowMarks(
 }
 
 /** Total units across all working rounds at the given mode. */
-export function totalUnits(pattern: Pattern, mode: DecomposeMode): number {
+export function totalUnits(pattern: ChartPattern, mode: DecomposeMode): number {
 	return decomposePattern(pattern, mode).reduce(
 		(n, d) => n + d.units.length,
 		0,

@@ -85,7 +85,7 @@ export interface PatternView {
 }
 export type PatternKind = 'granny' | 'round' | 'flat';
 
-export interface Pattern {
+export interface ChartPattern {
 	id: string;
 	type: PatternKind;
 	name: string;
@@ -141,7 +141,7 @@ export interface ProjectVersion {
 	id: string;
 	label: string; // e.g. "v1", "v2"
 	status: VersionStatus;
-	patterns: Pattern[];
+	patterns: ChartPattern[];
 	resources: Resources;
 	createdAt: string;
 	updatedAt: string;
