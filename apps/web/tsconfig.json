@@ -1,5 +1,10 @@
 {
-	"include": ["app/**/*", ".react-router/types/**/*", "*.config.ts"],
+	"include": [
+		"app/**/*",
+		".react-router/types/**/*",
+		"test/**/*",
+		"*.config.ts"
+	],
 	"compilerOptions": {
 		"target": "ES2022",
 		"lib": ["ES2022", "DOM", "DOM.Iterable"],

@@ -55,7 +55,8 @@
 		"lint": "biome check .",
 		"validate": "tsx scripts/validate.ts",
 		"check:contrast": "tsx scripts/check-contrast.ts",
-		"check": "npm run build:tokens && npm run typecheck && npm run lint && npm run check:contrast && npm run validate"
+		"check": "npm run build:tokens && npm run typecheck && npm run lint && npm run check:contrast && npm run validate",
+		"test": "vitest run"
 	},
 	"peerDependencies": {
 		"antd": "^5",
@@ -72,7 +73,8 @@
 		"tailwindcss": "^4.3.1",
 		"tsup": "^8.3.5",
 		"tsx": "^4.19.2",
-		"typescript": "~5.6.3"
+		"typescript": "~5.6.3",
+		"vitest": "^3.2.6"
 	},
 	"dependencies": {
 		"@radix-ui/react-accordion": "^1.2.14",
