@@ -3,8 +3,7 @@
 Threadwick's **design-system foundation**: **design tokens** (OKLCH, light + dark), the **Ant Design
 theme**, the **brand** wordmark, and shared UI primitives. Both Threadwick apps (`home`, `studio`)
 import from here so they read as one product — instead of hand-syncing a theme three times. The
-Pattern model, org canon, and shared config live in sibling packages (`@threadwick/types`,
-`@threadwick/org`, `@threadwick/config`).
+Pattern model lives in the sibling package `@threadwick/types`.
 
 > Built by AI agents — see [AGENTS.md](AGENTS.md) (read first) and [llms.txt](llms.txt).
 
@@ -48,7 +47,7 @@ export function App({ mode }: { mode: 'light' | 'dark' }) {
 | `@threadwick/core/brand` | `Wordmark`; `Logo` badge + `ThreadwickLogo` / `StudioLogo` / `MarketplaceLogo`; `logoSVG()` (static SVG), `fromAwesome()` |
 | `@threadwick/core/components` | `Stack` (8-px spacing guardrail) |
 
-Sibling packages: **`@threadwick/types`** (Pattern model + schema), **`@threadwick/org`** (typed canon), **`@threadwick/config`** (tsconfig/eslint/prettier).
+Sibling package: **`@threadwick/types`** (Pattern model + schema).
 
 ## Tokens
 
@@ -77,4 +76,4 @@ CSS variables use the `--tw-*` prefix, e.g. `var(--tw-primary)`, `var(--tw-bg-la
 
 AGPL-3.0-or-later © Threadwick — see [LICENSE](LICENSE). Importing `@threadwick/core` carries its
 copyleft. Brand name + marks © Threadwick; trademark, legal entity, and a formal privacy policy/ToS
-are still TBD (see `@threadwick/org` → legal).
+are still TBD.
