@@ -161,11 +161,7 @@ export function CraftPickerSlot() {
 				disabled
 			>
 				<span>All my crafts</span>
-				<Icon
-					name="chevron-down"
-					label=""
-					className="size-3 opacity-60"
-				/>
+				<Icon name="chevron-down" label="" className="size-3 opacity-60" />
 			</button>
 		</InteriorSlot>
 	);
