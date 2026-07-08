@@ -23,10 +23,6 @@
 			"types": "./dist/tokens/index.d.ts",
 			"import": "./dist/tokens/index.js"
 		},
-		"./theme": {
-			"types": "./dist/theme/index.d.ts",
-			"import": "./dist/theme/index.js"
-		},
 		"./brand": {
 			"types": "./dist/brand/index.d.ts",
 			"import": "./dist/brand/index.js"
@@ -59,7 +55,6 @@
 		"test": "vitest run"
 	},
 	"peerDependencies": {
-		"antd": "^5",
 		"react": "^18"
 	},
 	"optionalDependencies": {
@@ -68,7 +63,6 @@
 	"devDependencies": {
 		"@types/node": "^20.14.0",
 		"@types/react": "^18.3.12",
-		"antd": "^5.22.0",
 		"react": "^18.3.1",
 		"tailwindcss": "^4.3.1",
 		"tsup": "^8.3.5",

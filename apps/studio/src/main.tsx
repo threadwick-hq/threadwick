@@ -1,7 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { ConfigProvider } from 'antd';
 import { FeedbackProvider } from '@threadwick/core/components';
-import { theme } from './theme';
 import { App } from './App';
 import { store } from '@threadwick/editor/browser';
 import { cloudEnabled } from './cloud/config';
@@ -39,9 +37,7 @@ if (cloudEnabled) {
 }
 
 createRoot(document.getElementById('root')!).render(
-  <ConfigProvider theme={theme}>
-    <FeedbackProvider>
-      <App />
-    </FeedbackProvider>
-  </ConfigProvider>,
+  <FeedbackProvider>
+    <App />
+  </FeedbackProvider>,
 );

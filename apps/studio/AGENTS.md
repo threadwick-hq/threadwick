@@ -13,7 +13,7 @@ Legacy studio chrome (Phase 6 migration). **Precedence:** root [AGENTS.md](../..
 
 - Chart core is [`@threadwick/editor`](../../packages/editor/README.md) — `apps/studio/src/core` is gone.
 - Icons: `@threadwick/icons` via `src/icons.tsx` (iconoir removed).
-- AntD chrome → shadcn (sub-phase 6c); AntD notes below apply until migration lands.
+- Chrome is `@threadwick/core` shadcn primitives (sub-phase 6c complete; AntD removed in TW-017/#63).
 - Run scripts: `pnpm --filter threadwick-studio <script>` from repo root.
 
 ## Brand & values
@@ -51,9 +51,8 @@ Full source: [docs/BRAND.md](docs/BRAND.md).
 ## Gotchas
 
 - Editor CSS grids: use modifier classes (`.editor.has-banner`), don't remove grid children.
-- antd v5: prefer `variant`, `destroyOnHidden`, `menu={{items}}`, `App.useApp()`.
-- The Ant Design docs MCP server was removed as unused; if TW-017 (drop AntD) needs it,
-  re-add temporarily with `claude mcp add antd -- npx -y @ant-design/cli mcp --version 5`.
+- Feedback (toasts + confirms) is the core `FeedbackProvider` layer (`toast.*` / `confirm()` from
+  `@threadwick/core/components`) — never a per-view dialog state machine.
 
 ## Dev commands
 
