@@ -25,6 +25,7 @@ export * from './ui/input';
 export * from './ui/label';
 export * from './ui/number-input';
 export * from './ui/photo-card';
+export * from './ui/popover';
 export * from './ui/segmented';
 export * from './ui/select';
 export * from './ui/switch';

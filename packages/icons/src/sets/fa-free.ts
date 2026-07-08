@@ -7,6 +7,7 @@ import {
 	faArrowsRotate,
 	faArrowUpRightFromSquare,
 	faBars,
+	faBell,
 	faBookOpen,
 	faCheck,
 	faChevronDown,
@@ -148,6 +149,7 @@ const glyphs: Record<IconName, IconDefinition> = {
 	tools: faScrewdriverWrench,
 	browse: faCompass,
 	wishlist: faHeart,
+	bell: faBell,
 };
 
 export const faFree: IconSet = {
