@@ -1,3 +1,4 @@
+import { isMarketplaceEnabled } from '@threadwick/core/capabilities';
 import {
 	CardGrid,
 	EmptyState,
@@ -35,6 +36,11 @@ const QUICK_START: QuickStartChip[] = [
 export default function StudioHome() {
 	const recents = useRecents();
 	const store = useStudioStore();
+	// Drop the marketplace entry chip when the networked layer is off.
+	const chips = QUICK_START.filter(
+		(chip) =>
+			isMarketplaceEnabled() || !chip.to.startsWith('/studio/marketplace'),
+	);
 
 	// The read model deliberately carries no media; resolve per kind here.
 	const mediaFor = (item: RecentItem): PhotoCardMedia => {
@@ -64,7 +70,7 @@ export default function StudioHome() {
 			</p>
 
 			<nav aria-label="Quick start" className="mt-6 flex flex-wrap gap-2">
-				{QUICK_START.map((chip) => (
+				{chips.map((chip) => (
 					<Link
 						key={chip.label}
 						to={chip.to}

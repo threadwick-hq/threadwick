@@ -8,6 +8,11 @@ import {
 	type EntryContext,
 	ServerRouter,
 } from 'react-router';
+import { initStudioCapabilities } from './studio/capabilities';
+
+// Set capability flags before any server render so gated surfaces (e.g. the
+// marketplace) are absent from the SSR HTML in a decoupled build.
+initStudioCapabilities();
 
 const ABORT_DELAY = 5_000;
 

@@ -46,8 +46,6 @@ async function loadStudioStore() {
 		import('@threadwick/editor'),
 		import('@threadwick/editor/browser'),
 	]);
-	const { initStudioCapabilities } = await import('./capabilities');
-	initStudioCapabilities();
 	const { store } = browser;
 	// First run only (no valid save) seeds the sample; an emptied library stays empty.
 	if (!store.loadLocal()) store.seedIfEmpty(core.sampleProject);

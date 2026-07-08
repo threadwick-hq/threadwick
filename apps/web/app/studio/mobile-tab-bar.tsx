@@ -1,3 +1,4 @@
+import { isMarketplaceEnabled } from '@threadwick/core/capabilities';
 import { cn } from '@threadwick/core/lib/utils';
 import { Icon, type IconName } from '@threadwick/icons';
 import { NavLink } from 'react-router';
@@ -10,16 +11,23 @@ type Tab = {
 	end?: boolean;
 };
 
-// Spec §1: the mobile reduction of the sidebar to five glanceable, big-target tabs.
-const TABS: Tab[] = [
-	{ to: '/studio', icon: 'home', label: 'Home', end: true },
-	// Section roots (no `end`) so a tab stays active across its subpaths,
-	// e.g. Library across /library/patterns · /yarns · /tools.
-	{ to: '/studio/library', icon: 'view', label: 'Library' },
-	{ to: '/studio/marketplace', icon: 'marketplace', label: 'Market' },
-	{ to: '/studio/patterns', icon: 'add', label: 'Create' },
-	{ to: '/studio/account', icon: 'account', label: 'Account' },
-];
+// Spec §1: the mobile reduction of the sidebar to glanceable, big-target tabs.
+// Section roots (no `end`) so a tab stays active across its subpaths, e.g.
+// Library across /library/patterns · /yarns · /tools. The Market tab drops out
+// when the marketplace capability is off.
+const HOME: Tab = { to: '/studio', icon: 'home', label: 'Home', end: true };
+const LIBRARY: Tab = { to: '/studio/library', icon: 'view', label: 'Library' };
+const MARKET: Tab = {
+	to: '/studio/marketplace',
+	icon: 'marketplace',
+	label: 'Market',
+};
+const CREATE: Tab = { to: '/studio/patterns', icon: 'add', label: 'Create' };
+const ACCOUNT: Tab = {
+	to: '/studio/account',
+	icon: 'account',
+	label: 'Account',
+};
 
 /**
  * The fixed bottom tab bar — the studio's global nav below the sidebar
@@ -27,6 +35,9 @@ const TABS: Tab[] = [
  * boundary with the sidebar so exactly one is visible at a time.
  */
 export function MobileTabBar() {
+	const tabs: Tab[] = isMarketplaceEnabled()
+		? [HOME, LIBRARY, MARKET, CREATE, ACCOUNT]
+		: [HOME, LIBRARY, CREATE, ACCOUNT];
 	return (
 		<nav
 			aria-label="Studio"
@@ -34,7 +45,7 @@ export function MobileTabBar() {
 			// in the top 4rem and nothing lands under the indicator.
 			className="fixed inset-x-0 bottom-0 z-40 flex h-[calc(4rem+env(safe-area-inset-bottom))] border-t border-border bg-card pb-[env(safe-area-inset-bottom)] min-[860px]:hidden"
 		>
-			{TABS.map((tab) => (
+			{tabs.map((tab) => (
 				<NavLink
 					key={tab.to}
 					to={tab.to}
