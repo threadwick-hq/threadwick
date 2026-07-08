@@ -148,7 +148,7 @@ export function nextVersionLabel(prj: Project): string {
 }
 
 // ---- normalisation / migration --------------------------------------------
-// biome-ignore-start lint/suspicious/noExplicitAny: the normalize* functions parse untrusted legacy project JSON at the migration boundary; `any` is the deliberate input type here.
+// biome-ignore-start lint/suspicious/noExplicitAny: the normalize* functions parse untrusted project JSON at the trust boundary; `any` is the deliberate input type here.
 function normalizeFollowMarks(m: any) {
 	if (!m) return undefined;
 	const corners = Array.isArray(m.corners) ? m.corners.map(String) : [];

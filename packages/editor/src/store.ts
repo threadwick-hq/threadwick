@@ -1067,6 +1067,9 @@ class Store {
 			const raw = localStorage.getItem(SAVE_KEY);
 			if (!raw) return false;
 			const data = JSON.parse(raw);
+			// Pre-release: a stale stored version bails cleanly to the fresh seed
+			// instead of mangling through the normalizers and re-saving empties.
+			if (data?.version !== FILE_VERSION) return false;
 			if (!data?.library || !Array.isArray(data.library.projects)) return false;
 			this.state.library.projects = data.library.projects.map(normalizeProject);
 			const ui = data.ui || {};

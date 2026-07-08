@@ -187,9 +187,11 @@ surface — the **Follow view** — built on a maker-plane Project/progress mode
 the Studio app." Tracked as `work/` tasks **TW-010..TW-049**. Parallelizable with Phase 7; it
 front-loads Phase 7's maker-plane model increment.
 
-Runs as five sub-phases. Every stored-shape change bumps `FILE_VERSION` + adds a `normalizeProject`
-migration (both `threadwickstudio:v2` and legacy `stitchgridstudio:v2`) + keeps the export → import →
-deep-equal round-trip green, in the same PR. `SAVE_KEY` never changes. Cards use photos, never chart
+Runs as five sub-phases. Pre-release format policy (owner decision, 2026-07-08): every stored-shape
+change bumps `FILE_VERSION` with **no migration** — retired shapes are rejected, not upgraded — and
+keeps the export → import → deep-equal round-trip green, in the same PR. `SAVE_KEY` never changes;
+the legacy `stitchgridstudio:v2` key handling was removed. The bump-plus-migration discipline
+resumes at release. Cards use photos, never chart
 snapshots. Every networked feature sits behind a runtime capability flag so the offline PWA (Phase 8)
 stays complete.
 
@@ -247,11 +249,11 @@ still SSR; `pnpm check` green.
    mirror in `pattern.schema.json` (fail-closed).
 2. Wire `apps/studio` + `packages/editor` to `@threadwick/types`; resolve the `Pattern` name collision
    deliberately (authoring vs chart-geometry layers).
-3. **Bump `FILE_VERSION`**; extend `normalizeProject` to migrate existing `threadwickstudio:v2` **and**
-   legacy `stitchgridstudio:v2` data. Ship the migration **with** an export→import→deep-equal
-   round-trip test, in the same change.
+3. **Bump `FILE_VERSION`** — pre-release, no migration (retired shapes are rejected; see the Phase 6
+   note). Ship the shape change **with** an export→import→deep-equal round-trip test, in the same
+   change.
 
-**Verify:** round-trip passes; both legacy keys migrate; schema validates a real chart; green build.
+**Verify:** round-trip passes; stale versions are rejected cleanly; schema validates a real chart; green build.
 
 ---
 
