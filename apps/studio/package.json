@@ -21,7 +21,6 @@
     "svg",
     "pattern",
     "designer",
-    "antd",
     "react",
     "typescript"
   ],
@@ -33,7 +32,6 @@
     "@threadwick/core": "workspace:*",
     "@threadwick/editor": "workspace:*",
     "@threadwick/icons": "workspace:*",
-    "antd": "^5.22.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.80.0"

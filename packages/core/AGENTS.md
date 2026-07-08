@@ -1,7 +1,7 @@
 # AGENTS.md — read this first
 
 `@threadwick/core` is Threadwick's **design-system foundation**: design tokens (OKLCH, light +
-dark), the Ant Design theme, the **brand** wordmark, and shared UI primitives. Threadwick is built
+dark), the **brand** wordmark, and shared UI primitives (shadcn-style, on Radix). Threadwick is built
 by AI agents, so this repo is optimised for machine consumption and **machine-enforced correctness**
 — "wrong" should fail to compile or fail a check, not rely on you reading prose.
 
@@ -10,7 +10,7 @@ by AI agents, so this repo is optimised for machine consumption and **machine-en
 > **`@threadwick/domain`** when a second surface needs them.
 
 ## What this is (and is not)
-- **Is:** the tokens-first design-system foundation — tokens, theme, brand, and shared primitives
+- **Is:** the tokens-first design-system foundation — tokens, brand, and shared primitives
   that every surface installs.
 - **Is not:** a Storybook product, a component zoo, the pattern model, or the org canon (those are
   sibling packages). Components are extracted from the apps **on demand**. Right-size everything.
@@ -25,7 +25,6 @@ by AI agents, so this repo is optimised for machine consumption and **machine-en
 | `scripts/build-tokens.ts` | codegen: tokens.json → the generated files | ✅ |
 | `scripts/check-contrast.ts` | WCAG AA gate (OKLCH→sRGB) | ✅ |
 | `scripts/validate.ts` | conformance checker (off-grid / non-token / aria) | ✅ |
-| `src/theme/antd.ts` | `lightTheme` + `darkTheme` (AntD `ThemeConfig`) | ✅ |
 | `src/brand/Wordmark.tsx` · `assets/` | logo mark + wordmark + svg assets | ✅ |
 
 ## Invariants (do not break)
@@ -63,9 +62,9 @@ reduced-motion-safe · screen-reader-checked.
 
 ## How apps consume core
 ```ts
-import { lightTheme, darkTheme } from '@threadwick/core/theme';
-import '@threadwick/core/tokens.css';
-// <ConfigProvider theme={mode === 'dark' ? darkTheme : lightTheme}>
+import { Button, FeedbackProvider } from '@threadwick/core/components';
+import '@threadwick/core/tokens.css'; // design tokens (CSS vars, light + dark)
+import '@threadwick/core/theme.css'; // shadcn role tokens mapped onto the brand tokens
 // document.documentElement.dataset.theme = mode;   // 'light' | 'dark'
 ```
 Apps **import, never redefine** — delete local `tokens.*` / `theme.*` and re-export from core.

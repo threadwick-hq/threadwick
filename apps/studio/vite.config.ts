@@ -12,13 +12,13 @@ export default defineConfig({
     outDir: 'dist/studio',
     emptyOutDir: true,
     sourcemap: false,
-    // antd is ~900 kB minified on its own — a known, cache-stable vendor cost
-    // (dropped once the 6c chrome migration removes AntD; see TW-017).
+    // The main chunk is ~770 kB minified (react-dom + @threadwick/editor incl.
+    // the PDF composer); raise the warning limit until it's worth code-splitting.
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         // split the big vendors into their own cache-stable chunks
-        manualChunks: { antd: ['antd'], supabase: ['@supabase/supabase-js'] },
+        manualChunks: { supabase: ['@supabase/supabase-js'] },
       },
     },
   },

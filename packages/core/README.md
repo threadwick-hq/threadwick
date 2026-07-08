@@ -1,7 +1,7 @@
 # @threadwick/core
 
-Threadwick's **design-system foundation**: **design tokens** (OKLCH, light + dark), the **Ant Design
-theme**, the **brand** wordmark, and shared UI primitives. Both Threadwick apps (`home`, `studio`)
+Threadwick's **design-system foundation**: **design tokens** (OKLCH, light + dark), the **brand**
+wordmark, and shared UI primitives (shadcn-style, on Radix). Both Threadwick apps (`home`, `studio`)
 import from here so they read as one product — instead of hand-syncing a theme three times. The
 Pattern model lives in the sibling package `@threadwick/types`.
 
@@ -11,7 +11,7 @@ Pattern model lives in the sibling package `@threadwick/types`.
 
 ```sh
 npm install @threadwick/core
-# peers: react ^18, react-dom ^18, antd ^5, iconoir-react ^7
+# peers: react ^18
 ```
 
 Initially you can link it via an npm workspace / path dependency — no need to publish to a registry.
@@ -19,16 +19,16 @@ Initially you can link it via an npm workspace / path dependency — no need to 
 ## Usage
 
 ```tsx
-import { ConfigProvider } from 'antd';
-import { lightTheme, darkTheme } from '@threadwick/core/theme';
+import { Button, FeedbackProvider } from '@threadwick/core/components';
 import '@threadwick/core/tokens.css'; // ships --tw-* vars + :focus-visible ring + reduced-motion guard
+import '@threadwick/core/theme.css'; // shadcn role tokens mapped onto the brand tokens
 
 export function App({ mode }: { mode: 'light' | 'dark' }) {
   document.documentElement.dataset.theme = mode; // drives [data-theme="dark"]
   return (
-    <ConfigProvider theme={mode === 'dark' ? darkTheme : lightTheme}>
+    <FeedbackProvider>
       {/* … */}
-    </ConfigProvider>
+    </FeedbackProvider>
   );
 }
 ```
@@ -40,10 +40,10 @@ export function App({ mode }: { mode: 'light' | 'dark' }) {
 
 | Subpath | Contents |
 |---|---|
-| `@threadwick/core` | `tokens`, theme (re-exports; not the stylesheet) |
+| `@threadwick/core` | `tokens` (re-exports; not the stylesheet) |
 | `@threadwick/core/tokens` | `tokens.light` / `tokens.dark` (OKLCH), `space`, `size`, `radii`, `sizing`, `fonts`, `shadows`; palette helpers `oklch()`, `L()` |
-| `@threadwick/core/theme` | `lightTheme`, `darkTheme` (AntD `ThemeConfig`) |
 | `@threadwick/core/tokens.css` | `:root` (light) + `[data-theme="dark"]` custom properties + a11y rules |
+| `@threadwick/core/theme.css` | shadcn role tokens (`--background`, `--primary`, …) mapped onto the brand tokens |
 | `@threadwick/core/brand` | `Wordmark`; `Logo` badge + `ThreadwickLogo` / `StudioLogo` / `MarketplaceLogo`; `logoSVG()` (static SVG), `fromAwesome()` |
 | `@threadwick/core/components` | `Stack` (8-px spacing guardrail) |
 

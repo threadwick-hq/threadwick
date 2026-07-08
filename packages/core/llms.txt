@@ -1,7 +1,7 @@
 # Threadwick Core
 
 > `@threadwick/core` — Threadwick's design-system foundation: design tokens (OKLCH, light + dark),
-> the Ant Design theme, the brand wordmark, and shared UI primitives.
+> the brand wordmark, and shared UI primitives (shadcn-style, on Radix).
 > Built by AI agents; optimised for machine consumption and machine-enforced correctness.
 
 Key facts:
@@ -22,10 +22,10 @@ Key facts:
 - [figma/FOUNDATIONS.md](figma/FOUNDATIONS.md): generated token ↔ hex tables for the Figma library.
 
 ## Package exports (subpaths)
-- `@threadwick/core` — tokens + theme.
+- `@threadwick/core` — tokens.
 - `@threadwick/core/tokens` — `tokens` (light/dark OKLCH), `space`, `size`, `radii`, `fonts`, `shadows`, palette helpers (`oklch`, `L`).
-- `@threadwick/core/theme` — `lightTheme`, `darkTheme` (AntD ThemeConfig).
 - `@threadwick/core/tokens.css` — `:root` (light) + `[data-theme="dark"]` + focus ring + reduced-motion guard.
+- `@threadwick/core/theme.css` — shadcn role tokens mapped onto the brand tokens.
 - `@threadwick/core/brand` — `Wordmark`.
 - `@threadwick/core/components` — `Stack` (8-px spacing guardrail).
 

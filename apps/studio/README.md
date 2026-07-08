@@ -83,35 +83,8 @@ npm run build      # type-check + lint + production build into dist/studio/
 npm run preview    # serve the production build (http://localhost:8080)
 ```
 
-The UI is **React 18 + Ant Design v5** in **strict TypeScript**, built with Vite.
-
-## AI-assisted development
-
-Because the UI is built on **Ant Design**, the repo ships Ant Design's
-[**official MCP server**](https://ant.design/docs/react/mcp) in
-[`.mcp.json`](.mcp.json) (studio-local) and [`.mcp.json`](../../.mcp.json) (repo root).
-Any MCP-aware assistant (Claude Code, …) that
-opens this repo can query live antd component docs, props, demos, design tokens
-and changelogs while it writes code — so generated UI stays idiomatic to the
-design system. It exposes seven tools (`antd_list`, `antd_info`, `antd_doc`,
-`antd_demo`, `antd_token`, `antd_semantic`, `antd_changelog`) and two prompts
-(`antd-expert`, `antd-page-generator`).
-
-```jsonc
-{
-  "mcpServers": {
-    // official @ant-design/cli MCP server (the `antd mcp` command)
-    "antd": { "command": "npx", "args": ["-y", "@ant-design/cli", "mcp"] }
-  }
-}
-```
-
-It's the official server from [`@ant-design/cli`](https://www.npmjs.com/package/@ant-design/cli),
-run over stdio. We invoke it with `npx` so no global install is needed; the docs'
-equivalent is `npm install -g @ant-design/cli` then `{ "command": "antd", "args":
-["mcp"] }`. Pin a version with an extra arg (e.g. `"mcp", "--version", "5.20.0"`).
-In Claude Code, enable the project MCP server when prompted (or run `claude mcp list`); it is
-defined in the repo-root [`.mcp.json`](../../.mcp.json).
+The UI is **React 18** on the **`@threadwick/core`** shadcn-style primitives, in
+**strict TypeScript**, built with Vite.
 
 ## Exporting
 
@@ -128,7 +101,7 @@ Every project autosaves to your browser; these are the ways out:
 
 ## Architecture
 
-The core is deliberately **DOM-free and unit-tested**; the React/antd UI is a
+The core is deliberately **DOM-free and unit-tested**; the React UI is a
 thin layer on top, and the interactive canvas is an imperative controller mounted
 into React via a ref.
 
@@ -144,8 +117,8 @@ src/core/         framework-agnostic core (strict TS, unit-tested)
   files.ts          project import/export, SVG/PNG, PDF composer, instructions
   sample.ts         the worked sample project
   editorCanvas.ts   interactive surface (the two-click insert workflow)
-src/                React + Ant Design UI
-  main.tsx theme.ts useStore.ts App.tsx index.css
+src/                React UI on @threadwick/core primitives
+  main.tsx useStore.ts App.tsx index.css
   components/ Glyph Thumb
   editor/CanvasView.tsx        mounts the canvas controller into React
   views/ ProjectsView ProjectView EditorView
