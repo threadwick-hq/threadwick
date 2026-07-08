@@ -6,6 +6,7 @@ import {
 } from '@threadwick/core/components';
 import type { RecentItem } from '@threadwick/editor';
 import { Icon, type IconName } from '@threadwick/icons';
+import type { ImageRef } from '@threadwick/types';
 import { Link } from 'react-router';
 import { getPattern } from '../../studio/pattern-store';
 import { useRecents } from '../../studio/recents';
@@ -37,15 +38,23 @@ export default function StudioHome() {
 
 	// The read model deliberately carries no media; resolve per kind here.
 	const mediaFor = (item: RecentItem): PhotoCardMedia => {
-		const image =
-			item.kind === 'pattern'
-				? getPattern(item.id)?.overview.cover
-				: store?.state.library.projects.find((p) => p.id === item.id)
-						?.photos?.[0]?.image;
+		const image = recentImage(item);
 		return image?.src.trim()
 			? { photoUrl: image.src, photoAlt: image.alt ?? '' }
 			: {};
 	};
+
+	function recentImage(item: RecentItem): ImageRef | undefined {
+		switch (item.kind) {
+			case 'pattern':
+				return getPattern(item.id)?.overview.cover;
+			case 'project':
+				return store?.state.library.projects.find((p) => p.id === item.id)
+					?.photos?.[0]?.image;
+			default:
+				return assertNever(item.kind);
+		}
+	}
 
 	return (
 		<div className="mx-auto max-w-3xl px-6 py-8">
@@ -159,7 +168,18 @@ function greeting(): string {
 }
 
 function recentHref(item: RecentItem): string {
-	return item.kind === 'pattern'
-		? `/studio/patterns/${item.id}`
-		: `/studio/projects/${item.id}`;
+	switch (item.kind) {
+		case 'pattern':
+			return `/studio/patterns/${item.id}`;
+		case 'project':
+			return `/studio/projects/${item.id}`;
+		default:
+			return assertNever(item.kind);
+	}
+}
+
+// A new RecentKind (e.g. 'saved', TW-044) must fail to compile here rather
+// than silently mislink or drop media.
+function assertNever(kind: never): never {
+	throw new Error(`Unhandled recent kind: ${String(kind)}`);
 }
