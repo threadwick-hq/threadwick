@@ -3,6 +3,7 @@ import { InteriorSlot } from '@threadwick/core/components';
 import type { ReactNode } from 'react';
 import { useLocation } from 'react-router';
 import { useInteriorChrome } from './interior-chrome';
+import { MobileTabBar } from './mobile-tab-bar';
 import { CraftPickerSlot, Sidebar } from './sidebar';
 
 /**
@@ -32,10 +33,10 @@ export function StudioShell({ children }: { children: ReactNode }) {
 					{children}
 				</main>
 			) : (
-				<div className="mx-auto flex h-full w-full max-w-uwd border-border md:border-x">
+				<div className="mx-auto flex h-full w-full max-w-uwd border-border min-[860px]:border-x">
 					<aside
 						aria-label={interior ? 'Project navigation' : 'Studio sidebar'}
-						className="hidden w-[244px] shrink-0 flex-col border-r border-border bg-card md:flex"
+						className="hidden w-[244px] shrink-0 flex-col border-r border-border bg-card min-[860px]:flex"
 					>
 						<div className="flex h-16 shrink-0 items-center border-b border-border px-5">
 							<Wordmark />
@@ -56,9 +57,13 @@ export function StudioShell({ children }: { children: ReactNode }) {
 							</>
 						)}
 					</aside>
-					<main id="studio-main" className="min-w-0 flex-1 overflow-y-auto">
+					<main
+						id="studio-main"
+						className="min-w-0 flex-1 overflow-y-auto pb-16 min-[860px]:pb-0"
+					>
 						{children}
 					</main>
+					<MobileTabBar />
 				</div>
 			)}
 		</div>
