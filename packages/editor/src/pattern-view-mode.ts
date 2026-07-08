@@ -1,4 +1,8 @@
-import type { Pattern, PatternOwnership } from '@threadwick/types';
+import type {
+	Pattern,
+	PatternCategory,
+	PatternOwnership,
+} from '@threadwick/types';
 import {
 	type PatternQualityCheck,
 	patternQualityChecks,
@@ -13,6 +17,8 @@ export type PatternListing = {
 	reviewCount?: number;
 	handle?: string;
 	followerCount?: number;
+	/** The catalogue browse category — the adapter (TW-047) defaults to 'other' when absent. */
+	category?: PatternCategory;
 };
 
 export type PatternMakerPrimaryAction = 'start-making' | 'buy';

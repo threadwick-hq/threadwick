@@ -94,6 +94,7 @@ export function sampleMarketplaceListing(): PatternListing {
 		reviewCount: 312,
 		handle: '@mara_makes',
 		followerCount: 1240,
+		category: 'blankets',
 	};
 }
 

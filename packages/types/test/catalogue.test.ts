@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'vitest';
 import {
+	CATEGORIES,
 	type CatalogueListing,
 	DIFFICULTIES,
 	listingMatchesFacets,
@@ -13,7 +14,13 @@ const LISTING: CatalogueListing = {
 	cover: { src: 'blob:cover', alt: '' },
 	priceCents: 599,
 	currency: 'USD',
-	facets: { craft: 'crochet', weight: 'dk', difficulty: 'easy', free: false },
+	facets: {
+		craft: 'crochet',
+		weight: 'dk',
+		difficulty: 'easy',
+		free: false,
+		category: 'blankets',
+	},
 };
 
 describe('catalogue listing', () => {
@@ -35,6 +42,15 @@ describe('catalogue listing', () => {
 		);
 		assert.equal(listingMatchesFacets(LISTING, { free: false }), true);
 		assert.equal(listingMatchesFacets(LISTING, { free: true }), false);
+		assert.equal(listingMatchesFacets(LISTING, { category: 'blankets' }), true);
+		assert.equal(
+			listingMatchesFacets(LISTING, { category: 'garments' }),
+			false,
+		);
+		assert.equal(
+			listingMatchesFacets(LISTING, { craft: 'crochet', category: 'blankets' }),
+			true,
+		);
 	});
 
 	test('the difficulty vocabulary is ordered coarse-to-fine', () => {
@@ -43,6 +59,17 @@ describe('catalogue listing', () => {
 			'easy',
 			'intermediate',
 			'advanced',
+		]);
+	});
+
+	test('the category vocabulary is ordered by browse display order', () => {
+		assert.deepEqual(CATEGORIES, [
+			'blankets',
+			'garments',
+			'amigurumi',
+			'home-bags',
+			'accessories',
+			'other',
 		]);
 	});
 });
