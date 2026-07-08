@@ -7,9 +7,9 @@ import {
 	chartToSVG,
 	escapeXML,
 	isStart,
-	projectFromFile,
-	projectToFile,
+	parseProjectFile,
 	STITCHES,
+	serializeProjectFile,
 	slug,
 	summarizeRound,
 } from './index';
@@ -27,7 +27,7 @@ function download(filename: string, blob: Blob): void {
 
 // ---- project file ----------------------------------------------------------
 export function exportProjectFile(project: Project): void {
-	const data = JSON.stringify(projectToFile(project), null, 2);
+	const data = JSON.stringify(serializeProjectFile(project), null, 2);
 	download(
 		`${slug(project.name, 'project')}.threadwick.json`,
 		new Blob([data], { type: 'application/json' }),
@@ -45,7 +45,7 @@ export function importProjectFile(): Promise<Project | null> {
 			const reader = new FileReader();
 			reader.onload = () => {
 				try {
-					resolve(projectFromFile(JSON.parse(String(reader.result))));
+					resolve(parseProjectFile(JSON.parse(String(reader.result))));
 				} catch {
 					resolve(null);
 				}

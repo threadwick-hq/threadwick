@@ -19,6 +19,7 @@ import type {
 	Round,
 	Stitch,
 	StitchType,
+	StoredLibrary,
 	UIState,
 } from './index';
 import {
@@ -29,8 +30,6 @@ import {
 	deepClone,
 	draftVersion,
 	effectiveFollowMode,
-	FILE_FORMAT,
-	FILE_VERSION,
 	isRealStitch,
 	isStart,
 	isStartRow,
@@ -39,11 +38,13 @@ import {
 	newRound,
 	newVersion,
 	nextVersionLabel,
-	normalizeProject,
 	nowISO,
 	PATTERN_TYPES,
+	parseProject,
+	parseStoredLibrary,
 	pruneFollowMarks,
 	publishedVersion,
+	serializeStoredLibrary,
 	startRowId,
 	topOfStitch,
 	uid,
@@ -260,7 +261,7 @@ class Store {
 		else this.emit();
 	}
 	importProject(obj: unknown): string {
-		const prj = normalizeProject(obj);
+		const prj = parseProject(obj);
 		prj.id = uid('prj');
 		this.reidVersions(prj);
 		prj.name = this.uniqueProjectName(prj.name);
@@ -271,7 +272,7 @@ class Store {
 	duplicateProject(id: string): string | null {
 		const src = this.getProject(id);
 		if (!src) return null;
-		const copy = normalizeProject(deepClone(src));
+		const copy = parseProject(deepClone(src));
 		copy.id = uid('prj');
 		this.reidVersions(copy);
 		copy.name = this.uniqueProjectName(`${src.name} (copy)`);
@@ -1079,22 +1080,8 @@ class Store {
 	}
 
 	// ---- persistence ---------------------------------------------------------
-	serialize(): {
-		format: string;
-		version: number;
-		library: { projects: Project[] };
-		ui: UIState;
-	} {
-		return {
-			format: FILE_FORMAT,
-			version: FILE_VERSION,
-			library: { projects: this.#state.library.projects },
-			ui: {
-				view: this.#state.ui.view,
-				projectId: this.#state.ui.projectId,
-				patternId: this.#state.ui.patternId,
-			},
-		};
+	serialize(): StoredLibrary {
+		return serializeStoredLibrary(this.#state.library.projects, this.#state.ui);
 	}
 	saveLocal(): void {
 		try {
@@ -1107,21 +1094,20 @@ class Store {
 		try {
 			const raw = localStorage.getItem(SAVE_KEY);
 			if (!raw) return false;
-			const data = JSON.parse(raw);
-			// Pre-release: a stale stored version bails cleanly to the fresh seed
-			// instead of mangling through the normalizers and re-saving empties.
-			if (data?.version !== FILE_VERSION) return false;
-			if (!data?.library || !Array.isArray(data.library.projects)) return false;
-			this.#state.library.projects =
-				data.library.projects.map(normalizeProject);
-			const ui = data.ui || {};
-			const prj = this.getProject(ui.projectId);
+			// The codec validates shape + version; a stale/invalid blob bails to
+			// null so the caller falls back to a fresh seed.
+			const parsed = parseStoredLibrary(JSON.parse(raw));
+			if (!parsed) return false;
+			this.#state.library.projects = parsed.projects;
+			// Referential reconciliation: only restore the route if the stored
+			// project/pattern still exist.
+			const prj = this.getProject(parsed.ui.projectId);
 			if (prj) {
 				this.#state.ui.projectId = prj.id;
 				const pat = activeVersion(prj).patterns.find(
-					(p) => p.id === ui.patternId,
+					(p) => p.id === parsed.ui.patternId,
 				);
-				if (pat && ui.view === 'editor') {
+				if (pat && parsed.ui.view === 'editor') {
 					this.#state.ui.patternId = pat.id;
 					this.#state.ui.view = 'editor';
 				} else this.#state.ui.view = 'project';

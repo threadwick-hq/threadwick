@@ -7,6 +7,7 @@
 // and the freed name is the Phase 7 seam — once model unification lands, this barrel
 // re-exports the authoring `Pattern` from @threadwick/types under its own name.
 
+export * from './codec';
 export * from './colors';
 export * from './connectivity';
 export * from './decomposition';
