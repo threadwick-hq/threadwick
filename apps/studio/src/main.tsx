@@ -12,17 +12,11 @@ import '@fontsource/inter/latin-600.css';
 import './index.css'; // owns the Tailwind entry + @threadwick/core tokens & theme
 
 // First run: seed a worked sample so the app opens on something real.
-if (!store.loadLocal()) {
-  store.state.library.projects.push(sampleProject());
-  store.saveLocal();
-}
+store.loadLocal();
+store.seedIfEmpty(sampleProject);
 
 // Autosave (the container is ephemeral; keep work between reloads).
-let saveTimer: ReturnType<typeof setTimeout> | undefined;
-store.subscribe(() => {
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => store.saveLocal(), 350);
-});
+store.enableAutosave();
 
 // Expose for debugging / the browser smoke test. Cloud is opt-in: with no
 // Supabase env vars `cloudEnabled` is false and no cloud code is loaded at all.

@@ -179,14 +179,14 @@ test('store: live drag + slider coalesce into one undo entry', () => {
 	const aOf = () => pat().stitches.find((s) => s.id === a)!;
 
 	store.setSelection([a]);
-	const beforeDrag = store.undoStack.length;
+	const beforeDrag = store.undoDepth;
 	store.dragBegin();
 	store.dragBy(5, 0);
 	store.dragBy(5, 0);
 	store.dragBy(5, 0);
 	store.commitGesture();
 	assert.equal(
-		store.undoStack.length,
+		store.undoDepth,
 		beforeDrag + 1,
 		'one undo entry for the whole drag',
 	);
@@ -195,12 +195,12 @@ test('store: live drag + slider coalesce into one undo entry', () => {
 	assert.ok(near(aOf().x, 0, 1e-9), 'undo restores the pre-drag position');
 
 	store.setSelection([a]);
-	const beforeSlide = store.undoStack.length;
+	const beforeSlide = store.undoDepth;
 	store.liveUpdateSelection({ len: 40 });
 	store.liveUpdateSelection({ len: 50 });
 	store.endLive();
 	assert.equal(
-		store.undoStack.length,
+		store.undoDepth,
 		beforeSlide + 1,
 		'one undo entry for the slider drag',
 	);
@@ -235,13 +235,13 @@ test('store: endpoint adjustments coalesce into one undo entry; chains de-automa
 	const aOf = () => pat().stitches.find((s) => s.id === a)!;
 	const chOf = () => pat().stitches.find((s) => s.id === ch)!;
 
-	const before = store.undoStack.length;
+	const before = store.undoDepth;
 	store.dragBegin();
 	store.adjustStitch(a, { len: 40, rot: 15 });
 	store.adjustStitch(a, { len: 45, rot: 30 });
 	store.commitGesture();
 	assert.equal(
-		store.undoStack.length,
+		store.undoDepth,
 		before + 1,
 		'one undo entry per handle gesture',
 	);
@@ -307,9 +307,9 @@ test('store: mirrorSelection flips each stitch individually, one undo entry', ()
 
 	// mixed selection: each flips its own state
 	store.setSelection([a, b]);
-	const before = store.undoStack.length;
+	const before = store.undoDepth;
 	store.mirrorSelection();
-	assert.equal(store.undoStack.length, before + 1);
+	assert.equal(store.undoDepth, before + 1);
 	assert.equal(of(a).mirror, false);
 	assert.equal(of(b).mirror, true);
 	store.undo();

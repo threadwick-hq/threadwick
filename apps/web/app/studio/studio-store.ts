@@ -50,10 +50,8 @@ async function loadStudioStore() {
 	initStudioCapabilities();
 	const { store } = browser;
 	store.loadLocal();
-	if (store.state.library.projects.length === 0) {
-		store.state.library.projects.push(core.sampleProject());
-		store.saveLocal();
-	}
+	store.seedIfEmpty(core.sampleProject);
+	store.enableAutosave();
 	window.threadwick = { store };
 	return store;
 }

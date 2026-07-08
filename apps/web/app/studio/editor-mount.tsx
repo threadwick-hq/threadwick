@@ -62,21 +62,14 @@ export function EditorMount() {
 				if (pattern) store.addMakePatternRef(pattern.id);
 			}
 
-			// Autosave on data changes (the canvas only persists view changes itself).
-			let saveTimer: ReturnType<typeof setTimeout> | undefined;
-			const unsubscribeSave = store.subscribe(() => {
-				clearTimeout(saveTimer);
-				saveTimer = setTimeout(() => store.saveLocal(), 350);
-			});
-
+			// Autosave is owned by the store (enabled once in studio-store); the
+			// canvas only persists its own view changes.
 			const controller = initCanvas(store, svg, {});
 			const unsubscribeDraw = store.subscribe(() => controller.invalidate());
 			const raf = requestAnimationFrame(() => controller.fit());
 
 			dispose = () => {
 				cancelAnimationFrame(raf);
-				clearTimeout(saveTimer);
-				unsubscribeSave();
 				unsubscribeDraw();
 				controller.destroy();
 			};

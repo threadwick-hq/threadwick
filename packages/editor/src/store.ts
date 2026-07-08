@@ -56,7 +56,13 @@ export interface StoreState {
 	library: { projects: Project[] };
 	ui: UIState;
 }
-type Listener = (state: StoreState) => void;
+
+/** The public, read-only view of the store's state — external mutation is a type error. */
+export interface ReadonlyStoreState {
+	readonly library: { readonly projects: readonly Project[] };
+	readonly ui: Readonly<UIState>;
+}
+type Listener = (state: ReadonlyStoreState) => void;
 interface PatternSnapshot {
 	start: StitchType | null;
 	rounds: Round[];
@@ -85,19 +91,55 @@ export interface StitchPatch {
 }
 
 class Store {
-	state: StoreState = {
+	#state: StoreState = {
 		library: { projects: [] },
 		ui: { view: 'projects', projectId: null, patternId: null },
 	};
-	selection = new Set<string>();
-	undoStack: PatternSnapshot[] = [];
-	redoStack: PatternSnapshot[] = [];
+	#selection = new Set<string>();
+	#undoStack: PatternSnapshot[] = [];
+	#redoStack: PatternSnapshot[] = [];
 
 	private listeners = new Set<Listener>();
 	private histPatternId: string | null = null;
 	private dragSnapped = false;
 	private liveSnapped = false;
-	lastPlacedId: string | null = null;
+
+	// ---- read-only views (mutation happens only through the commands below) --
+	/** A read-only view of the store's data + UI route; mutating it is a type error. */
+	get state(): ReadonlyStoreState {
+		return this.#state;
+	}
+	/** The current stitch selection, read-only. */
+	get selection(): ReadonlySet<string> {
+		return this.#selection;
+	}
+	/** Depth of the undo/redo history — for enabling controls and introspection. */
+	get undoDepth(): number {
+		return this.#undoStack.length;
+	}
+	get redoDepth(): number {
+		return this.#redoStack.length;
+	}
+
+	// ---- seeding & persistence commands --------------------------------------
+	/**
+	 * Seed one project when the library is empty (first run). The factory keeps
+	 * domain sample data out of the store. Returns whether it seeded.
+	 */
+	seedIfEmpty(makeProject: () => Project): boolean {
+		if (this.#state.library.projects.length > 0) return false;
+		this.#state.library.projects.push(makeProject());
+		this.saveLocal();
+		return true;
+	}
+	/** Debounced autosave: persist on every emit; returns an unsubscribe. */
+	enableAutosave(delayMs = 350): () => void {
+		let timer: ReturnType<typeof setTimeout> | undefined;
+		return this.subscribe(() => {
+			clearTimeout(timer);
+			timer = setTimeout(() => this.saveLocal(), delayMs);
+		});
+	}
 
 	// ---- subscription --------------------------------------------------------
 	subscribe(fn: Listener): () => void {
@@ -105,7 +147,7 @@ class Store {
 		return () => this.listeners.delete(fn);
 	}
 	emit(): void {
-		for (const fn of this.listeners) fn(this.state);
+		for (const fn of this.listeners) fn(this.#state);
 	}
 	private touch(): void {
 		this.emit();
@@ -113,10 +155,10 @@ class Store {
 
 	// ---- lookups -------------------------------------------------------------
 	getProject(id: string | null): Project | null {
-		return this.state.library.projects.find((p) => p.id === id) ?? null;
+		return this.#state.library.projects.find((p) => p.id === id) ?? null;
 	}
 	currentProject(): Project | null {
-		return this.getProject(this.state.ui.projectId);
+		return this.getProject(this.#state.ui.projectId);
 	}
 	// The active version of the current project — patterns + resources live here.
 	currentVersion(): ProjectVersion | null {
@@ -131,7 +173,7 @@ class Store {
 	currentPattern(): ChartPattern | null {
 		const v = this.currentVersion();
 		return v
-			? (v.patterns.find((x) => x.id === this.state.ui.patternId) ?? null)
+			? (v.patterns.find((x) => x.id === this.#state.ui.patternId) ?? null)
 			: null;
 	}
 	// Locate a pattern (current project's active version first, then anywhere).
@@ -144,7 +186,7 @@ class Store {
 			const pat = v.patterns.find((p) => p.id === patternId);
 			if (pat) return { prj: cur, version: v, pat };
 		}
-		for (const prj of this.state.library.projects)
+		for (const prj of this.#state.library.projects)
 			for (const v of prj.versions) {
 				const pat = v.patterns.find((p) => p.id === patternId);
 				if (pat) return { prj, version: v, pat };
@@ -158,13 +200,13 @@ class Store {
 
 	// ---- navigation ----------------------------------------------------------
 	goProjects(): void {
-		this.state.ui = { view: 'projects', projectId: null, patternId: null };
+		this.#state.ui = { view: 'projects', projectId: null, patternId: null };
 		this.clearEditor();
 		this.emit();
 	}
 	openProject(id: string): void {
 		if (!this.getProject(id)) return;
-		this.state.ui = { view: 'project', projectId: id, patternId: null };
+		this.#state.ui = { view: 'project', projectId: id, patternId: null };
 		this.clearEditor();
 		this.emit();
 	}
@@ -172,26 +214,25 @@ class Store {
 		const prj = this.getProject(projectId);
 		if (!prj || !activeVersion(prj).patterns.find((p) => p.id === patternId))
 			return;
-		this.state.ui = { view: 'editor', projectId, patternId };
+		this.#state.ui = { view: 'editor', projectId, patternId };
 		this.clearEditor();
 		this.emit();
 	}
 	backToProject(): void {
-		if (this.state.ui.projectId) this.openProject(this.state.ui.projectId);
+		if (this.#state.ui.projectId) this.openProject(this.#state.ui.projectId);
 		else this.goProjects();
 	}
 	private clearEditor(): void {
-		this.selection = new Set();
-		this.undoStack = [];
-		this.redoStack = [];
+		this.#selection = new Set();
+		this.#undoStack = [];
+		this.#redoStack = [];
 		this.histPatternId = null;
-		this.lastPlacedId = null;
 	}
 
 	// ---- projects ------------------------------------------------------------
 	createProject(name?: string): string {
 		const prj = newProject(name);
-		this.state.library.projects.unshift(prj);
+		this.#state.library.projects.unshift(prj);
 		this.emit();
 		return prj.id;
 	}
@@ -212,10 +253,10 @@ class Store {
 		}
 	}
 	deleteProject(id: string): void {
-		this.state.library.projects = this.state.library.projects.filter(
+		this.#state.library.projects = this.#state.library.projects.filter(
 			(p) => p.id !== id,
 		);
-		if (this.state.ui.projectId === id) this.goProjects();
+		if (this.#state.ui.projectId === id) this.goProjects();
 		else this.emit();
 	}
 	importProject(obj: unknown): string {
@@ -223,7 +264,7 @@ class Store {
 		prj.id = uid('prj');
 		this.reidVersions(prj);
 		prj.name = this.uniqueProjectName(prj.name);
-		this.state.library.projects.unshift(prj);
+		this.#state.library.projects.unshift(prj);
 		this.emit();
 		return prj.id;
 	}
@@ -236,7 +277,7 @@ class Store {
 		copy.name = this.uniqueProjectName(`${src.name} (copy)`);
 		copy.createdAt = nowISO();
 		copy.updatedAt = nowISO();
-		this.state.library.projects.unshift(copy);
+		this.#state.library.projects.unshift(copy);
 		this.emit();
 		return copy.id;
 	}
@@ -267,7 +308,7 @@ class Store {
 		}
 	}
 	private uniqueProjectName(name: string): string {
-		const names = new Set(this.state.library.projects.map((p) => p.name));
+		const names = new Set(this.#state.library.projects.map((p) => p.name));
 		if (!names.has(name)) return name;
 		let i = 2;
 		while (names.has(`${name} ${i}`)) i++;
@@ -282,10 +323,12 @@ class Store {
 		this.clearEditor();
 		// If we were in the editor on a pattern that doesn't exist in this version, step back.
 		if (
-			this.state.ui.view === 'editor' &&
-			!activeVersion(prj).patterns.find((p) => p.id === this.state.ui.patternId)
+			this.#state.ui.view === 'editor' &&
+			!activeVersion(prj).patterns.find(
+				(p) => p.id === this.#state.ui.patternId,
+			)
 		) {
-			this.state.ui = { view: 'project', projectId, patternId: null };
+			this.#state.ui = { view: 'project', projectId, patternId: null };
 		}
 		this.emit();
 	}
@@ -326,8 +369,8 @@ class Store {
 		prj.updatedAt = nowISO();
 		this.clearEditor();
 		// the editor's pattern id won't exist in the freshly-id'd draft — step back to the project
-		if (this.state.ui.view === 'editor')
-			this.state.ui = { view: 'project', projectId, patternId: null };
+		if (this.#state.ui.view === 'editor')
+			this.#state.ui = { view: 'project', projectId, patternId: null };
 		this.emit();
 		return draft.id;
 	}
@@ -343,8 +386,8 @@ class Store {
 		).id;
 		prj.updatedAt = nowISO();
 		this.clearEditor();
-		if (this.state.ui.view === 'editor')
-			this.state.ui = { view: 'project', projectId, patternId: null };
+		if (this.#state.ui.view === 'editor')
+			this.#state.ui = { view: 'project', projectId, patternId: null };
 		this.emit();
 	}
 
@@ -382,7 +425,7 @@ class Store {
 		ver.patterns = ver.patterns.filter((p) => p.id !== patternId);
 		ver.updatedAt = nowISO();
 		prj.updatedAt = nowISO();
-		if (this.state.ui.patternId === patternId) this.openProject(projectId);
+		if (this.#state.ui.patternId === patternId) this.openProject(projectId);
 		else this.emit();
 	}
 	duplicatePattern(projectId: string, patternId: string): string | null {
@@ -475,13 +518,13 @@ class Store {
 	}
 	private pushHistory(pat: ChartPattern): void {
 		if (this.histPatternId !== pat.id) {
-			this.undoStack = [];
-			this.redoStack = [];
+			this.#undoStack = [];
+			this.#redoStack = [];
 			this.histPatternId = pat.id;
 		}
-		this.undoStack.push(this.snap(pat));
-		if (this.undoStack.length > 250) this.undoStack.shift();
-		this.redoStack.length = 0;
+		this.#undoStack.push(this.snap(pat));
+		if (this.#undoStack.length > 250) this.#undoStack.shift();
+		this.#redoStack.length = 0;
 	}
 	editTransact(fn: (pat: ChartPattern) => void): void {
 		const pat = this.currentPattern();
@@ -499,24 +542,24 @@ class Store {
 	}
 	undo(): void {
 		const pat = this.currentPattern();
-		if (!pat || !this.undoStack.length) return;
-		this.redoStack.push(this.snap(pat));
-		this.restoreSnap(pat, this.undoStack.pop()!);
+		if (!pat || !this.#undoStack.length) return;
+		this.#redoStack.push(this.snap(pat));
+		this.restoreSnap(pat, this.#undoStack.pop()!);
 		this.pruneSelection(pat);
 		this.emit();
 	}
 	redo(): void {
 		const pat = this.currentPattern();
-		if (!pat || !this.redoStack.length) return;
-		this.undoStack.push(this.snap(pat));
-		this.restoreSnap(pat, this.redoStack.pop()!);
+		if (!pat || !this.#redoStack.length) return;
+		this.#undoStack.push(this.snap(pat));
+		this.restoreSnap(pat, this.#redoStack.pop()!);
 		this.pruneSelection(pat);
 		this.emit();
 	}
 	private pruneSelection(pat: ChartPattern): void {
 		const ids = new Set(pat.stitches.map((s) => s.id));
-		for (const id of [...this.selection])
-			if (!ids.has(id)) this.selection.delete(id);
+		for (const id of [...this.#selection])
+			if (!ids.has(id)) this.#selection.delete(id);
 	}
 
 	// ---- editor: rounds ------------------------------------------------------
@@ -598,7 +641,7 @@ class Store {
 		});
 	}
 	setRepeatOnSelection(times = 1): void {
-		if (this.selection.size < 2 || !this.isDraftActive()) return;
+		if (this.#selection.size < 2 || !this.isDraftActive()) return;
 		const pat = this.currentPattern();
 		if (!pat) return;
 		const roundId = pat.activeRound;
@@ -606,7 +649,7 @@ class Store {
 		const order = chainOrder(pat.stitches, roundId).filter(
 			(s) => !isStart(s.type),
 		);
-		const selected = order.filter((s) => this.selection.has(s.id));
+		const selected = order.filter((s) => this.#selection.has(s.id));
 		if (selected.length < 2) return;
 		const fromStitchId = selected[0]!.id;
 		const toStitchId = selected[selected.length - 1]!.id;
@@ -777,7 +820,6 @@ class Store {
 			const working = pat.rounds.find((r) => r.id !== startRow.id);
 			if (working) pat.activeRound = working.id;
 		});
-		this.lastPlacedId = id;
 		return id;
 	}
 
@@ -818,15 +860,14 @@ class Store {
 				auto: type === 'ch' ? true : undefined,
 			});
 		});
-		this.lastPlacedId = id;
 		return id;
 	}
 
 	moveSelectionBy(dx: number, dy: number): void {
-		if (!this.selection.size || (!dx && !dy)) return;
+		if (!this.#selection.size || (!dx && !dy)) return;
 		this.editTransact((pat) => {
 			for (const s of pat.stitches)
-				if (this.selection.has(s.id)) {
+				if (this.#selection.has(s.id)) {
 					s.x += dx;
 					s.y += dy;
 					if (s.type === 'ch') s.auto = false;
@@ -835,10 +876,10 @@ class Store {
 	}
 
 	setChainAuto(value: boolean): void {
-		if (!this.selection.size) return;
+		if (!this.#selection.size) return;
 		this.editTransact((pat) => {
 			for (const s of pat.stitches)
-				if (this.selection.has(s.id) && s.type === 'ch') s.auto = value;
+				if (this.#selection.has(s.id) && s.type === 'ch') s.auto = value;
 		});
 	}
 
@@ -851,7 +892,7 @@ class Store {
 		this.dragSnapped = false;
 	}
 	dragBy(dx: number, dy: number): void {
-		if (!this.selection.size || (!dx && !dy) || !this.isDraftActive()) return;
+		if (!this.#selection.size || (!dx && !dy) || !this.isDraftActive()) return;
 		const pat = this.currentPattern();
 		if (!pat) return;
 		if (!this.dragSnapped) {
@@ -859,7 +900,7 @@ class Store {
 			this.dragSnapped = true;
 		}
 		for (const s of pat.stitches)
-			if (this.selection.has(s.id)) {
+			if (this.#selection.has(s.id)) {
 				s.x += dx;
 				s.y += dy;
 				if (s.type === 'ch') s.auto = false;
@@ -900,7 +941,7 @@ class Store {
 	// entry: it snapshots once, then emits live so the canvas updates as you drag.
 	// endLive() resets so the next gesture starts a fresh history entry.
 	liveUpdateSelection(patch: StitchPatch): void {
-		if (!this.selection.size || !this.isDraftActive()) return;
+		if (!this.#selection.size || !this.isDraftActive()) return;
 		const pat = this.currentPattern();
 		if (!pat) return;
 		if (!this.liveSnapped) {
@@ -908,7 +949,7 @@ class Store {
 			this.liveSnapped = true;
 		}
 		for (const s of pat.stitches) {
-			if (!this.selection.has(s.id)) continue;
+			if (!this.#selection.has(s.id)) continue;
 			if (patch.type !== undefined) s.type = patch.type;
 			if (patch.color !== undefined) s.color = patch.color;
 			if (patch.len !== undefined) s.len = patch.len;
@@ -924,10 +965,10 @@ class Store {
 	}
 
 	updateSelection(patch: StitchPatch): void {
-		if (!this.selection.size) return;
+		if (!this.#selection.size) return;
 		this.editTransact((pat) => {
 			for (const s of pat.stitches) {
-				if (!this.selection.has(s.id)) continue;
+				if (!this.#selection.has(s.id)) continue;
 				if (patch.type !== undefined) s.type = patch.type;
 				if (patch.color !== undefined) s.color = patch.color;
 				if (patch.len !== undefined) s.len = patch.len;
@@ -938,24 +979,24 @@ class Store {
 		});
 	}
 	rotateSelectionBy(deg: number): void {
-		if (!this.selection.size) return;
+		if (!this.#selection.size) return;
 		this.editTransact((pat) => {
 			for (const s of pat.stitches)
-				if (this.selection.has(s.id)) s.rot = (s.rot || 0) + deg;
+				if (this.#selection.has(s.id)) s.rot = (s.rot || 0) + deg;
 		});
 	}
 	// Mirroring is an action, not a state control: each selected stitch flips its
 	// own mirror flag, so mixed selections behave sensibly (like rotate does).
 	mirrorSelection(): void {
-		if (!this.selection.size) return;
+		if (!this.#selection.size) return;
 		this.editTransact((pat) => {
 			for (const s of pat.stitches)
-				if (this.selection.has(s.id)) s.mirror = !s.mirror;
+				if (this.#selection.has(s.id)) s.mirror = !s.mirror;
 		});
 	}
 
 	deleteSelection(): void {
-		if (this.selection.size) this.removeStitches([...this.selection]);
+		if (this.#selection.size) this.removeStitches([...this.#selection]);
 	}
 	removeStitches(ids: string[]): void {
 		const set = new Set(ids);
@@ -983,7 +1024,7 @@ class Store {
 					s.base = null;
 			}
 		});
-		this.selection.clear();
+		this.#selection.clear();
 		this.emit();
 	}
 
@@ -1021,18 +1062,18 @@ class Store {
 
 	// ---- selection -----------------------------------------------------------
 	setSelection(ids: string[]): void {
-		this.selection = new Set(ids);
+		this.#selection = new Set(ids);
 		this.emit();
 	}
 	toggleSelection(id: string, additive: boolean): void {
-		if (!additive) this.selection = new Set([id]);
-		else if (this.selection.has(id)) this.selection.delete(id);
-		else this.selection.add(id);
+		if (!additive) this.#selection = new Set([id]);
+		else if (this.#selection.has(id)) this.#selection.delete(id);
+		else this.#selection.add(id);
 		this.emit();
 	}
 	clearSelection(): void {
-		if (this.selection.size) {
-			this.selection.clear();
+		if (this.#selection.size) {
+			this.#selection.clear();
 			this.emit();
 		}
 	}
@@ -1047,11 +1088,11 @@ class Store {
 		return {
 			format: FILE_FORMAT,
 			version: FILE_VERSION,
-			library: { projects: this.state.library.projects },
+			library: { projects: this.#state.library.projects },
 			ui: {
-				view: this.state.ui.view,
-				projectId: this.state.ui.projectId,
-				patternId: this.state.ui.patternId,
+				view: this.#state.ui.view,
+				projectId: this.#state.ui.projectId,
+				patternId: this.#state.ui.patternId,
 			},
 		};
 	}
@@ -1071,18 +1112,19 @@ class Store {
 			// instead of mangling through the normalizers and re-saving empties.
 			if (data?.version !== FILE_VERSION) return false;
 			if (!data?.library || !Array.isArray(data.library.projects)) return false;
-			this.state.library.projects = data.library.projects.map(normalizeProject);
+			this.#state.library.projects =
+				data.library.projects.map(normalizeProject);
 			const ui = data.ui || {};
 			const prj = this.getProject(ui.projectId);
 			if (prj) {
-				this.state.ui.projectId = prj.id;
+				this.#state.ui.projectId = prj.id;
 				const pat = activeVersion(prj).patterns.find(
 					(p) => p.id === ui.patternId,
 				);
 				if (pat && ui.view === 'editor') {
-					this.state.ui.patternId = pat.id;
-					this.state.ui.view = 'editor';
-				} else this.state.ui.view = 'project';
+					this.#state.ui.patternId = pat.id;
+					this.#state.ui.view = 'editor';
+				} else this.#state.ui.view = 'project';
 			}
 			return true;
 		} catch {
