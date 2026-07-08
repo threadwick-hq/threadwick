@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "@threadwick/core/tokens.css";
 @import "@threadwick/core/theme.css";
+/* Font Awesome base rules — the icon wrapper disables runtime injection. */
+@import "@threadwick/icons/styles.css";
 
 /* Scan @threadwick/core's components so Tailwind generates the utilities baked into them
    (workspace deps in node_modules are not auto-detected). */
