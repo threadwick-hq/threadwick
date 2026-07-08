@@ -6,7 +6,7 @@ import {
 } from '@threadwick/core/components';
 import {
 	deriveLastWorkedAt,
-	formatRelativeAgo,
+	formatRelativeAgoSentence,
 	type Project,
 } from '@threadwick/editor';
 import { Link } from 'react-router';
@@ -45,7 +45,8 @@ export default function StudioProjectsIndex() {
 				<CardGrid className="mt-6">
 					{projects.map((project) => {
 						const photo = project.photos?.[0]?.image;
-						const media: PhotoCardMedia = photo
+						// non-empty src only — an empty string would render a broken <img>
+						const media: PhotoCardMedia = photo?.src.trim()
 							? { photoUrl: photo.src, photoAlt: photo.alt ?? '' }
 							: {};
 						return (
@@ -78,11 +79,7 @@ function projectStateLine(project: Project): string {
 			? `${patternCount} pattern${patternCount === 1 ? '' : 's'}`
 			: undefined;
 	const worked = workedAt
-		? `Worked on ${lowercaseJustNow(formatRelativeAgo(workedAt))}`
+		? `Worked on ${formatRelativeAgoSentence(workedAt)}`
 		: undefined;
 	return [worked, counts].filter(Boolean).join(' · ') || 'Not started yet';
-}
-
-function lowercaseJustNow(ago: string): string {
-	return ago === 'Just now' ? 'just now' : ago;
 }

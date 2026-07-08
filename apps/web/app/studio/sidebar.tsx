@@ -2,6 +2,7 @@ import { InteriorSlot } from '@threadwick/core/components';
 import { cn } from '@threadwick/core/lib/utils';
 import { Icon, type IconName } from '@threadwick/icons';
 import { NavLink } from 'react-router';
+import { usePatternLibrary } from './pattern-store';
 import { useStudioStore } from './studio-store';
 
 type NavItem = {
@@ -28,12 +29,9 @@ type NavSection = {
 export function Sidebar() {
 	const store = useStudioStore();
 	const projects = store?.state.library.projects ?? [];
-	const patternCount = projects.reduce((total, project) => {
-		const version = project.versions.find(
-			(candidate) => candidate.id === project.activeVersionId,
-		);
-		return total + (version?.patterns.length ?? 0);
-	}, 0);
+	// Workbench counts read the same top-level collections the list routes
+	// render, so the badge and the list can never disagree.
+	const patternCount = usePatternLibrary().length;
 
 	const sections: NavSection[] = [
 		{ items: [{ to: '/studio', icon: 'home', label: 'Home', end: true }] },

@@ -5,7 +5,7 @@ import {
 	type PhotoCardMedia,
 } from '@threadwick/core/components';
 import {
-	formatRelativeAgo,
+	formatRelativeAgoSentence,
 	patternDraftVersion,
 	patternEditedAt,
 	patternPublishedVersion,
@@ -36,7 +36,8 @@ export default function PatternsIndex() {
 				<CardGrid className="mt-6">
 					{patterns.map((pattern) => {
 						const cover = pattern.overview.cover;
-						const media: PhotoCardMedia = cover
+						// non-empty src only — an empty string would render a broken <img>
+						const media: PhotoCardMedia = cover?.src.trim()
 							? { photoUrl: cover.src, photoAlt: cover.alt ?? '' }
 							: {};
 						return (
@@ -88,17 +89,11 @@ export default function PatternsIndex() {
 
 function patternStateLine(pattern: Pattern): string | undefined {
 	const editedAt = patternEditedAt(pattern);
-	return editedAt
-		? `Edited ${lowercaseJustNow(formatRelativeAgo(editedAt))}`
-		: undefined;
+	return editedAt ? `Edited ${formatRelativeAgoSentence(editedAt)}` : undefined;
 }
 
 function patternBadge(pattern: Pattern): string | undefined {
 	if (patternDraftVersion(pattern)) return 'Draft';
 	if (patternPublishedVersion(pattern)) return 'Published';
 	return undefined;
-}
-
-function lowercaseJustNow(ago: string): string {
-	return ago === 'Just now' ? 'just now' : ago;
 }
