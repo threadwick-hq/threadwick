@@ -8,10 +8,13 @@ export type OverviewMaterialItem = {
 	acquired?: boolean;
 };
 
-/** Derive last-worked timestamp from stored field or per-pattern progress touches. */
+/**
+ * Derive the last-worked timestamp: the newest of the stored field and the
+ * per-pattern progress touches. Progress advances don't write lastWorkedAt,
+ * so a stored value must not shadow a newer touch.
+ */
 export function deriveLastWorkedAt(project: Project): string | undefined {
-	if (project.lastWorkedAt) return project.lastWorkedAt;
-	let best = '';
+	let best = project.lastWorkedAt ?? '';
 	for (const ref of project.makePatterns ?? []) {
 		const at = ref.progress?.updatedAt ?? '';
 		if (at > best) best = at;
