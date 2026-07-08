@@ -13,7 +13,8 @@ import { CraftPickerSlot, Sidebar } from './sidebar';
  *
  * Follow mode is immersive on md+: global nav recedes to Follow's own back bar (TW-031).
  * Project/pattern interiors swap the craft-picker slot for an identity tile (TW-025/033).
- * The topbar lands in TW-022. Below `md` the sidebar is hidden (the mobile bottom tab bar is TW-024).
+ * The topbar lands in TW-022. Below `min-[860px]` the sidebar gives way to the fixed
+ * `MobileTabBar` (they share that one breakpoint, so exactly one shows at a time).
  */
 export function StudioShell({ children }: { children: ReactNode }) {
 	const location = useLocation();
@@ -59,7 +60,7 @@ export function StudioShell({ children }: { children: ReactNode }) {
 					</aside>
 					<main
 						id="studio-main"
-						className="min-w-0 flex-1 overflow-y-auto pb-16 min-[860px]:pb-0"
+						className="min-w-0 flex-1 overflow-y-auto pb-[calc(4rem+env(safe-area-inset-bottom))] min-[860px]:pb-0"
 					>
 						{children}
 					</main>

@@ -13,7 +13,9 @@ type Tab = {
 // Spec §1: the mobile reduction of the sidebar to five glanceable, big-target tabs.
 const TABS: Tab[] = [
 	{ to: '/studio', icon: 'home', label: 'Home', end: true },
-	{ to: '/studio/library/patterns', icon: 'view', label: 'Library' },
+	// Section roots (no `end`) so a tab stays active across its subpaths,
+	// e.g. Library across /library/patterns · /yarns · /tools.
+	{ to: '/studio/library', icon: 'view', label: 'Library' },
 	{ to: '/studio/marketplace', icon: 'marketplace', label: 'Market' },
 	{ to: '/studio/patterns', icon: 'add', label: 'Create' },
 	{ to: '/studio/account', icon: 'account', label: 'Account' },
@@ -28,7 +30,9 @@ export function MobileTabBar() {
 	return (
 		<nav
 			aria-label="Studio"
-			className="fixed inset-x-0 bottom-0 z-40 flex h-16 border-t border-border bg-card min-[860px]:hidden"
+			// Grow by the iOS home-indicator inset and pad it out, so the tabs sit
+			// in the top 4rem and nothing lands under the indicator.
+			className="fixed inset-x-0 bottom-0 z-40 flex h-[calc(4rem+env(safe-area-inset-bottom))] border-t border-border bg-card pb-[env(safe-area-inset-bottom)] min-[860px]:hidden"
 		>
 			{TABS.map((tab) => (
 				<NavLink
