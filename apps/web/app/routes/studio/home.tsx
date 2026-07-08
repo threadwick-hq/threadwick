@@ -1,16 +1,165 @@
-/** The Studio's default destination — a placeholder until the real Home screen (a later Phase 6 task). */
+import {
+	CardGrid,
+	EmptyState,
+	PhotoCard,
+	type PhotoCardMedia,
+} from '@threadwick/core/components';
+import type { RecentItem } from '@threadwick/editor';
+import { Icon, type IconName } from '@threadwick/icons';
+import { Link } from 'react-router';
+import { getPattern } from '../../studio/pattern-store';
+import { useRecents } from '../../studio/recents';
+import { useStudioStore } from '../../studio/studio-store';
+
+type QuickStartChip = {
+	to: string;
+	icon: IconName;
+	label: string;
+};
+
+// Both roles' entries, never gated (spec §3). Creation flows are their own
+// later tasks; the chips navigate to the owning surfaces.
+const QUICK_START: QuickStartChip[] = [
+	{ to: '/studio/patterns', icon: 'add', label: 'New pattern' },
+	{ to: '/studio/projects', icon: 'make-it', label: 'New project' },
+	{ to: '/studio/projects', icon: 'download', label: 'Import' },
+	{
+		to: '/studio/marketplace/browse',
+		icon: 'browse',
+		label: 'Browse marketplace',
+	},
+];
+
+/** Home — single-column, personal-first (spec §3): greeting, quick start, Continue. */
 export default function StudioHome() {
+	const recents = useRecents();
+	const store = useStudioStore();
+
+	// The read model deliberately carries no media; resolve per kind here.
+	const mediaFor = (item: RecentItem): PhotoCardMedia => {
+		const image =
+			item.kind === 'pattern'
+				? getPattern(item.id)?.overview.cover
+				: store?.state.library.projects.find((p) => p.id === item.id)
+						?.photos?.[0]?.image;
+		return image?.src.trim()
+			? { photoUrl: image.src, photoAlt: image.alt ?? '' }
+			: {};
+	};
+
 	return (
-		<div className="px-6 py-8">
-			<h1 className="text-2xl font-medium tracking-tight">Good afternoon</h1>
+		<div className="mx-auto max-w-3xl px-6 py-8">
+			<h1 className="text-2xl font-medium tracking-tight">{greeting()}</h1>
 			<p className="mt-1 text-sm text-muted-foreground">
 				Your work and the marketplace, all in one place.
 			</p>
-			<div className="mt-6 rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
-				The Home screen lands in a later Phase 6 task. This is the shell's
-				default destination — the sidebar and topbar fill in next (TW-021 /
-				TW-022).
-			</div>
+
+			<nav aria-label="Quick start" className="mt-6 flex flex-wrap gap-2">
+				{QUICK_START.map((chip) => (
+					<Link
+						key={chip.label}
+						to={chip.to}
+						className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted/50 [&_svg]:size-3.5"
+					>
+						<Icon name={chip.icon} label="" />
+						{chip.label}
+					</Link>
+				))}
+			</nav>
+
+			<section className="mt-10" aria-labelledby="continue-heading">
+				<h2 id="continue-heading" className="text-sm font-medium">
+					Continue
+				</h2>
+				{recents === null ? (
+					<p className="mt-3 text-sm text-muted-foreground">
+						Loading your recent work…
+					</p>
+				) : recents.lead === undefined ? (
+					<EmptyState
+						className="mt-3"
+						title="Nothing in progress yet"
+						description="Start something with the quick-start chips above and it will be waiting for you here."
+					/>
+				) : (
+					<>
+						<LeadCard item={recents.lead} media={mediaFor(recents.lead)} />
+						{recents.shelf.length > 0 ? (
+							<CardGrid className="mt-4">
+								{recents.shelf.map((item) => (
+									<Link
+										key={`${item.kind}-${item.id}`}
+										to={recentHref(item)}
+										aria-label={`Open ${item.title}`}
+										className="block rounded-xl"
+									>
+										<PhotoCard
+											title={item.title}
+											subtitle={item.state}
+											{...mediaFor(item)}
+										/>
+									</Link>
+								))}
+							</CardGrid>
+						) : null}
+					</>
+				)}
+			</section>
+
+			<p className="mt-12 text-center text-xs text-muted-foreground">
+				Saved in your browser — local-first, yours to export any time.
+			</p>
 		</div>
 	);
+}
+
+/** The content-width "pick up where you left off" lead card. */
+function LeadCard({
+	item,
+	media,
+}: {
+	item: RecentItem;
+	media: PhotoCardMedia;
+}) {
+	return (
+		<Link
+			to={recentHref(item)}
+			aria-label={`Continue ${item.title}`}
+			className="mt-3 flex overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-sm transition-shadow hover:shadow-md"
+		>
+			<div className="relative aspect-[4/3] w-40 shrink-0 sm:w-56">
+				{media.photoUrl !== undefined ? (
+					<img
+						src={media.photoUrl}
+						alt={media.photoAlt}
+						loading="lazy"
+						className="absolute inset-0 h-full w-full object-cover"
+					/>
+				) : (
+					<div aria-hidden="true" className="absolute inset-0 bg-muted" />
+				)}
+			</div>
+			<div className="flex min-w-0 flex-col justify-center gap-1 p-5">
+				<div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+					Pick up where you left off
+				</div>
+				<div className="truncate text-lg font-medium">{item.title}</div>
+				<div className="text-sm text-muted-foreground">{item.state}</div>
+			</div>
+		</Link>
+	);
+}
+
+function greeting(): string {
+	const hour = new Date().getHours();
+	if (hour < 5) return 'Working late';
+	if (hour < 12) return 'Good morning';
+	if (hour < 18) return 'Good afternoon';
+	return 'Good evening';
+}
+
+function recentHref(item: RecentItem): string {
+	return item.kind === 'pattern'
+		? `/studio/patterns/${item.id}`
+		: `/studio/projects/${item.id}`;
 }
