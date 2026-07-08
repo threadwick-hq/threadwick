@@ -91,11 +91,14 @@ export default function LibraryYarns() {
 
 function YarnCard({ yarn }: { yarn: StashYarn }) {
 	const skeins = yarn.quantity?.skeins ?? 0;
-	const setSkeins = (n: number) =>
+	const setSkeins = (n: number) => {
+		const { skeins: _drop, ...rest } = yarn.quantity ?? {};
+		const next = n > 0 ? { ...rest, skeins: n } : rest;
 		updateYarnQuantity(
 			yarn.id,
-			n > 0 ? { ...yarn.quantity, skeins: n } : undefined,
+			Object.keys(next).length > 0 ? next : undefined,
 		);
+	};
 
 	return (
 		<div className="flex flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-sm">
@@ -121,7 +124,7 @@ function YarnCard({ yarn }: { yarn: StashYarn }) {
 					<div className="flex items-center gap-1">
 						<button
 							type="button"
-							aria-label="Fewer skeins"
+							aria-label={`Fewer skeins of ${yarn.name}`}
 							className="flex size-6 items-center justify-center rounded-md border border-border hover:bg-muted/50"
 							onClick={() => setSkeins(Math.max(0, skeins - 1))}
 						>
@@ -130,7 +133,7 @@ function YarnCard({ yarn }: { yarn: StashYarn }) {
 						<span className="w-6 text-center tabular-nums">{skeins}</span>
 						<button
 							type="button"
-							aria-label="More skeins"
+							aria-label={`More skeins of ${yarn.name}`}
 							className="flex size-6 items-center justify-center rounded-md border border-border hover:bg-muted/50"
 							onClick={() => setSkeins(skeins + 1)}
 						>

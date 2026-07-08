@@ -15,12 +15,16 @@ export default function LibraryTools() {
 	const sections = toolMatrixForCraft(scope);
 	const isOwned = (kind: ToolKind, size: string) =>
 		owned.some((t) => t.kind === kind && t.size === size);
+	// Count only the kinds this scope shows, so the header matches the matrix.
+	const scopedOwned = owned.filter((t) =>
+		sections.some((s) => s.kind === t.kind),
+	).length;
 
 	return (
 		<div className="mx-auto max-w-3xl px-6 py-8">
 			<h1 className="text-2xl font-medium tracking-tight">Tools</h1>
 			<p className="mt-1 text-sm text-muted-foreground">
-				{owned.length} owned — tap a size to add or remove it. Your owned set
+				{scopedOwned} owned — tap a size to add or remove it. Your owned set
 				powers the “owned only” filter in the project tool picker.
 			</p>
 
@@ -35,6 +39,7 @@ export default function LibraryTools() {
 									key={size}
 									type="button"
 									aria-pressed={active}
+									aria-label={`${size} ${section.kind}`}
 									onClick={() => toggleTool(section.kind, size)}
 									className={cn(
 										'min-w-16 rounded-lg border px-3 py-2 text-sm font-medium transition-colors',

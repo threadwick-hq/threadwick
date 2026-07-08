@@ -1,5 +1,4 @@
 import type { OwnedTool, StashYarn, ToolKind } from '@threadwick/types';
-import { useEffect } from 'react';
 import { createLocalStore } from '../lib/create-local-store';
 
 // The Library's genuinely-owned data — the yarn stash and the owned-tools
@@ -46,18 +45,13 @@ const SEED: LibraryStash = {
 	],
 };
 
+// The seed factory runs only on first load (no valid stored value); a stash the
+// user has emptied deliberately stays empty — no re-seed on next mount.
 const libraryStore = createLocalStore<LibraryStash>({
 	storageKey: STORAGE_KEY,
-	seed: () => structuredCloneStash(SEED),
+	seed: () => structuredClone(SEED),
 	isValid: isLibraryStash,
 });
-
-function ensureSeed(): void {
-	const current = libraryStore.getSnapshot();
-	if (current.yarns.length === 0 && current.tools.length === 0) {
-		libraryStore.update(() => structuredCloneStash(SEED), { notify: false });
-	}
-}
 
 // ---- yarns -----------------------------------------------------------------
 
@@ -107,17 +101,11 @@ export function toggleTool(kind: ToolKind, size: string): void {
 // ---- hooks / selectors -----------------------------------------------------
 
 export function useStashYarns(): StashYarn[] {
-	useEffect(() => {
-		ensureSeed();
-	}, []);
 	return libraryStore.use().yarns;
 }
 
 /** The owned-tools set — the seam the project tool picker's owned-only filter reads. */
 export function useOwnedTools(): OwnedTool[] {
-	useEffect(() => {
-		ensureSeed();
-	}, []);
 	return libraryStore.use().tools;
 }
 
@@ -127,8 +115,4 @@ export function useLibraryCounts(): {
 } {
 	const lib = libraryStore.use();
 	return { yarns: lib.yarns.length, tools: lib.tools.length };
-}
-
-function structuredCloneStash(stash: LibraryStash): LibraryStash {
-	return JSON.parse(JSON.stringify(stash));
 }

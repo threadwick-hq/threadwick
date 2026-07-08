@@ -139,11 +139,16 @@ export function useSavedPatterns(): {
 	pattern: Pattern;
 	ownership: PatternOwnership;
 }[] {
-	usePatternMarketplaceState();
-	const ids = new Set<string>([
-		...bookmarksStore.getSnapshot(),
-		...Object.keys(ownershipStore.getSnapshot()),
-	]);
+	useEffect(() => {
+		ensureCatalogSeed();
+	}, []);
+	// Read via `.use()` (the SSR-stable snapshot) — NOT getSnapshot() — so the
+	// server render and hydration agree (empty seed) and flip post-hydration,
+	// avoiding a count mismatch in the server-rendered sidebar.
+	const bookmarks = bookmarksStore.use();
+	const ownership = ownershipStore.use();
+	catalogStore.use();
+	const ids = new Set<string>([...bookmarks, ...Object.keys(ownership)]);
 	const out: { pattern: Pattern; ownership: PatternOwnership }[] = [];
 	for (const id of ids) {
 		const pattern = resolveViewPattern(id);
