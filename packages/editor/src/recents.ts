@@ -1,5 +1,8 @@
 import type { Pattern } from '@threadwick/types';
-import { deriveLastWorkedAt, formatRelativeAgo } from './project-overview';
+import {
+	deriveLastWorkedAt,
+	formatRelativeAgoSentence,
+} from './project-overview';
 import type { Project } from './types';
 
 export type RecentKind = 'pattern' | 'project';
@@ -101,7 +104,6 @@ function toRecent(
 	if (at === undefined) return undefined;
 	const parsed = Date.parse(at);
 	if (Number.isNaN(parsed)) return undefined;
-	const ago = formatRelativeAgo(at, now);
-	const state = `${STATE_VERB[kind]} ${ago === 'Just now' ? 'just now' : ago}`;
+	const state = `${STATE_VERB[kind]} ${formatRelativeAgoSentence(at, now)}`;
 	return { kind, id, title, at, state, parsed };
 }

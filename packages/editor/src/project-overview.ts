@@ -45,6 +45,15 @@ export function formatRelativeAgo(iso: string, now = Date.now()): string {
 	return `${days} day${days === 1 ? '' : 's'} ago`;
 }
 
+/** formatRelativeAgo for mid-sentence use — 'Just now' reads as 'just now'. */
+export function formatRelativeAgoSentence(
+	iso: string,
+	now = Date.now(),
+): string {
+	const ago = formatRelativeAgo(iso, now);
+	return ago === 'Just now' ? 'just now' : ago;
+}
+
 export function projectOverviewMaterials(
 	project: Project,
 ): OverviewMaterialItem[] {
