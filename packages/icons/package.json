@@ -4,7 +4,9 @@
 	"description": "Threadwick's action-named icon interface — one <Icon name> against a closed set of intent names, resolved by a swappable icon set (Font Awesome Free baseline, Pro when licensed).",
 	"type": "module",
 	"license": "AGPL-3.0-or-later",
-	"sideEffects": false,
+	"sideEffects": [
+		"*.css"
+	],
 	"exports": {
 		".": "./src/index.ts",
 		"./styles.css": "./styles.css"
