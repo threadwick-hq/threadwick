@@ -148,8 +148,8 @@ export function EditorView() {
             </BreadcrumbList>
           </Breadcrumb>
           <div className="grow" />
-          <Tip label="Undo (⌘Z)"><Button variant="ghost" size="iconSm" aria-label="Undo" disabled={!s.undoStack.length} onClick={() => s.undo()}><Icon name="undo" label="" /></Button></Tip>
-          <Tip label="Redo (⇧⌘Z)"><Button variant="ghost" size="iconSm" aria-label="Redo" disabled={!s.redoStack.length} onClick={() => s.redo()}><Icon name="redo" label="" /></Button></Tip>
+          <Tip label="Undo (⌘Z)"><Button variant="ghost" size="iconSm" aria-label="Undo" disabled={!s.undoDepth} onClick={() => s.undo()}><Icon name="undo" label="" /></Button></Tip>
+          <Tip label="Redo (⇧⌘Z)"><Button variant="ghost" size="iconSm" aria-label="Redo" disabled={!s.redoDepth} onClick={() => s.redo()}><Icon name="redo" label="" /></Button></Tip>
           <Tip label="How it works"><Button variant="ghost" size="iconSm" aria-label="How it works" onClick={() => setHelp(true)}><Icon name="help" label="" /></Button></Tip>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
