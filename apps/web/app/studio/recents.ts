@@ -1,4 +1,5 @@
 import { deriveRecents, type RecentsModel } from '@threadwick/editor';
+import { patternInScope, projectInScope, useCraftScope } from './craft-scope';
 import { usePatternLibrary } from './pattern-store';
 import { useStudioStore } from './studio-store';
 
@@ -11,6 +12,13 @@ import { useStudioStore } from './studio-store';
 export function useRecents(shelfSize?: number): RecentsModel | null {
 	const patterns = usePatternLibrary();
 	const store = useStudioStore();
+	const { scope } = useCraftScope();
 	if (!store) return null;
-	return deriveRecents(patterns, store.state.library.projects, { shelfSize });
+	return deriveRecents(
+		patterns.filter((pattern) => patternInScope(scope, pattern)),
+		store.state.library.projects.filter((project) =>
+			projectInScope(scope, project),
+		),
+		{ shelfSize },
+	);
 }

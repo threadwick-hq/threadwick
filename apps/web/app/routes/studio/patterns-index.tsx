@@ -12,11 +12,15 @@ import {
 } from '@threadwick/editor';
 import type { Pattern } from '@threadwick/types';
 import { Link } from 'react-router';
+import { patternInScope, useCraftScope } from '../../studio/craft-scope';
 import { usePatternLibrary } from '../../studio/pattern-store';
 
 /** Workbench patterns list — your designs, drilling into the pattern interior. */
 export default function PatternsIndex() {
-	const patterns = usePatternLibrary();
+	const { scope } = useCraftScope();
+	const patterns = usePatternLibrary().filter((pattern) =>
+		patternInScope(scope, pattern),
+	);
 
 	return (
 		<div className="px-6 py-8">
