@@ -21,6 +21,19 @@ export type YarnWeight =
 	| 'super-bulky'
 	| 'jumbo';
 
+/** The canonical `YarnWeight` order, lightest to heaviest — the single source for facet/sort ordering across the app. */
+export const YARN_WEIGHTS = [
+	'lace',
+	'fingering',
+	'sport',
+	'dk',
+	'worsted',
+	'aran',
+	'bulky',
+	'super-bulky',
+	'jumbo',
+] as const satisfies readonly YarnWeight[];
+
 /** Optional precise amounts — tracking is a friendly middle, so every field is opt-in. */
 export interface YarnQuantity {
 	skeins?: number;

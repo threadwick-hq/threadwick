@@ -90,7 +90,11 @@ export type IconName =
 	| 'browse'
 	| 'wishlist'
 	// studio topbar
-	| 'bell';
+	| 'bell'
+	// marketplace browse
+	| 'star'
+	| 'sort'
+	| 'filter';
 
 /** Per-action metadata, independent of any icon set. `label` is the default accessible name. */
 export type IconMeta = {
@@ -180,4 +184,7 @@ export const iconMeta: Record<IconName, IconMeta> = {
 	browse: { label: 'Browse' },
 	wishlist: { label: 'Wishlist' },
 	bell: { label: 'Notifications' },
+	star: { label: 'Rating' },
+	sort: { label: 'Sort' },
+	filter: { label: 'Filter' },
 };

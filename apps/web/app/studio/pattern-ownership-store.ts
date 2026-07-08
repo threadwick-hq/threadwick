@@ -7,6 +7,7 @@ import {
 import type { Pattern, PatternOwnership } from '@threadwick/types';
 import { useEffect } from 'react';
 import { createLocalStore } from '../lib/create-local-store';
+import { CATALOGUE_FIXTURES } from './marketplace-fixtures';
 import { getPattern } from './pattern-store';
 
 const CATALOG_KEY = 'threadwick.marketplace.catalog.v1';
@@ -52,8 +53,18 @@ function ensureCatalogSeed() {
 	if (catalogStore.getSnapshot().patterns.length === 0) {
 		catalogStore.update(
 			() => ({
-				patterns: [sampleMarketplaceViewPattern()],
-				listings: [sampleMarketplaceListing(), samplePaidMarketplaceListing()],
+				// Keep the original sample pattern/listings first (and their ids
+				// stable) so existing lookups keep working; the catalogue fixtures
+				// are added additively for browse-grid variety.
+				patterns: [
+					sampleMarketplaceViewPattern(),
+					...CATALOGUE_FIXTURES.map((fixture) => fixture.pattern),
+				],
+				listings: [
+					sampleMarketplaceListing(),
+					samplePaidMarketplaceListing(),
+					...CATALOGUE_FIXTURES.map((fixture) => fixture.listing),
+				],
 			}),
 			{ notify: false },
 		);
@@ -65,6 +76,14 @@ export function getCatalogPattern(id: string): Pattern | undefined {
 	return catalogStore
 		.getSnapshot()
 		.patterns.find((pattern) => pattern.id === id);
+}
+
+/** All patterns currently in the marketplace catalog, reactive to updates. */
+export function useCatalogPatterns(): Pattern[] {
+	useEffect(() => {
+		ensureCatalogSeed();
+	}, []);
+	return catalogStore.use().patterns;
 }
 
 export function getPatternListing(

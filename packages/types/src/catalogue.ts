@@ -18,6 +18,24 @@ export const DIFFICULTIES: readonly Difficulty[] = [
 	'advanced',
 ];
 
+/** What kind of thing a pattern is — the browse category facet. */
+export type PatternCategory =
+	| 'blankets'
+	| 'garments'
+	| 'amigurumi'
+	| 'home-bags'
+	| 'accessories'
+	| 'other';
+
+export const CATEGORIES = [
+	'blankets',
+	'garments',
+	'amigurumi',
+	'home-bags',
+	'accessories',
+	'other',
+] as const satisfies readonly PatternCategory[];
+
 /** The filterable facets a catalogue listing carries. */
 export interface ListingFacets {
 	craft: Craft;
@@ -25,6 +43,7 @@ export interface ListingFacets {
 	difficulty?: Difficulty;
 	/** True for free listings — the "Free" browse filter. */
 	free: boolean;
+	category: PatternCategory;
 }
 
 /** A browse-catalogue card: a projection over a Pattern + its listing, plus facets. */
@@ -43,6 +62,7 @@ export interface CatalogueFacetOptions {
 	crafts: readonly Craft[];
 	weights: readonly YarnWeight[];
 	difficulties: readonly Difficulty[];
+	categories: readonly PatternCategory[];
 }
 
 /** Whether a listing passes an (optional) facet selection — all set facets must match. */
@@ -53,6 +73,7 @@ export function listingMatchesFacets(
 		weight: YarnWeight;
 		difficulty: Difficulty;
 		free: boolean;
+		category: PatternCategory;
 	}>,
 ): boolean {
 	if (
@@ -74,6 +95,12 @@ export function listingMatchesFacets(
 		return false;
 	}
 	if (selection.free !== undefined && listing.facets.free !== selection.free) {
+		return false;
+	}
+	if (
+		selection.category !== undefined &&
+		listing.facets.category !== selection.category
+	) {
 		return false;
 	}
 	return true;

@@ -6,6 +6,7 @@ import {
 	faArrowRight,
 	faArrowsRotate,
 	faArrowUpRightFromSquare,
+	faArrowUpWideShort,
 	faBars,
 	faBell,
 	faBookOpen,
@@ -32,6 +33,7 @@ import {
 	faFileExport,
 	faFilePdf,
 	faFilePen,
+	faFilter,
 	faFingerprint,
 	faFolder,
 	faFolderOpen,
@@ -64,6 +66,7 @@ import {
 	faRotateRight,
 	faScrewdriverWrench,
 	faSliders,
+	faStar,
 	faStore,
 	faTableCells,
 	faTrash,
@@ -150,6 +153,9 @@ const glyphs: Record<IconName, IconDefinition> = {
 	browse: faCompass,
 	wishlist: faHeart,
 	bell: faBell,
+	star: faStar,
+	sort: faArrowUpWideShort,
+	filter: faFilter,
 };
 
 export const faFree: IconSet = {

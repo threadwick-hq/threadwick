@@ -26,7 +26,12 @@ export default [
 		route('library/patterns', 'routes/studio/library/patterns.tsx'),
 		route('library/yarns', 'routes/studio/library/yarns.tsx'),
 		route('library/tools', 'routes/studio/library/tools.tsx'),
-		// Every other destination (Marketplace, …) is a placeholder for now.
+		route('marketplace', 'routes/studio/marketplace/home.tsx'),
+		route('marketplace/browse', 'routes/studio/marketplace/browse.tsx'),
+		route('marketplace/following', 'routes/studio/marketplace/following.tsx'),
+		route('marketplace/free', 'routes/studio/marketplace/free.tsx'),
+		route('marketplace/wishlist', 'routes/studio/marketplace/wishlist.tsx'),
+		// Every other destination is a placeholder for now.
 		route('*', 'routes/studio/section.tsx'),
 	]),
 ] satisfies RouteConfig;
