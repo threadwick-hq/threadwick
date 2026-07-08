@@ -390,16 +390,6 @@ function normalizePatternReference(
 	return null;
 }
 
-function isPatternReferenceArray(arr: unknown[]): boolean {
-	return arr.some(
-		(x) =>
-			x &&
-			typeof x === 'object' &&
-			'source' in x &&
-			typeof (x as any).source === 'string',
-	);
-}
-
 function normalizeMakePatterns(
 	p: any,
 	versions: ProjectVersion[],
@@ -412,21 +402,11 @@ function normalizeMakePatterns(
 		return '';
 	};
 
-	let raw: unknown[] | undefined;
-	if (Array.isArray(p.makePatterns)) raw = p.makePatterns;
-	else if (Array.isArray(p.patterns) && isPatternReferenceArray(p.patterns))
-		raw = p.patterns;
-	else if (Array.isArray(p.patternIds)) {
-		return p.patternIds.map((pid: unknown) => ({
-			id: uid('ref'),
-			label: resolveLabel(String(pid)),
-			source: 'threadwick' as const,
-			patternId: String(pid),
-		}));
-	}
-	if (!raw) return undefined;
-	const refs = raw
-		.map((r) => normalizePatternReference(r, resolveLabel))
+	// Current shape only: `makePatterns` is the one field carrying refs.
+	// (Pre-release policy — retired shapes are rejected, not upgraded.)
+	if (!Array.isArray(p.makePatterns)) return undefined;
+	const refs = p.makePatterns
+		.map((r: unknown) => normalizePatternReference(r, resolveLabel))
 		.filter(Boolean) as PatternReference[];
 	return refs.length ? refs : undefined;
 }
@@ -497,19 +477,10 @@ export function normalizeProject(p: any = {}): Project {
 		prj.versions = p.versions.map((v: any, i: number) =>
 			normalizeVersion(v, `v${i + 1}`),
 		);
-	} else {
-		// Migrate a legacy project ({ patterns, resources }) into a single draft version.
-		prj.versions = [
-			normalizeVersion({
-				patterns: p.patterns,
-				resources: p.resources,
-				status: 'draft',
-				label: 'v1',
-				createdAt: p.createdAt,
-				updatedAt: p.updatedAt,
-			}),
-		];
 	}
+	// else: keep newProject's fresh draft version — a project without
+	// versions[] is not a current shape, and pre-release there is no
+	// upgrade path for retired shapes.
 	enforceSinglePublished(prj.versions);
 	const active =
 		prj.versions.find((v) => v.id === p.activeVersionId) ??
@@ -522,7 +493,7 @@ export function normalizeProject(p: any = {}): Project {
 
 	const makePatterns = normalizeMakePatterns(p, prj.versions);
 	if (makePatterns) prj.makePatterns = makePatterns;
-	const makerStatus = normalizeMakerStatus(p.makerStatus ?? p.status);
+	const makerStatus = normalizeMakerStatus(p.makerStatus);
 	if (makerStatus) prj.makerStatus = makerStatus;
 	else if (makePatterns?.some((r) => r.progress?.unitsDone)) {
 		prj.makerStatus = 'in-progress';
@@ -606,9 +577,10 @@ export function projectToFile(project: Project): ProjectFile {
 export function projectFromFile(data: unknown): Project | null {
 	if (!data || typeof data !== 'object') return null;
 	const rec = data as Record<string, unknown>;
-	const raw = (
-		rec.project && typeof rec.project === 'object' ? rec.project : rec
-	) as Record<string, unknown>;
-	if (!Array.isArray(raw.patterns) && !raw.name) return null;
-	return normalizeProject(raw);
+	// Pre-release policy: only the current envelope is accepted — no
+	// compatibility window for older versions or bare (unwrapped) projects
+	// until release (see apps/studio/AGENTS.md, Data ownership).
+	if (rec.version !== FILE_VERSION) return null;
+	if (!rec.project || typeof rec.project !== 'object') return null;
+	return normalizeProject(rec.project);
 }

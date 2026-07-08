@@ -219,11 +219,12 @@ test('normalizeProject fills a bare object with fresh project defaults', () => {
 	assert.equal(prj.makerStatus, undefined);
 });
 
-test('normalizeProject migrates a pre-versions (v1/v2) project into a single draft version', () => {
-	// Oldest supported shape: patterns/resources sat directly on the project, before
-	// FILE_VERSION 3 introduced ProjectVersion.
+test('normalizeProject does NOT upgrade the retired pre-versions shape — it yields a fresh draft (pre-release policy)', () => {
+	// The pre-FILE_VERSION-3 shape (patterns/resources directly on the project)
+	// is retired; until release there is no compatibility window, so nothing
+	// from it carries over.
 	const prj = normalizeProject({
-		name: 'Legacy',
+		name: 'Retired shape',
 		patterns: [
 			{
 				id: 'p1',
@@ -238,16 +239,14 @@ test('normalizeProject migrates a pre-versions (v1/v2) project into a single dra
 		updatedAt: '2020-01-02T00:00:00.000Z',
 	});
 	assert.equal(prj.versions.length, 1);
-	assert.equal(prj.versions[0]?.label, 'v1');
 	assert.equal(prj.versions[0]?.status, 'draft');
-	assert.equal(prj.versions[0]?.patterns[0]?.name, 'Old pattern');
-	assert.equal(prj.versions[0]?.resources.yarns[0]?.name, 'Cotton');
-	// the project-level timestamps also migrate, not just the version's
+	assert.equal(prj.versions[0]?.patterns.length, 0);
+	assert.equal(prj.versions[0]?.resources.yarns.length, 0);
+	// scalar fields still parse — they are part of the current shape too
 	assert.equal(prj.createdAt, '2020-01-01T00:00:00.000Z');
-	assert.equal(prj.updatedAt, '2020-01-02T00:00:00.000Z');
 });
 
-test('normalizeProject migrates legacy patternIds[] into threadwick makePatterns refs, resolving labels from live patterns', () => {
+test('normalizeProject ignores the retired patternIds and top-level patterns fields', () => {
 	const prj = normalizeProject({
 		name: 'Make',
 		versions: [
@@ -257,42 +256,33 @@ test('normalizeProject migrates legacy patternIds[] into threadwick makePatterns
 				patterns: [{ id: 'pat1', type: 'granny', name: 'Sq' }],
 			},
 		],
-		patternIds: ['pat1', 'pat-missing'],
-	});
-	assert.equal(prj.makePatterns?.length, 2);
-	assert.equal(prj.makePatterns?.[0]?.source, 'threadwick');
-	assert.equal(prj.makePatterns?.[0]?.label, 'Sq'); // resolved from the live pattern
-	assert.equal(prj.makePatterns?.[1]?.label, ''); // unresolved id -> blank label, not a throw
-	assert.equal(prj.makerStatus, 'draft');
-});
-
-test('normalizeProject routes a `patterns` array to makePatterns the moment any item carries `source` (and still feeds the whole array to the authoring migration)', () => {
-	// isPatternReferenceArray uses .some(), not .every() — a single tagged item flips
-	// the WHOLE array to "these are maker-plane refs", even though (since `versions` is
-	// absent) the same array is also fed to the legacy authoring migration as ChartPattern
-	// data. Real double-duty gotcha worth pinning before Phase 7 untangles it.
-	const prj = normalizeProject({
-		name: 'Mixed',
+		patternIds: ['pat1'],
 		patterns: [
-			{ id: 'chart1', type: 'granny', name: 'ChartLike' }, // no `source`
 			{ id: 'ref1', label: 'ExtRef', source: 'blog', url: 'http://x' },
 		],
 	});
-	assert.equal(prj.versions[0]?.patterns.length, 2); // both fed to the authoring side
-	assert.equal(prj.makePatterns?.length, 1); // only the `source`-tagged one survives here
-	assert.equal(prj.makePatterns?.[0]?.id, 'ref1');
+	assert.equal(prj.makePatterns, undefined);
 });
 
-test('normalizeProject prefers an explicit makePatterns[] over patternIds[]', () => {
+test('normalizeProject resolves a missing makePatterns label from the live pattern, blank when unresolved', () => {
 	const prj = normalizeProject({
-		name: 'Precedence',
-		makePatterns: [
-			{ id: 'ref-a', label: 'A', source: 'blog', url: 'http://a' },
+		name: 'Make',
+		versions: [
+			{
+				label: 'v1',
+				status: 'draft',
+				patterns: [{ id: 'pat1', type: 'granny', name: 'Sq' }],
+			},
 		],
-		patternIds: ['should-be-ignored'],
+		makePatterns: [
+			{ source: 'threadwick', patternId: 'pat1' },
+			{ source: 'threadwick', patternId: 'pat-missing' },
+		],
 	});
-	assert.equal(prj.makePatterns?.length, 1);
-	assert.equal(prj.makePatterns?.[0]?.id, 'ref-a');
+	assert.equal(prj.makePatterns?.length, 2);
+	assert.equal(prj.makePatterns?.[0]?.label, 'Sq'); // resolved from the live pattern
+	assert.equal(prj.makePatterns?.[1]?.label, ''); // unresolved id -> blank label, not a throw
+	assert.equal(prj.makerStatus, 'draft');
 });
 
 test('normalizeProject passes a non-string name through unvalidated', () => {
@@ -419,27 +409,33 @@ test('projectFromFile rejects input with neither a `project` wrapper nor a recog
 	assert.equal(projectFromFile({ garbage: true }), null);
 });
 
-test('projectFromFile accepts a bare (unwrapped) project object, not just the {format,version,project} envelope', () => {
+test('projectFromFile rejects bare projects and non-current versions (pre-release: envelope with the current FILE_VERSION only)', () => {
 	const prj = normalizeProject({ name: 'Bare' });
-	const back = projectFromFile(prj);
-	assert.ok(back);
-	assert.equal(back?.name, 'Bare');
+	assert.equal(projectFromFile(prj), null);
+	const stale = { ...projectToFile(prj), version: 3 };
+	assert.equal(projectFromFile(stale), null);
 });
 
-test('full export -> import round-trip is a deep-equal identity for an already-normalized project (including a legacy-migrated one)', () => {
+test('full export -> import round-trip is a deep-equal identity for an already-normalized project', () => {
 	const legacy = normalizeProject({
-		name: 'Legacy round-trip',
-		patterns: [
+		name: 'Round-trip',
+		versions: [
 			{
-				id: 'p1',
-				type: 'granny',
-				name: 'Old pattern',
-				rounds: [{ id: 'r1', name: 'R1' }],
-				stitches: [{ id: 's1', type: 'dc', round: 'r1', x: 1, y: 2 }],
+				label: 'v1',
+				status: 'draft',
+				patterns: [
+					{
+						id: 'p1',
+						type: 'granny',
+						name: 'Pattern',
+						rounds: [{ id: 'r1', name: 'R1' }],
+						stitches: [{ id: 's1', type: 'dc', round: 'r1', x: 1, y: 2 }],
+					},
+				],
+				resources: { yarns: [{ name: 'Cotton' }] },
 			},
 		],
-		resources: { yarns: [{ name: 'Cotton' }] },
-		patternIds: ['p1'],
+		makePatterns: [{ source: 'threadwick', patternId: 'p1' }],
 	});
 	const file = projectToFile(legacy);
 	// round-trip through JSON, like a real file save/load would

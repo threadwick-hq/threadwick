@@ -47,7 +47,7 @@ A `Project` owns `versions[]` + `activeVersionId`; **patterns and resources live
 - **Data ownership:** the portable `ProjectFile` (`projectToFile` / `projectFromFile`) round-trips
   losslessly — `export → import → deep-equal` is covered in `test/`. When you change a stored shape,
   bump `FILE_VERSION` + add a `normalizeProject` migration + keep the round-trip green, in the same
-  change. `SAVE_KEY` (`threadwickstudio:v2`, legacy `stitchgridstudio:v2`) never changes.
+  change. `SAVE_KEY` (`threadwickstudio:v2`) never changes.
 
 This ships the existing **v3 model intact**. The redesign's Pattern-as-versioned-root / maker-plane
 `Project` shift is **Phase 6d + Phase 7** (`@threadwick/types`), not here — see

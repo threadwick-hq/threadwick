@@ -24,14 +24,17 @@ Full source: [docs/BRAND.md](docs/BRAND.md).
 - Free-first: core tools, sync, export always free; only marketplace processing is paid.
 - Makers never pay Threadwick. No dark patterns.
 - Vocabulary: Project → Pattern → **Chart** (not "graph"); **Ravelry** (never "Raverly").
-- Never resurrect "stitchgrid" except the legacy localStorage migration key.
+- Never resurrect "stitchgrid" anywhere (the legacy key migration was removed pre-release).
 - WCAG AA: primary `#a64e30`; muted text `#6b675f`.
 
 ## Data ownership (non-negotiable)
 
 - Everything exportable; canonical format is human-readable JSON (`@threadwick/editor` model).
 - Export → import → deep-equal is the bar; cover in tests.
-- Format changes: bump `FILE_VERSION`, add migration in `normalizeProject`, ship together.
+- **Pre-release format policy:** until the app ships, breaking format changes may change the
+  shape in place — bump `FILE_VERSION`, no migration; retired shapes are rejected, not
+  upgraded (`projectFromFile` accepts only the current-version envelope). The
+  bump-plus-migration discipline resumes at release.
 
 ## Where things live
 
