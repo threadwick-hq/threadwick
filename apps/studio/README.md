@@ -76,11 +76,15 @@ patterns are still viewable. (A dedicated, richer view mode is planned.)
 
 ## Run it locally
 
+Studio lives in a pnpm workspace; run scripts from the repo root, and build the
+workspace packages once per fresh checkout (`dist/` is gitignored):
+
 ```bash
-npm install
-npm run dev        # Vite dev server (http://localhost:5173)
-npm run build      # type-check + lint + production build into dist/studio/
-npm run preview    # serve the production build (http://localhost:8080)
+pnpm install
+pnpm turbo run build --filter='./packages/*'  # once — builds @threadwick/* deps
+pnpm --filter threadwick-studio dev      # Vite dev server (http://localhost:5173/studio/)
+pnpm --filter threadwick-studio build    # type-check + lint + production build into dist/studio/
+pnpm --filter threadwick-studio preview  # serve the production build (http://localhost:8080)
 ```
 
 The UI is **React 18** on the **`@threadwick/core`** shadcn-style primitives, in
@@ -101,35 +105,40 @@ Every project autosaves to your browser; these are the ways out:
 
 ## Architecture
 
-The core is deliberately **DOM-free and unit-tested**; the React UI is a
-thin layer on top, and the interactive canvas is an imperative controller mounted
-into React via a ref.
+The chart core is the workspace package
+[`@threadwick/editor`](../../packages/editor/README.md) — deliberately
+**DOM-free and unit-tested**. This app is the React chrome on top of it, and the
+interactive canvas is an imperative controller mounted into React via a ref.
 
 ```
-src/core/         framework-agnostic core (strict TS, unit-tested)
-  types.ts          shared domain types
-  geometry.ts       pure 2D math (polar/cartesian, rotation)
-  symbols.ts        stitch-symbol library (primitive descriptors)
-  render.ts         the one renderer: descriptors -> SVG (editor + export)
-  connectivity.ts   origin / base / space / chain model (the procedural core)
-  model.ts          project / pattern / resource factories + migration
-  store.ts          central store: data, procedural edits, undo/redo, persistence
-  files.ts          project import/export, SVG/PNG, PDF composer, instructions
-  sample.ts         the worked sample project
-  editorCanvas.ts   interactive surface (the two-click insert workflow)
-src/                React UI on @threadwick/core primitives
-  main.tsx useStore.ts App.tsx index.css
-  components/ Glyph Thumb
+@threadwick/editor           framework-agnostic chart core (strict TS, unit-tested):
+                               shared domain types · geometry · stitch symbols ·
+                               the SVG renderer · the origin/base/space connectivity
+                               model · project/pattern factories + migration ·
+                               written instructions · the worked sample
+@threadwick/editor/browser   browser-only runtime: the localStorage-backed store
+                               (data, procedural edits, undo/redo, persistence),
+                               files I/O (import/export, SVG/PNG, PDF composer) and
+                               the canvas controller (the two-click insert workflow)
+src/                         React UI on @threadwick/core primitives
+  main.tsx App.tsx useStore.ts icons.tsx index.css
+  components/ Glyph Thumb TopBar VersionTag
   editor/CanvasView.tsx        mounts the canvas controller into React
   views/ ProjectsView ProjectView EditorView
-api/              Vercel serverless functions (Ravelry userinfo proxy)
+  cloud/                       opt-in Supabase auth (AuthMenu, session handling);
+                               loaded only when the VITE_SUPABASE_* env vars are set
+api/                         Vercel serverless functions (Ravelry userinfo proxy)
 ```
 
 ## Testing
 
+The chart-core suite lives with the model in `@threadwick/editor`; this app's
+own suite covers its seams (e.g. the cloud auth wiring).
+
 ```bash
-npm test         # Vitest core tests (the DOM-free model)
-npm run typecheck # strict tsc --noEmit
+pnpm --filter @threadwick/editor test      # the DOM-free chart-core tests
+pnpm --filter threadwick-studio test       # this app's tests
+pnpm --filter threadwick-studio typecheck  # strict tsc --noEmit
 ```
 
 ## Deployment
