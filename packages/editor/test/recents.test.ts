@@ -117,4 +117,40 @@ describe('recents read model', () => {
 		const pattern = patternEditedAgo(9, 'Sunburst');
 		assert.equal(patternEditedAt(pattern), hoursAgo(9));
 	});
+
+	test('an empty versions list yields no timestamp', () => {
+		const base = sampleWorkbenchPattern();
+		assert.ok(base.versioning);
+		const empty: Pattern = {
+			...base,
+			versioning: { ...base.versioning, versions: [] },
+		};
+		assert.equal(patternEditedAt(empty), undefined);
+	});
+
+	test('identical timestamps tie-break deterministically: patterns before projects', () => {
+		const model = deriveRecents(
+			[patternEditedAgo(5, 'Tie-pattern')],
+			[{ ...projectWorkedAgo(0, 'Tie-project'), lastWorkedAt: hoursAgo(5) }],
+			{ now: NOW },
+		);
+		assert.equal(model.lead?.title, 'Tie-pattern');
+		assert.equal(model.shelf[0]?.title, 'Tie-project');
+	});
+
+	test('a progress touch newer than a stale lastWorkedAt wins', () => {
+		const base = sampleProject();
+		const project: Project = {
+			...base,
+			name: 'Freshly worked',
+			lastWorkedAt: hoursAgo(72),
+			makePatterns: (base.makePatterns ?? []).map((ref, i) =>
+				i === 0 && ref.progress
+					? { ...ref, progress: { ...ref.progress, updatedAt: hoursAgo(1) } }
+					: ref,
+			),
+		};
+		const model = deriveRecents([], [project], { now: NOW });
+		assert.equal(model.lead?.state, 'Worked on 1 hour ago');
+	});
 });

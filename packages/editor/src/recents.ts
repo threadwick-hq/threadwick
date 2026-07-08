@@ -77,13 +77,18 @@ export function deriveRecents(
 	return { lead: items[0], shelf: items.slice(1, 1 + shelfSize) };
 }
 
-/** The newest version-edit timestamp, or undefined for a versioning-less pattern. */
+/** The newest version-edit timestamp; undefined when no version carries a valid one. */
 export function patternEditedAt(pattern: Pattern): string | undefined {
-	let best = '';
+	let best: string | undefined;
+	let bestParsed = Number.NEGATIVE_INFINITY;
 	for (const version of pattern.versioning?.versions ?? []) {
-		if (version.updatedAt > best) best = version.updatedAt;
+		const parsed = Date.parse(version.updatedAt);
+		if (!Number.isNaN(parsed) && parsed > bestParsed) {
+			best = version.updatedAt;
+			bestParsed = parsed;
+		}
 	}
-	return best || undefined;
+	return best;
 }
 
 function toRecent(
