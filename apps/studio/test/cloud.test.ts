@@ -4,8 +4,9 @@ import { test } from 'vitest';
 import assert from 'node:assert/strict';
 
 import { uid } from '@threadwick/editor';
-import { cloudEnabled } from '../src/cloud/config';
+import { AUTH_CALLBACK_PATH, cloudEnabled } from '../src/cloud/config';
 import { supabase } from '../src/cloud/client';
+import vercelConfig from '../vercel.json';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -17,6 +18,16 @@ test('cloud flag mirrors env, and the client matches the flag', () => {
   const hasEnv = Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
   assert.equal(cloudEnabled, hasEnv);
   assert.equal(supabase === null, !hasEnv);
+});
+
+// The fixed OAuth / magic-link callback is a three-way contract: the redirectTo
+// constant, the Supabase allow-list entry (dashboard), and the Vercel SPA
+// rewrite that stops the callback URL from 404ing. Pin the two in-repo parts.
+test('the fixed auth callback path has a matching SPA rewrite', () => {
+  assert.equal(AUTH_CALLBACK_PATH, '/studio/auth/callback');
+  const rewrite = vercelConfig.rewrites.find((r) => r.source === AUTH_CALLBACK_PATH);
+  assert.ok(rewrite, 'vercel.json must rewrite the auth callback to the SPA');
+  assert.equal(rewrite.destination, '/studio/index.html');
 });
 
 test('uid: prefixed, uuid-shaped', () => {

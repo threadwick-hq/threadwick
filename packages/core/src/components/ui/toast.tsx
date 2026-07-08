@@ -18,12 +18,25 @@ type ToastContextValue = {
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 let pushToast: ToastContextValue['push'] | null = null;
+// Calls made before ToastProvider's mount effect registers pushToast (e.g. a
+// consumer's own mount effect on a cold page load) queue here and flush on
+// mount. Bounded so a provider-less environment can't grow it without limit.
+const MAX_QUEUED_BEFORE_MOUNT = 20;
+const queuedBeforeMount: Array<[string, ToastVariant]> = [];
+
+function pushOrQueue(message: string, variant: ToastVariant): void {
+	if (pushToast) {
+		pushToast(message, variant);
+	} else if (queuedBeforeMount.length < MAX_QUEUED_BEFORE_MOUNT) {
+		queuedBeforeMount.push([message, variant]);
+	}
+}
 
 /** Imperative toast API — sonner-style, backed by ToastProvider. */
 export const toast = {
-	success: (message: string) => pushToast?.(message, 'success'),
-	error: (message: string) => pushToast?.(message, 'error'),
-	message: (message: string) => pushToast?.(message, 'default'),
+	success: (message: string) => pushOrQueue(message, 'success'),
+	error: (message: string) => pushOrQueue(message, 'error'),
+	message: (message: string) => pushOrQueue(message, 'default'),
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -39,6 +52,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
 	useEffect(() => {
 		pushToast = push;
+		for (const [message, variant] of queuedBeforeMount.splice(0)) {
+			push(message, variant);
+		}
 		return () => {
 			pushToast = null;
 		};
