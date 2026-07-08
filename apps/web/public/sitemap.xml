@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Fallback for dev/preview. The production build regenerates this with a fresh
-     <lastmod> (the latest commit date) via scripts/prerender.mjs. -->
+<!-- Static sitemap, served as-is; update <lastmod> when page content changes meaningfully. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://threadwick.com/</loc>
