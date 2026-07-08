@@ -222,23 +222,27 @@ test('newProject / newPattern shape', () => {
 test('normalizeProject tolerates junk + drops orphan stitches', () => {
 	const p = normalizeProject({
 		name: 'M',
-		patterns: [
+		versions: [
 			{
-				type: 'granny',
-				rounds: [{ id: 'r1', name: 'R1' }],
-				stitches: [
-					{ type: 'dc', round: 'r1', x: 1, y: 2 },
-					{ type: 'dc', round: 'GONE' },
-					{ junk: true },
+				patterns: [
+					{
+						type: 'granny',
+						rounds: [{ id: 'r1', name: 'R1' }],
+						stitches: [
+							{ type: 'dc', round: 'r1', x: 1, y: 2 },
+							{ type: 'dc', round: 'GONE' },
+							{ junk: true },
+						],
+					},
 				],
 			},
 		],
 	});
 	assert.equal(activeVersion(p).patterns[0]?.stitches.length, 1);
 });
-test('normalizeProject migrates a legacy project into one draft version', () => {
+test('normalizeProject gives a versionless input a fresh draft, carrying nothing over (pre-release: retired shapes are not upgraded)', () => {
 	const p = normalizeProject({
-		name: 'Legacy',
+		name: 'Retired shape',
 		patterns: [
 			{ type: 'granny', rounds: [{ id: 'r1', name: 'R1' }], stitches: [] },
 		],
@@ -246,8 +250,8 @@ test('normalizeProject migrates a legacy project into one draft version', () => 
 	});
 	assert.equal(p.versions.length, 1);
 	assert.equal(p.versions[0]?.status, 'draft');
-	assert.equal(activeVersion(p).patterns.length, 1);
-	assert.equal(activeVersion(p).resources.yarns[0]?.name, 'Cotton');
+	assert.equal(activeVersion(p).patterns.length, 0);
+	assert.equal(activeVersion(p).resources.yarns.length, 0);
 });
 test('projectToFile / projectFromFile round-trip', () => {
 	const p = sampleProject();
@@ -263,19 +267,24 @@ test('projectToFile / projectFromFile round-trip', () => {
 		JSON.parse(JSON.stringify(back)),
 		JSON.parse(JSON.stringify(p)),
 	);
-	assert.ok(projectFromFile(p));
+	// pre-release strictness: bare (unwrapped) projects are rejected
+	assert.equal(projectFromFile(p), null);
 });
-test('normalizeProject migrates a start that shared a working row', () => {
+test('normalizeProject repairs a start that shared a working row', () => {
 	const p = normalizeProject({
 		name: 'M',
-		patterns: [
+		versions: [
 			{
-				type: 'granny',
-				rounds: [{ id: 'r1', name: 'Round 1' }],
-				activeRound: 'r1',
-				stitches: [
-					{ id: 'ring', type: 'mr', round: 'r1', x: 0, y: 0 },
-					{ id: 'd', type: 'dc', round: 'r1', origin: 'ring', x: 0, y: 0 },
+				patterns: [
+					{
+						type: 'granny',
+						rounds: [{ id: 'r1', name: 'Round 1' }],
+						activeRound: 'r1',
+						stitches: [
+							{ id: 'ring', type: 'mr', round: 'r1', x: 0, y: 0 },
+							{ id: 'd', type: 'dc', round: 'r1', origin: 'ring', x: 0, y: 0 },
+						],
+					},
 				],
 			},
 		],

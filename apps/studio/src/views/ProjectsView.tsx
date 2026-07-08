@@ -9,6 +9,7 @@ import {
   Input,
   Label,
   confirm,
+  toast,
 } from '@threadwick/core/components';
 import {
   PlusIcon, ImportIcon, MoreIcon, DownloadIcon, CopyIcon, DeleteIcon,
@@ -50,6 +51,7 @@ export function ProjectsView() {
   const onImport = async () => {
     const obj = await importProjectFile();
     if (obj) s.openProject(s.importProject(obj));
+    else toast.error('Could not import that file — it is not a current-version Threadwick export.');
   };
 
   const confirmDelete = (p: Project) => confirm({

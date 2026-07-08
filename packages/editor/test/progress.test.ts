@@ -97,8 +97,8 @@ describe('follow progress machine', () => {
 	});
 });
 
-describe('normalizeProject v4 migration', () => {
-	test('migrates patternIds stub into makePatterns', () => {
+describe('normalizeProject makePatterns parsing', () => {
+	test('ignores the retired patternIds field; only makePatterns carries refs', () => {
 		const prj = normalizeProject({
 			name: 'Make',
 			versions: [
@@ -117,6 +117,7 @@ describe('normalizeProject v4 migration', () => {
 				},
 			],
 			patternIds: ['pat-a'],
+			makePatterns: [{ source: 'threadwick', patternId: 'pat-a' }],
 		});
 		assert.equal(prj.makePatterns?.length, 1);
 		assert.equal(prj.makePatterns?.[0]?.source, 'threadwick');
@@ -125,10 +126,10 @@ describe('normalizeProject v4 migration', () => {
 		assert.equal(prj.makerStatus, 'draft');
 	});
 
-	test('migration is idempotent', () => {
+	test('normalization is idempotent', () => {
 		const once = normalizeProject({
 			name: 'Make',
-			patternIds: ['p1'],
+			makePatterns: [{ source: 'threadwick', patternId: 'p1', label: 'P1' }],
 			versions: [{ label: 'v1', status: 'draft', patterns: [] }],
 		});
 		const twice = normalizeProject(JSON.parse(JSON.stringify(once)));

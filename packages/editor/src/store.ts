@@ -51,7 +51,6 @@ import {
 } from './index';
 
 const SAVE_KEY = 'threadwickstudio:v2';
-const LEGACY_SAVE_KEY = 'stitchgridstudio:v2'; // pre-rename key; read once and migrated forward
 
 export interface StoreState {
 	library: { projects: Project[] };
@@ -1065,11 +1064,12 @@ class Store {
 	}
 	loadLocal(): boolean {
 		try {
-			let raw = localStorage.getItem(SAVE_KEY);
-			const fromLegacy = raw === null;
-			if (fromLegacy) raw = localStorage.getItem(LEGACY_SAVE_KEY); // tool was renamed; keep old data
+			const raw = localStorage.getItem(SAVE_KEY);
 			if (!raw) return false;
 			const data = JSON.parse(raw);
+			// Pre-release: a stale stored version bails cleanly to the fresh seed
+			// instead of mangling through the normalizers and re-saving empties.
+			if (data?.version !== FILE_VERSION) return false;
 			if (!data?.library || !Array.isArray(data.library.projects)) return false;
 			this.state.library.projects = data.library.projects.map(normalizeProject);
 			const ui = data.ui || {};
@@ -1084,7 +1084,6 @@ class Store {
 					this.state.ui.view = 'editor';
 				} else this.state.ui.view = 'project';
 			}
-			if (fromLegacy) this.saveLocal(); // migrate pre-rename data onto the current key
 			return true;
 		} catch {
 			return false;
