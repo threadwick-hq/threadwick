@@ -1,6 +1,6 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Icon } from '@threadwick/icons';
-import type { ComponentProps } from 'react';
+import { type ComponentProps, forwardRef } from 'react';
 import { cn } from '../../lib/utils';
 
 /** Dialog — shadcn/ui on Radix, themed Brick & Ecru. Compose with the parts below. */
@@ -8,12 +8,14 @@ export const Dialog = DialogPrimitive.Root;
 export const DialogTrigger = DialogPrimitive.Trigger;
 export const DialogClose = DialogPrimitive.Close;
 
-export function DialogOverlay({
-	className,
-	...props
-}: ComponentProps<typeof DialogPrimitive.Overlay>) {
+// forwardRef: Radix Presence attaches a ref to the overlay for exit animations.
+export const DialogOverlay = forwardRef<
+	HTMLDivElement,
+	ComponentProps<typeof DialogPrimitive.Overlay>
+>(function DialogOverlay({ className, ...props }, ref) {
 	return (
 		<DialogPrimitive.Overlay
+			ref={ref}
 			className={cn(
 				'fixed inset-0 z-50 bg-black/40 backdrop-blur-[1px]',
 				className,
@@ -21,7 +23,7 @@ export function DialogOverlay({
 			{...props}
 		/>
 	);
-}
+});
 
 export function DialogContent({
 	className,

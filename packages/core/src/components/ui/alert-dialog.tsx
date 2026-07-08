@@ -1,6 +1,6 @@
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 import type { VariantProps } from 'class-variance-authority';
-import type { ComponentProps } from 'react';
+import { type ComponentProps, forwardRef } from 'react';
 import { cn } from '../../lib/utils';
 import { buttonVariants } from './button';
 
@@ -11,12 +11,14 @@ import { buttonVariants } from './button';
 export const AlertDialog = AlertDialogPrimitive.Root;
 export const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
 
-export function AlertDialogOverlay({
-	className,
-	...props
-}: ComponentProps<typeof AlertDialogPrimitive.Overlay>) {
+// forwardRef: Radix Presence attaches a ref to the overlay for exit animations.
+export const AlertDialogOverlay = forwardRef<
+	HTMLDivElement,
+	ComponentProps<typeof AlertDialogPrimitive.Overlay>
+>(function AlertDialogOverlay({ className, ...props }, ref) {
 	return (
 		<AlertDialogPrimitive.Overlay
+			ref={ref}
 			className={cn(
 				'fixed inset-0 z-50 bg-black/40 backdrop-blur-[1px]',
 				className,
@@ -24,7 +26,7 @@ export function AlertDialogOverlay({
 			{...props}
 		/>
 	);
-}
+});
 
 export function AlertDialogContent({
 	className,
