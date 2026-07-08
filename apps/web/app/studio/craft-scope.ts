@@ -69,6 +69,9 @@ export function craftIncludes(
 	crafts: readonly (Craft | undefined)[],
 ): boolean {
 	if (scope === 'all') return true;
+	// Deliberate: an item is judged by its KNOWN crafts only. Benefit of the
+	// doubt applies when nothing is known; a partially-known item that matches
+	// no known craft is scoped out (search remains the spec's escape hatch).
 	const known = crafts.filter((craft): craft is Craft => craft !== undefined);
 	if (known.length === 0) return true;
 	return known.includes(scope);
@@ -108,7 +111,7 @@ function isCraftScopeState(value: unknown): value is CraftScopeState {
 	const { scope, addedCrafts } = value;
 	const isCraft = (candidate: unknown): candidate is Craft =>
 		typeof candidate === 'string' &&
-		(CRAFT_TAXONOMY as readonly string[]).includes(candidate);
+		CRAFT_TAXONOMY.some((craft) => craft === candidate);
 	if (scope !== 'all' && !isCraft(scope)) return false;
 	return Array.isArray(addedCrafts) && addedCrafts.every(isCraft);
 }
