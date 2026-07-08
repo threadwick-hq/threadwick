@@ -104,24 +104,25 @@ export function toolMatrixForCraft(
 export type PatternAcquisition = 'saved' | 'free' | 'purchased';
 
 /**
- * A pattern in your Library. Composes the existing PatternOwnership as the single
- * entitlement truth (one model, not two) — the acquisition label is derived, not
- * duplicated. Points at the pattern by id; never re-models pattern content.
+ * A pattern in your Library. Points at the pattern by id and records when it was
+ * saved — it does NOT embed the entitlement. `PatternOwnership` stays the single
+ * canonical entitlement store (keyed by patternId; see the web pattern-ownership
+ * store); the Library screen joins on `patternId` to read ownership/acquisition,
+ * so the two never drift (one model, not two).
  */
 export interface SavedPattern {
 	id: string;
-	patternId: string; // → Pattern.id
+	patternId: string; // → Pattern.id, and the join key into the ownership store
 	savedAt: string; // ISO 8601
-	ownership: PatternOwnership;
 	ravelryPatternId?: string; // decouplable link into the Ravelry pattern DB
 }
 
-/** Derive the acquisition label from the composed ownership read-state. */
-export function savedPatternAcquisition(
-	saved: SavedPattern,
+/** Derive the acquisition label from the pattern's canonical ownership read-state. */
+export function acquisitionFromOwnership(
+	ownership: PatternOwnership,
 ): PatternAcquisition {
-	if (!saved.ownership.owned) return 'saved';
-	return saved.ownership.purchasedAt ? 'purchased' : 'free';
+	if (!ownership.owned) return 'saved';
+	return ownership.purchasedAt ? 'purchased' : 'free';
 }
 
 // ── The whole collection ─────────────────────────────────────────────────────
