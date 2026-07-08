@@ -11,9 +11,9 @@ import '@fontsource/inter/latin-400.css';
 import '@fontsource/inter/latin-600.css';
 import './index.css'; // owns the Tailwind entry + @threadwick/core tokens & theme
 
-// First run: seed a worked sample so the app opens on something real.
-store.loadLocal();
-store.seedIfEmpty(sampleProject);
+// First run only (no valid save) seed a worked sample; a library the user
+// emptied deliberately stays empty.
+if (!store.loadLocal()) store.seedIfEmpty(sampleProject);
 
 // Autosave (the container is ephemeral; keep work between reloads).
 store.enableAutosave();
