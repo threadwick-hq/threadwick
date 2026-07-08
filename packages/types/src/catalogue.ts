@@ -6,10 +6,10 @@
 // filter dimensions the catalogue grid offers.
 
 import type { YarnWeight } from './library';
-import type { Craft, ImageRef } from './pattern';
+import type { Craft, ImageRef, SkillLevel } from './pattern';
 
-/** Pattern difficulty — a browse facet, coarsest to finest. */
-export type Difficulty = 'beginner' | 'easy' | 'intermediate' | 'advanced';
+/** Pattern difficulty — the browse facet is the existing SkillLevel (one name per concept). */
+export type Difficulty = SkillLevel;
 
 export const DIFFICULTIES: readonly Difficulty[] = [
 	'beginner',

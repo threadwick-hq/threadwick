@@ -1,3 +1,4 @@
+import { isMarketplaceEnabled } from '@threadwick/core/capabilities';
 import { Button, CardGrid, EmptyState } from '@threadwick/core/components';
 import { cn } from '@threadwick/core/lib/utils';
 import { Icon } from '@threadwick/icons';
@@ -142,7 +143,7 @@ function YarnCard({ yarn }: { yarn: StashYarn }) {
 					</div>
 				</div>
 				<div className="mt-2 flex items-center justify-between">
-					{yarn.weight ? (
+					{isMarketplaceEnabled() && yarn.weight ? (
 						<Link
 							to={`/studio/marketplace/browse?weight=${yarn.weight}`}
 							className="text-xs font-medium text-primary hover:underline"
