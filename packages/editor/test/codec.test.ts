@@ -40,13 +40,25 @@ describe('storage codec', () => {
 		);
 	});
 
-	test('a non-object or non-array library is rejected', () => {
+	test('a non-object, missing, or non-array library is rejected', () => {
 		assert.equal(parseStoredLibrary(null), null);
 		assert.equal(parseStoredLibrary('nope'), null);
+		assert.equal(parseStoredLibrary({ version: FILE_VERSION }), null); // no library
 		assert.equal(
 			parseStoredLibrary({ version: FILE_VERSION, library: { projects: {} } }),
 			null,
 		);
+	});
+
+	test('a null project element is coerced to a fresh project, not thrown on', () => {
+		const parsed = parseStoredLibrary({
+			version: FILE_VERSION,
+			library: { projects: [null] },
+			ui: {},
+		});
+		assert.ok(parsed);
+		assert.equal(parsed.projects.length, 1);
+		assert.ok(parsed.projects[0]?.id);
 	});
 
 	test('an invalid ui shape is coerced, not rejected', () => {
@@ -62,6 +74,7 @@ describe('storage codec', () => {
 		assert.ok(parsed);
 		assert.equal(parsed.ui.view, 'projects'); // unknown view -> default
 		assert.equal(parsed.ui.projectId, null); // non-string -> null
+		assert.equal(parsed.ui.patternId, null); // null passes through as null
 	});
 
 	test('the file envelope round-trips through the codec', () => {

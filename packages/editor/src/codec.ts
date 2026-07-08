@@ -34,7 +34,9 @@ export interface StoredLibrary {
 
 /** Parse one untrusted project object into a valid current-shape Project. */
 export function parseProject(data: unknown): Project {
-	return normalizeProject(data);
+	// `null` would slip past normalizeProject's `= {}` default (it only fires
+	// for `undefined`) and throw on `.name`; coerce it so the parse never throws.
+	return normalizeProject(data ?? undefined);
 }
 
 // ---- exported project file -------------------------------------------------
@@ -78,6 +80,7 @@ export function parseStoredLibrary(
 	data: unknown,
 ): { projects: Project[]; ui: StoredUI } | null {
 	if (!data || typeof data !== 'object') return null;
+	// Safe narrowing: guarded by the typeof check above (untrusted-JSON boundary).
 	const rec = data as Record<string, unknown>;
 	if (rec.version !== FILE_VERSION) return null;
 	const library = rec.library;
@@ -91,6 +94,7 @@ export function parseStoredLibrary(
 }
 
 function parseStoredUI(data: unknown): StoredUI {
+	// Safe narrowing: guarded by the object check (untrusted-JSON boundary).
 	const rec =
 		data && typeof data === 'object' ? (data as Record<string, unknown>) : {};
 	const view = UI_VIEWS.find((v) => v === rec.view) ?? 'projects';
