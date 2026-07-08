@@ -1,6 +1,12 @@
+import { config } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { type IconName, type IconSet, iconMeta } from './contract';
 import { faFree } from './sets/fa-free';
+
+// Deterministic CSS instead of runtime <style> injection: injection is
+// unreliable in production/SSR bundles (this package is sideEffects:false).
+// Every consuming app imports '@threadwick/icons/styles.css' once at its root.
+config.autoAddCss = false;
 
 /**
  * The active icon set. Font Awesome Free is the installable baseline; a build-time alias

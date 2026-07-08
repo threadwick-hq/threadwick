@@ -8,6 +8,9 @@
 @import '@threadwick/core/tokens.css';
 @import '@threadwick/core/theme.css';
 
+/* Font Awesome base rules — the icon wrapper disables runtime injection. */
+@import '@threadwick/icons/styles.css';
+
 /* Brand tokens are aliased onto @threadwick/core (--tw-*) so the whole studio shell follows
    the shared "Brick & Ecru" palette. The chart-marker hues (--origin/--space/--next) and the
    serif name face stay studio-local.

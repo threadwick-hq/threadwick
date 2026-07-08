@@ -1,0 +1,4 @@
+/* Font Awesome's base rules (sizing, alignment) as a static import — the icon
+   wrapper disables svg-core's runtime injection (see src/icon.tsx). Import this
+   once at every consuming app's root stylesheet. */
+@import "@fortawesome/fontawesome-svg-core/styles.css";

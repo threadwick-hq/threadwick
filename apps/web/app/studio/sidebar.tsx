@@ -143,7 +143,7 @@ export function Sidebar() {
 					<Icon
 						name="chevron-down"
 						label=""
-						className="shrink-0 opacity-60 [&_svg]:size-3"
+						className="size-3 shrink-0 opacity-60"
 					/>
 				</div>
 			</div>
@@ -161,11 +161,7 @@ export function CraftPickerSlot() {
 				disabled
 			>
 				<span>All my crafts</span>
-				<Icon
-					name="chevron-down"
-					label=""
-					className="opacity-60 [&_svg]:size-3"
-				/>
+				<Icon name="chevron-down" label="" className="size-3 opacity-60" />
 			</button>
 		</InteriorSlot>
 	);
