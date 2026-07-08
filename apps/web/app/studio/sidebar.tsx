@@ -9,6 +9,7 @@ import {
 } from '@threadwick/core/components';
 import { cn } from '@threadwick/core/lib/utils';
 import { Icon, type IconName } from '@threadwick/icons';
+import { toolMatrixForCraft } from '@threadwick/types';
 import type { ReactNode } from 'react';
 import { NavLink } from 'react-router';
 import {
@@ -21,6 +22,8 @@ import {
 	setCraftScope,
 	useCraftScope,
 } from './craft-scope';
+import { useLibraryCounts, useOwnedTools } from './library-store';
+import { useSavedPatterns } from './pattern-ownership-store';
 import { usePatternLibrary } from './pattern-store';
 import { useStudioStore } from './studio-store';
 
@@ -56,6 +59,16 @@ export function Sidebar() {
 	const patternCount = usePatternLibrary().filter((pattern) =>
 		patternInScope(scope, pattern),
 	).length;
+	// Library counts read the same scoped/whole collections the Library screens
+	// render, so the badge and the screen never disagree.
+	const libraryCounts = useLibraryCounts();
+	const ownedTools = useOwnedTools();
+	const scopedToolCount = ownedTools.filter((t) =>
+		toolMatrixForCraft(scope).some((section) => section.kind === t.kind),
+	).length;
+	const savedPatternCount = useSavedPatterns().filter((entry) =>
+		patternInScope(scope, entry.pattern),
+	).length;
 
 	const sections: NavSection[] = [
 		{ items: [{ to: '/studio', icon: 'home', label: 'Home', end: true }] },
@@ -83,14 +96,19 @@ export function Sidebar() {
 					to: '/studio/library/patterns',
 					icon: 'view',
 					label: 'Patterns',
-					count: 0,
+					count: savedPatternCount,
 				},
-				{ to: '/studio/library/yarns', icon: 'yarn', label: 'Yarns', count: 0 },
+				{
+					to: '/studio/library/yarns',
+					icon: 'yarn',
+					label: 'Yarns',
+					count: libraryCounts.yarns,
+				},
 				{
 					to: '/studio/library/tools',
 					icon: 'tools',
 					label: 'Tools',
-					count: 0,
+					count: scopedToolCount,
 				},
 			],
 		},

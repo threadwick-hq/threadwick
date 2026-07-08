@@ -23,7 +23,10 @@ export default [
 		route('patterns/:patternId', 'routes/studio/pattern.tsx', [
 			index('routes/studio/pattern/overview.tsx'),
 		]),
-		// Every other destination (Workbench, Library, Marketplace, …) is a placeholder for now.
+		route('library/patterns', 'routes/studio/library/patterns.tsx'),
+		route('library/yarns', 'routes/studio/library/yarns.tsx'),
+		route('library/tools', 'routes/studio/library/tools.tsx'),
+		// Every other destination (Marketplace, …) is a placeholder for now.
 		route('*', 'routes/studio/section.tsx'),
 	]),
 ] satisfies RouteConfig;
