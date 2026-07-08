@@ -21,6 +21,7 @@ export * from './pattern-versioning';
 export * from './pattern-view-mode';
 export * from './progress';
 export * from './project-overview';
+export * from './recents';
 export * from './render';
 export * from './sample';
 export * from './sample-marketplace-pattern';
