@@ -18,12 +18,14 @@ _Nothing queued._
   PDF (tappable links, embedded media, live/animated states).
 - 🔲 **Persistent app header** — show "threadwick studio" on every screen; set the
   logo in **Space Grotesk**, with "threadwick" **bold** and "studio" normal weight.
-- 🔲 **Genuine shadcn-style theme** — the current Ant Design theme doesn't read as
-  shadcn; revisit tokens/components for a true shadcn look.
 - 🔲 **Ravelry integration** — consider linking / importing / exporting with
   [Ravelry](https://www.ravelry.com).
 
 ## Done
+
+- ✅ **Genuine shadcn-style theme** — delivered by the Phase 6c chrome migration:
+  the studio runs on `@threadwick/core` shadcn primitives themed via `theme.css`,
+  and the Ant Design theme and dependency are gone (TW-017, #63).
 
 - ✅ **Export-pattern dialog + Printable PDF** — editor hamburger → "Export
   pattern…" modal (SVG / PNG / Printable PDF + title, legend, background, PNG

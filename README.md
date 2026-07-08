@@ -40,8 +40,8 @@ The [issues list](https://github.com/threadwick-hq/threadwick/issues) and the "T
 project board are the at-a-glance views; [MIGRATION.md](MIGRATION.md) is the
 phase plan and the decision record. Phases 0–5 (monorepo, packages, design system, marketing site)
 are done; the localization layer shipped; **Phase 6** (Studio app surface) is underway — sub-phase
-6a (extracting the editor into `@threadwick/editor`) is complete, and the chrome migration
-(AntD → shadcn) is next.
+6a (extracting the editor into `@threadwick/editor`) and the 6c chrome migration (AntD → shadcn,
+with AntD removed entirely in #63) are complete, and the app-surface build-out continues.
 
 ## Contributing
 
