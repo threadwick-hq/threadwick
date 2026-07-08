@@ -36,7 +36,7 @@ function AuthControl() {
   const [step, setStep] = useState<Step>('choose');
   const [mode, setMode] = useState<'in' | 'up'>('in');
   const [backup, setBackup] = useState('');
-  const { register, handleSubmit, formState: { errors } } = useForm<AuthForm>();
+  const { register, handleSubmit, trigger, getValues, reset, formState: { errors } } = useForm<AuthForm>();
 
   useEffect(() => {
     let active = true;
@@ -56,7 +56,7 @@ function AuthControl() {
   const run = async (label: string, fn: () => Promise<void>): Promise<boolean> => {
     setBusy(true);
     try { await fn(); return true; }
-    catch (e) { toast.error((e as Error).message || `${label} failed`); return false; }
+    catch (e) { toast.error(e instanceof Error && e.message ? e.message : `${label} failed`); return false; }
     finally { setBusy(false); }
   };
 
@@ -81,9 +81,12 @@ function AuthControl() {
     }),
   );
 
-  const magicLink = handleSubmit((v) =>
-    run('Magic link', async () => { await sendMagicLink(v.email); toast.success('Sign-in link sent — check your email.'); }),
-  );
+  // Validate only the email — a magic link is the passwordless path, so the
+  // password field must not gate it (handleSubmit would validate both).
+  const magicLink = async () => {
+    if (!(await trigger('email'))) return;
+    await run('Magic link', async () => { await sendMagicLink(getValues('email')); toast.success('Sign-in link sent — check your email.'); });
+  };
 
   const saveBackup = () => run('Save backup email', async () => {
     await addBackupEmail(backup.trim());
@@ -96,7 +99,8 @@ function AuthControl() {
     toast.success('Passkey saved — use it to sign in next time.');
   });
 
-  const openSignIn = () => { setStep('choose'); setMode('in'); setOpen(true); };
+  // reset() so a reopened dialog never shows the previous attempt's values or errors.
+  const openSignIn = () => { reset(); setStep('choose'); setMode('in'); setOpen(true); };
   const openBackup = () => { setStep('backup'); setOpen(true); };
 
   // ---- signed in -----------------------------------------------------------
