@@ -88,7 +88,9 @@ export type IconName =
 	| 'projects'
 	| 'tools'
 	| 'browse'
-	| 'wishlist';
+	| 'wishlist'
+	// studio topbar
+	| 'bell';
 
 /** Per-action metadata, independent of any icon set. `label` is the default accessible name. */
 export type IconMeta = {
@@ -177,4 +179,5 @@ export const iconMeta: Record<IconName, IconMeta> = {
 	tools: { label: 'Tools' },
 	browse: { label: 'Browse' },
 	wishlist: { label: 'Wishlist' },
+	bell: { label: 'Notifications' },
 };
