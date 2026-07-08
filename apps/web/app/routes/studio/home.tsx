@@ -7,9 +7,19 @@ import {
 } from '@threadwick/core/components';
 import type { RecentItem } from '@threadwick/editor';
 import { Icon, type IconName } from '@threadwick/icons';
-import type { ImageRef } from '@threadwick/types';
+import type { CatalogueListing, ImageRef, Pattern } from '@threadwick/types';
 import { Link } from 'react-router';
-import { getPattern } from '../../studio/pattern-store';
+import {
+	popularListings,
+	useCatalogueListings,
+} from '../../studio/catalogue-adapter';
+import { isPublishedCreator } from '../../studio/creator-status';
+import {
+	secondBlockMode,
+	shouldShowCreatorTeaser,
+} from '../../studio/home-second-block';
+import { MarketplaceCard } from '../../studio/marketplace-card';
+import { getPattern, usePatternLibrary } from '../../studio/pattern-store';
 import { useRecents } from '../../studio/recents';
 import { useStudioStore } from '../../studio/studio-store';
 
@@ -32,14 +42,26 @@ const QUICK_START: QuickStartChip[] = [
 	},
 ];
 
-/** Home — single-column, personal-first (spec §3): greeting, quick start, Continue. */
+const DISCOVERY_ROW_LIMIT = 4;
+const LIBRARY_PEEK_LIMIT = 6;
+
+/** Home — single-column, personal-first (spec §3): greeting, quick start, Continue, then a discovery-or-library second block. */
 export default function StudioHome() {
 	const recents = useRecents();
 	const store = useStudioStore();
+	const patterns = usePatternLibrary();
+	const listings = useCatalogueListings();
+	const marketplaceEnabled = isMarketplaceEnabled();
 	// Drop the marketplace entry chip when the networked layer is off.
 	const chips = QUICK_START.filter(
-		(chip) =>
-			isMarketplaceEnabled() || !chip.to.startsWith('/studio/marketplace'),
+		(chip) => marketplaceEnabled || !chip.to.startsWith('/studio/marketplace'),
+	);
+
+	const discovery = popularListings(listings, DISCOVERY_ROW_LIMIT);
+	const mode = secondBlockMode(marketplaceEnabled, discovery.length > 0);
+	const showTeaser = shouldShowCreatorTeaser(
+		marketplaceEnabled,
+		isPublishedCreator(patterns),
 	);
 
 	// The read model deliberately carries no media; resolve per kind here.
@@ -121,6 +143,14 @@ export default function StudioHome() {
 				)}
 			</section>
 
+			{mode === 'discovery' ? (
+				<DiscoveryBlock listings={discovery} />
+			) : (
+				<LibraryPeek patterns={patterns} />
+			)}
+
+			{showTeaser ? <CreatorTeaser /> : null}
+
 			<p className="mt-12 text-center text-xs text-muted-foreground">
 				Saved in your browser — local-first, yours to export any time.
 			</p>
@@ -165,6 +195,88 @@ function LeadCard({
 	);
 }
 
+/** Marketplace discovery taste on Home (spec §3): a few popular listings that link out to the full storefront. */
+function DiscoveryBlock({ listings }: { listings: CatalogueListing[] }) {
+	return (
+		<section className="mt-10" aria-labelledby="discover-heading">
+			<div className="flex items-baseline justify-between gap-4">
+				<h2 id="discover-heading" className="text-sm font-medium">
+					Discover in the marketplace
+				</h2>
+				<Link
+					to="/studio/marketplace"
+					className="shrink-0 text-sm font-medium text-primary hover:underline"
+				>
+					Browse all
+				</Link>
+			</div>
+			<CardGrid className="mt-3">
+				{listings.map((listing) => (
+					<MarketplaceCard key={listing.patternId} listing={listing} />
+				))}
+			</CardGrid>
+		</section>
+	);
+}
+
+/** The larger library peek shown when marketplace discovery is unavailable (spec §3). */
+function LibraryPeek({ patterns }: { patterns: Pattern[] }) {
+	if (patterns.length === 0) return null;
+	const peek = patterns.slice(0, LIBRARY_PEEK_LIMIT);
+	return (
+		<section className="mt-10" aria-labelledby="library-heading">
+			<div className="flex items-baseline justify-between gap-4">
+				<h2 id="library-heading" className="text-sm font-medium">
+					Your patterns
+				</h2>
+				<Link
+					to="/studio/patterns"
+					className="shrink-0 text-sm font-medium text-primary hover:underline"
+				>
+					See all
+				</Link>
+			</div>
+			<CardGrid className="mt-3">
+				{peek.map((pattern) => (
+					<Link
+						key={pattern.id}
+						to={`/studio/patterns/${pattern.id}`}
+						aria-label={`Open ${pattern.overview.name}`}
+						className="block rounded-xl"
+					>
+						<PhotoCard
+							title={pattern.overview.name}
+							{...patternMedia(pattern)}
+						/>
+					</Link>
+				))}
+			</CardGrid>
+		</section>
+	);
+}
+
+/** A calm nudge for published creators toward their marketplace presence (spec §3). */
+function CreatorTeaser() {
+	return (
+		<Link
+			to="/studio/marketplace"
+			className="mt-10 flex items-center gap-4 rounded-xl border border-border bg-card p-5 text-card-foreground transition-shadow hover:shadow-md [&_svg]:size-5"
+		>
+			<div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted">
+				<Icon name="marketplace" label="" />
+			</div>
+			<div className="min-w-0 flex-1">
+				<div className="text-sm font-medium">
+					Your patterns are in the marketplace
+				</div>
+				<div className="text-sm text-muted-foreground">
+					See how your published work appears to makers.
+				</div>
+			</div>
+		</Link>
+	);
+}
+
 function greeting(): string {
 	const hour = new Date().getHours();
 	if (hour < 5) return 'Working late';
@@ -182,6 +294,14 @@ function recentHref(item: RecentItem): string {
 		default:
 			return assertNever(item.kind);
 	}
+}
+
+/** Resolves a pattern's cover into PhotoCard media, else falls through to the placeholder. */
+function patternMedia(pattern: Pattern): PhotoCardMedia {
+	const cover = pattern.overview.cover;
+	return cover?.src.trim()
+		? { photoUrl: cover.src, photoAlt: cover.alt ?? '' }
+		: {};
 }
 
 // A new RecentKind (e.g. 'saved', TW-044) must fail to compile here rather
