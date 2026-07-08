@@ -5,6 +5,7 @@
 
 export * from './follow';
 export * from './interior';
+export * from './marketplace-gate';
 export * from './overview';
 export * from './Stack';
 export * from './ui/accordion';

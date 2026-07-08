@@ -1,3 +1,4 @@
+import { isMarketplaceEnabled } from '@threadwick/core/capabilities';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -40,6 +41,32 @@ type NavItem = {
 type NavSection = {
 	label?: string;
 	items: NavItem[];
+};
+
+const MARKETPLACE_SECTION: NavSection = {
+	label: 'Marketplace',
+	items: [
+		{
+			to: '/studio/marketplace',
+			icon: 'marketplace',
+			label: 'Home',
+			end: true,
+		},
+		{ to: '/studio/marketplace/browse', icon: 'browse', label: 'Browse' },
+		{
+			to: '/studio/marketplace/following',
+			icon: 'community',
+			label: 'Following',
+			count: 0,
+		},
+		{ to: '/studio/marketplace/free', icon: 'gift', label: 'Free' },
+		{
+			to: '/studio/marketplace/wishlist',
+			icon: 'wishlist',
+			label: 'Wishlist',
+			count: 0,
+		},
+	],
 };
 
 /**
@@ -112,31 +139,9 @@ export function Sidebar() {
 				},
 			],
 		},
-		{
-			label: 'Marketplace',
-			items: [
-				{
-					to: '/studio/marketplace',
-					icon: 'marketplace',
-					label: 'Home',
-					end: true,
-				},
-				{ to: '/studio/marketplace/browse', icon: 'browse', label: 'Browse' },
-				{
-					to: '/studio/marketplace/following',
-					icon: 'community',
-					label: 'Following',
-					count: 0,
-				},
-				{ to: '/studio/marketplace/free', icon: 'gift', label: 'Free' },
-				{
-					to: '/studio/marketplace/wishlist',
-					icon: 'wishlist',
-					label: 'Wishlist',
-					count: 0,
-				},
-			],
-		},
+		// The whole Marketplace section drops out when the capability is off, so
+		// a decoupled/offline build shows no networked-layer nav.
+		...(isMarketplaceEnabled() ? [MARKETPLACE_SECTION] : []),
 	];
 
 	return (
