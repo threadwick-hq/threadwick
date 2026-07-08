@@ -10,7 +10,9 @@ type EmptyStateProps = {
 
 /**
  * EmptyState — the calm "nothing here yet" tile: white surface + hairline
- * border, centered copy, optional call to action.
+ * border, centered copy, optional call to action. Statically rendered (no
+ * live region) — pass role="status" via props when it replaces list results
+ * dynamically and the change should be announced.
  */
 export function EmptyState({
 	title,
@@ -21,14 +23,13 @@ export function EmptyState({
 }: EmptyStateProps) {
 	return (
 		<div
-			role="status"
 			className={cn(
 				'flex flex-col items-center gap-2 rounded-xl border border-border bg-card px-6 py-12 text-center',
 				className,
 			)}
 			{...props}
 		>
-			<div className="text-sm font-medium">{title}</div>
+			<h3 className="text-sm font-medium">{title}</h3>
 			{description ? (
 				<div className="max-w-sm text-sm text-muted-foreground">
 					{description}
