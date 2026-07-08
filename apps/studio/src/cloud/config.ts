@@ -4,3 +4,7 @@
 export const cloudEnabled = Boolean(
   import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY,
 );
+
+// The one OAuth / magic-link landing path. It must stay in step with the
+// Supabase allow-list entry and the vercel.json SPA rewrite (pinned by a test).
+export const AUTH_CALLBACK_PATH = '/studio/auth/callback';

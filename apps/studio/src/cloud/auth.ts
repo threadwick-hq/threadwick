@@ -3,6 +3,7 @@
 // has side effects on the local-only build.
 import type { Provider, Session } from '@supabase/supabase-js';
 import { supabase } from './client';
+import { AUTH_CALLBACK_PATH } from './config';
 
 export type { Session };
 // Google is a native Supabase provider; 'ravelry' is a Supabase *custom* OAuth2
@@ -21,10 +22,11 @@ function client() {
   return supabase;
 }
 
-// Redirect target for OAuth / magic links: a single canonical app URL (no query
-// or hash) so it matches one Supabase allow-list entry wherever sign-in started.
+// Redirect target for OAuth / magic links: one fixed callback URL so a single
+// Supabase allow-list entry matches no matter where sign-in started. client.ts
+// normalizes the address bar back to the app base when the redirect lands.
 function redirectTo(): string {
-  return window.location.origin + window.location.pathname;
+  return window.location.origin + AUTH_CALLBACK_PATH;
 }
 
 export async function getSession(): Promise<Session | null> {
