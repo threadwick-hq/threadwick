@@ -1,7 +1,7 @@
 {
 	"name": "@threadwick/core",
 	"version": "0.2.0",
-	"description": "Threadwick's design-system foundation: design tokens (OKLCH, light + dark), the Ant Design theme, the brand wordmark, and shared UI primitives (Stack).",
+	"description": "Threadwick's design-system foundation: design tokens (OKLCH, light + dark), the brand wordmark, and shared UI primitives (shadcn-style, on Radix).",
 	"type": "module",
 	"license": "AGPL-3.0-or-later",
 	"sideEffects": [
