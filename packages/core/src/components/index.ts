@@ -17,6 +17,7 @@ export * from './ui/card';
 export * from './ui/color-picker';
 export * from './ui/dialog';
 export * from './ui/dropdown-menu';
+export * from './ui/feedback';
 export * from './ui/input';
 export * from './ui/label';
 export * from './ui/number-input';

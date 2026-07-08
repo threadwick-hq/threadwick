@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
-import { App, Button, Divider, Dropdown, Form, Input, Modal, Space, Typography } from 'antd';
-import type { MenuProps } from 'antd';
+import { useForm } from 'react-hook-form';
+import {
+  Button,
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
+  Input,
+  Label,
+  toast,
+} from '@threadwick/core/components';
 import {
   SignInIcon, SignOutIcon, AccountIcon, PasskeyIcon, GoogleIcon, MailIcon,
 } from '../icons';
@@ -20,16 +27,16 @@ export function AuthMenu() {
 }
 
 type Step = 'choose' | 'backup';
+type AuthForm = { email: string; password: string };
 
 function AuthControl() {
-  const { message } = App.useApp();
   const [session, setSession] = useState<Session | null>(null);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [step, setStep] = useState<Step>('choose');
   const [mode, setMode] = useState<'in' | 'up'>('in');
   const [backup, setBackup] = useState('');
-  const [form] = Form.useForm<{ email: string; password: string }>();
+  const { register, handleSubmit, trigger, getValues, reset, formState: { errors } } = useForm<AuthForm>();
 
   useEffect(() => {
     let active = true;
@@ -42,14 +49,14 @@ function AuthControl() {
   // so a failed sign-in shows the real reason instead of silently signing out.
   useEffect(() => {
     const e = takeOAuthError();
-    if (e) message.error(`Sign-in failed: ${e}`);
-  }, [message]);
+    if (e) toast.error(`Sign-in failed: ${e}`);
+  }, []);
 
   // Run an async action with a busy flag and uniform error surfacing.
   const run = async (label: string, fn: () => Promise<void>): Promise<boolean> => {
     setBusy(true);
     try { await fn(); return true; }
-    catch (e) { message.error((e as Error).message || `${label} failed`); return false; }
+    catch (e) { toast.error(e instanceof Error && e.message ? e.message : `${label} failed`); return false; }
     finally { setBusy(false); }
   };
 
@@ -59,124 +66,134 @@ function AuthControl() {
   const passkeyIn = () => run('Passkey sign-in', async () => {
     await signInWithPasskey();
     setOpen(false);
-    message.success('Signed in.');
+    toast.success('Signed in.');
   });
 
   const passkeyCreate = async () => {
     const ok = await run('Create account', createAccountWithPasskey);
-    if (ok) { setStep('backup'); message.success('Passkey saved. Add a backup email so you never get locked out.'); }
+    if (ok) { setStep('backup'); toast.success('Passkey saved. Add a backup email so you never get locked out.'); }
   };
 
-  const emailSubmit = () => form.validateFields().then((v) =>
+  const emailSubmit = handleSubmit((v) =>
     run(mode === 'in' ? 'Sign in' : 'Sign up', async () => {
       if (mode === 'in') { await signInWithPassword(v.email, v.password); setOpen(false); }
-      else { await signUpWithPassword(v.email, v.password); setOpen(false); message.success('Check your email to confirm your account.'); }
+      else { await signUpWithPassword(v.email, v.password); setOpen(false); toast.success('Check your email to confirm your account.'); }
     }),
-  ).catch(() => { /* inline validation errors are shown by the form */ });
+  );
 
-  const magicLink = () => form.validateFields(['email']).then((v) =>
-    run('Magic link', async () => { await sendMagicLink(v.email); message.success('Sign-in link sent — check your email.'); }),
-  ).catch(() => {});
+  // Validate only the email — a magic link is the passwordless path, so the
+  // password field must not gate it (handleSubmit would validate both).
+  const magicLink = async () => {
+    if (!(await trigger('email'))) return;
+    await run('Magic link', async () => { await sendMagicLink(getValues('email')); toast.success('Sign-in link sent — check your email.'); });
+  };
 
   const saveBackup = () => run('Save backup email', async () => {
     await addBackupEmail(backup.trim());
     setOpen(false); setStep('choose'); setBackup('');
-    message.success('Confirmation link sent — open it to finish adding your backup email.');
+    toast.success('Confirmation link sent — open it to finish adding your backup email.');
   });
 
   const enrollPasskey = () => run('Passkey setup', async () => {
     await registerPasskey();
-    message.success('Passkey saved — use it to sign in next time.');
+    toast.success('Passkey saved — use it to sign in next time.');
   });
 
-  const openSignIn = () => { setStep('choose'); setMode('in'); setOpen(true); };
+  // reset() so a reopened dialog never shows the previous attempt's values or errors.
+  const openSignIn = () => { reset(); setStep('choose'); setMode('in'); setOpen(true); };
   const openBackup = () => { setStep('backup'); setOpen(true); };
 
   // ---- signed in -----------------------------------------------------------
   if (session) {
     const email = session.user.email;
-    const items: MenuProps['items'] = [
-      { key: 'who', label: email ?? 'Passkey account', disabled: true },
-      { type: 'divider' },
-    ];
-    if (!email) items.push({ key: 'backup', icon: <MailIcon />, label: 'Add backup email' });
-    items.push({ key: 'passkey', icon: <PasskeyIcon />, label: 'Set up a passkey' });
-    items.push({ key: 'out', icon: <SignOutIcon />, label: 'Sign out' });
     return (
-      <Dropdown
-        trigger={['click']}
-        menu={{
-          items,
-          onClick: ({ key }) => {
-            if (key === 'backup') openBackup();
-            else if (key === 'passkey') void enrollPasskey();
-            else if (key === 'out') void run('Sign out', signOut);
-          },
-        }}
-      >
-        <Button icon={<AccountIcon />}>{email ? 'Account' : 'Finish setup'}</Button>
-      </Dropdown>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline"><AccountIcon />{email ? 'Account' : 'Finish setup'}</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>{email ?? 'Passkey account'}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {!email && (
+            <DropdownMenuItem onSelect={openBackup}><MailIcon /> Add backup email</DropdownMenuItem>
+          )}
+          <DropdownMenuItem onSelect={() => void enrollPasskey()}><PasskeyIcon /> Set up a passkey</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => void run('Sign out', signOut)}><SignOutIcon /> Sign out</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     );
   }
 
   // ---- signed out ----------------------------------------------------------
   return (
     <>
-      <Button icon={<SignInIcon />} onClick={openSignIn}>Sign in</Button>
-      <Modal
-        title={step === 'backup' ? 'Add a backup email' : 'Sign in to threadwick'}
-        open={open} footer={null} onCancel={() => setOpen(false)} destroyOnHidden
-      >
-        {step === 'backup' ? (
-          <Space direction="vertical" style={{ width: '100%' }} size="middle">
-            <Typography.Text type="secondary">
-              So you can still sign in with an email link if a passkey isn’t available on your device.
-            </Typography.Text>
-            <Input
-              type="email" prefix={<MailIcon />} placeholder="you@example.com"
-              value={backup} onChange={(e) => setBackup(e.target.value)} autoComplete="email"
-            />
-            <Space>
-              <Button type="primary" loading={busy} disabled={!backup.trim()} onClick={saveBackup}>Save backup email</Button>
-              <Button type="text" onClick={() => setOpen(false)}>Skip for now</Button>
-            </Space>
-          </Space>
-        ) : (
-          <Space direction="vertical" style={{ width: '100%' }} size="middle">
-            <Space direction="vertical" style={{ width: '100%' }}>
-              <Button block type="primary" icon={<PasskeyIcon />} loading={busy} onClick={passkeyCreate}>
-                Create an account with a passkey
-              </Button>
-              <Button block icon={<PasskeyIcon />} loading={busy} onClick={passkeyIn}>
-                Sign in with a passkey
-              </Button>
-            </Space>
-            <Divider plain style={{ margin: '2px 0' }}>or continue with</Divider>
-            <Space direction="vertical" style={{ width: '100%' }}>
-              <Button block loading={busy} onClick={() => oauth('ravelry', 'Ravelry sign-in')}>Ravelry</Button>
-              <Button block icon={<GoogleIcon />} loading={busy} onClick={() => oauth('google', 'Google sign-in')}>Google</Button>
-            </Space>
-            <Divider plain style={{ margin: '2px 0' }}>or use email</Divider>
-            <Form form={form} layout="vertical" requiredMark={false} onFinish={emailSubmit}>
-              <Form.Item name="email" rules={[{ required: true, type: 'email', message: 'Enter a valid email' }]} style={{ marginBottom: 12 }}>
-                <Input prefix={<MailIcon />} placeholder="you@example.com" autoComplete="email" />
-              </Form.Item>
-              <Form.Item name="password" rules={[{ required: true, min: 8, message: 'At least 8 characters' }]} style={{ marginBottom: 12 }}>
-                <Input.Password placeholder="Password" autoComplete={mode === 'in' ? 'current-password' : 'new-password'} />
-              </Form.Item>
-              <Space>
-                <Button type="primary" htmlType="submit" loading={busy}>{mode === 'in' ? 'Sign in' : 'Create account'}</Button>
-                <Button type="text" onClick={magicLink} loading={busy}>Email me a link</Button>
-              </Space>
-            </Form>
-            <div style={{ textAlign: 'center' }}>
-              <Button type="link" size="small" onClick={() => setMode(mode === 'in' ? 'up' : 'in')}>
-                {mode === 'in' ? 'New here? Create an account' : 'Have an account? Sign in'}
-              </Button>
+      <Button variant="outline" onClick={openSignIn}><SignInIcon /> Sign in</Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{step === 'backup' ? 'Add a backup email' : 'Sign in to threadwick'}</DialogTitle>
+          </DialogHeader>
+          {step === 'backup' ? (
+            <div className="form-stack">
+              <p className="text-sm text-muted-foreground">
+                So you can still sign in with an email link if a passkey isn’t available on your device.
+              </p>
+              <div className="form-field">
+                <Label htmlFor="backup-email">Email</Label>
+                <Input
+                  id="backup-email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={backup}
+                  onChange={(e) => setBackup(e.target.value)}
+                  autoComplete="email"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button disabled={!backup.trim() || busy} onClick={saveBackup}>Save backup email</Button>
+                <Button variant="ghost" onClick={() => setOpen(false)}>Skip for now</Button>
+              </div>
             </div>
-          </Space>
-        )}
-      </Modal>
+          ) : (
+            <div className="form-stack">
+              <div className="flex flex-col gap-2">
+                <Button disabled={busy} onClick={passkeyCreate}><PasskeyIcon /> Create an account with a passkey</Button>
+                <Button variant="outline" disabled={busy} onClick={passkeyIn}><PasskeyIcon /> Sign in with a passkey</Button>
+              </div>
+              <p className="text-center text-xs text-muted-foreground">or continue with</p>
+              <div className="flex flex-col gap-2">
+                <Button variant="outline" disabled={busy} onClick={() => oauth('ravelry', 'Ravelry sign-in')}>Ravelry</Button>
+                <Button variant="outline" disabled={busy} onClick={() => oauth('google', 'Google sign-in')}><GoogleIcon /> Google</Button>
+              </div>
+              <p className="text-center text-xs text-muted-foreground">or use email</p>
+              <form className="form-stack" onSubmit={emailSubmit}>
+                <div className="form-field">
+                  <Label htmlFor="auth-email">Email</Label>
+                  <Input id="auth-email" type="email" placeholder="you@example.com" autoComplete="email"
+                    {...register('email', { required: 'Enter a valid email', pattern: { value: /\S+@\S+\.\S+/, message: 'Enter a valid email' } })} />
+                  {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+                </div>
+                <div className="form-field">
+                  <Label htmlFor="auth-password">Password</Label>
+                  <Input id="auth-password" type="password" placeholder="Password"
+                    autoComplete={mode === 'in' ? 'current-password' : 'new-password'}
+                    {...register('password', { required: 'At least 8 characters', minLength: { value: 8, message: 'At least 8 characters' } })} />
+                  {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button type="submit" disabled={busy}>{mode === 'in' ? 'Sign in' : 'Create account'}</Button>
+                  <Button type="button" variant="ghost" disabled={busy} onClick={magicLink}>Email me a link</Button>
+                </div>
+              </form>
+              <div className="text-center">
+                <Button type="button" variant="link" size="sm" onClick={() => setMode(mode === 'in' ? 'up' : 'in')}>
+                  {mode === 'in' ? 'New here? Create an account' : 'Have an account? Sign in'}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
