@@ -129,3 +129,25 @@ export function usePatternMarketplaceState(): void {
 	ownershipStore.use();
 	bookmarksStore.use();
 }
+
+/**
+ * Your Library patterns — saved (bookmarked) ∪ bought (purchased), resolved with
+ * their canonical ownership. Derived from the entitlement stores, never a
+ * separate SavedPattern store (one model, not two — see #90/#91).
+ */
+export function useSavedPatterns(): {
+	pattern: Pattern;
+	ownership: PatternOwnership;
+}[] {
+	usePatternMarketplaceState();
+	const ids = new Set<string>([
+		...bookmarksStore.getSnapshot(),
+		...Object.keys(ownershipStore.getSnapshot()),
+	]);
+	const out: { pattern: Pattern; ownership: PatternOwnership }[] = [];
+	for (const id of ids) {
+		const pattern = resolveViewPattern(id);
+		if (pattern) out.push({ pattern, ownership: getPatternOwnership(id) });
+	}
+	return out;
+}
