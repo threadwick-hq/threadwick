@@ -10,12 +10,14 @@ import {
 	type Project,
 } from '@threadwick/editor';
 import { Link } from 'react-router';
+import { projectInScope, useCraftScope } from '../../studio/craft-scope';
 import { makerStatusLabel } from '../../studio/maker-status';
 import { useStudioStore } from '../../studio/studio-store';
 
 /** Workbench projects list — your makes, drilling into the project interior. */
 export default function StudioProjectsIndex() {
 	const store = useStudioStore();
+	const { scope } = useCraftScope();
 
 	if (!store) {
 		return (
@@ -25,7 +27,9 @@ export default function StudioProjectsIndex() {
 		);
 	}
 
-	const projects = store.state.library.projects;
+	const projects = store.state.library.projects.filter((project) =>
+		projectInScope(scope, project),
+	);
 
 	return (
 		<div className="px-6 py-8">

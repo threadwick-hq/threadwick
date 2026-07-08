@@ -64,6 +64,11 @@ export function createLocalStore<T>(
 	}
 
 	let snapshot = load();
+	// Stable server snapshot: SSR/hydration must render the seed on both sides,
+	// then flip to the persisted value post-hydration — otherwise the server
+	// (no localStorage) and the hydrating client disagree and React logs a
+	// hydration mismatch.
+	const serverSnapshot = seed();
 	const listeners = new Set<() => void>();
 
 	function notify(): void {
@@ -92,7 +97,7 @@ export function createLocalStore<T>(
 	}
 
 	function useSnapshot(): T {
-		return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+		return useSyncExternalStore(subscribe, getSnapshot, () => serverSnapshot);
 	}
 
 	return { getSnapshot, subscribe, update, use: useSnapshot };

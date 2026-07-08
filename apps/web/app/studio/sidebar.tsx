@@ -1,7 +1,26 @@
-import { InteriorSlot } from '@threadwick/core/components';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+	InteriorSlot,
+} from '@threadwick/core/components';
 import { cn } from '@threadwick/core/lib/utils';
 import { Icon, type IconName } from '@threadwick/icons';
+import type { ReactNode } from 'react';
 import { NavLink } from 'react-router';
+import {
+	addCraft,
+	CRAFT_TAXONOMY,
+	craftLabel,
+	ownedCrafts,
+	patternInScope,
+	projectInScope,
+	setCraftScope,
+	useCraftScope,
+} from './craft-scope';
 import { usePatternLibrary } from './pattern-store';
 import { useStudioStore } from './studio-store';
 
@@ -28,10 +47,15 @@ type NavSection = {
  */
 export function Sidebar() {
 	const store = useStudioStore();
-	const projects = store?.state.library.projects ?? [];
-	// Workbench counts read the same top-level collections the list routes
+	const { scope } = useCraftScope();
+	// Workbench counts read the same scoped collections the list routes
 	// render, so the badge and the list can never disagree.
-	const patternCount = usePatternLibrary().length;
+	const projects = (store?.state.library.projects ?? []).filter((project) =>
+		projectInScope(scope, project),
+	);
+	const patternCount = usePatternLibrary().filter((pattern) =>
+		patternInScope(scope, pattern),
+	).length;
 
 	const sections: NavSection[] = [
 		{ items: [{ to: '/studio', icon: 'home', label: 'Home', end: true }] },
@@ -151,19 +175,86 @@ export function Sidebar() {
 	);
 }
 
-/** Reserved craft-picker slot (TW-023) — same footprint as the interior identity tile (TW-025). */
+/** The craft picker (spec §2): scope the whole studio to a craft you work with. */
 export function CraftPickerSlot() {
+	const { scope, addedCrafts } = useCraftScope();
+	const patterns = usePatternLibrary();
+	const store = useStudioStore();
+	const projects = store?.state.library.projects ?? [];
+	const itemCrafts = [
+		...patterns.map((pattern) => pattern.craft),
+		...projects.flatMap((project) =>
+			(project.makePatterns ?? []).map((ref) => ref.craft),
+		),
+	];
+	const crafts = ownedCrafts(itemCrafts, addedCrafts);
+	const addable = CRAFT_TAXONOMY.filter((craft) => !crafts.includes(craft));
+
 	return (
 		<InteriorSlot>
-			<button
-				type="button"
-				className="flex w-full items-center justify-between rounded-md border border-border px-2.5 py-2 text-xs text-muted-foreground"
-				disabled
-			>
-				<span>All my crafts</span>
-				<Icon name="chevron-down" label="" className="size-3 opacity-60" />
-			</button>
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<button
+						type="button"
+						className="flex w-full items-center justify-between rounded-md border border-border px-2.5 py-2 text-xs text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+					>
+						<span>{craftLabel(scope)}</span>
+						<Icon name="chevron-down" label="" className="size-3 opacity-60" />
+					</button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent align="start" className="w-52">
+					<ScopeItem
+						active={scope === 'all'}
+						onSelect={() => setCraftScope('all')}
+					>
+						All my crafts
+					</ScopeItem>
+					{crafts.map((craft) => (
+						<ScopeItem
+							key={craft}
+							active={scope === craft}
+							onSelect={() => setCraftScope(craft)}
+						>
+							{craftLabel(craft)}
+						</ScopeItem>
+					))}
+					{addable.length > 0 && (
+						<>
+							<DropdownMenuSeparator />
+							<DropdownMenuLabel>Add a craft</DropdownMenuLabel>
+							{addable.map((craft) => (
+								<DropdownMenuItem
+									key={craft}
+									onSelect={() => {
+										addCraft(craft);
+										setCraftScope(craft);
+									}}
+								>
+									<Icon name="add" label="" /> {craftLabel(craft)}
+								</DropdownMenuItem>
+							))}
+						</>
+					)}
+				</DropdownMenuContent>
+			</DropdownMenu>
 		</InteriorSlot>
+	);
+}
+
+function ScopeItem({
+	active,
+	onSelect,
+	children,
+}: {
+	active: boolean;
+	onSelect: () => void;
+	children: ReactNode;
+}) {
+	return (
+		<DropdownMenuItem onSelect={onSelect}>
+			<span className="min-w-0 flex-1 truncate">{children}</span>
+			{active && <Icon name="confirm" label="selected" />}
+		</DropdownMenuItem>
 	);
 }
 
