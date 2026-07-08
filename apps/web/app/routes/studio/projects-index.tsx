@@ -1,11 +1,19 @@
-import { Link } from 'react-router';
 import {
-	makerStatusDotClass,
-	makerStatusLabel,
-} from '../../studio/maker-status';
+	CardGrid,
+	EmptyState,
+	PhotoCard,
+	type PhotoCardMedia,
+} from '@threadwick/core/components';
+import {
+	deriveLastWorkedAt,
+	formatRelativeAgo,
+	type Project,
+} from '@threadwick/editor';
+import { Link } from 'react-router';
+import { makerStatusLabel } from '../../studio/maker-status';
 import { useStudioStore } from '../../studio/studio-store';
 
-/** Workbench projects list — links into the project interior drill-in. */
+/** Workbench projects list — your makes, drilling into the project interior. */
 export default function StudioProjectsIndex() {
 	const store = useStudioStore();
 
@@ -23,42 +31,58 @@ export default function StudioProjectsIndex() {
 		<div className="px-6 py-8">
 			<h1 className="text-2xl font-medium tracking-tight">Projects</h1>
 			<p className="mt-1 text-sm text-muted-foreground">
-				Your makes — open one to pick up where you left off.
+				{projects.length} project{projects.length === 1 ? '' : 's'} — your
+				makes; open one to pick up where you left off.
 			</p>
+
 			{projects.length === 0 ? (
-				<p className="mt-6 text-sm text-muted-foreground">No projects yet.</p>
+				<EmptyState
+					className="mt-6"
+					title="No projects yet"
+					description="Start making a pattern and your project will appear here."
+				/>
 			) : (
-				<ul className="mt-6 space-y-2">
+				<CardGrid className="mt-6">
 					{projects.map((project) => {
-						const status = project.makerStatus ?? 'draft';
-						const patternCount = project.makePatterns?.length ?? 0;
+						const photo = project.photos?.[0]?.image;
+						const media: PhotoCardMedia = photo
+							? { photoUrl: photo.src, photoAlt: photo.alt ?? '' }
+							: {};
 						return (
-							<li key={project.id}>
-								<Link
-									to={`/studio/projects/${project.id}`}
-									className="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3 transition-colors hover:bg-muted/40"
-								>
-									<span
-										className={`size-2 shrink-0 rounded-full ${makerStatusDotClass(status)}`}
-										aria-hidden
-									/>
-									<span className="min-w-0 flex-1">
-										<span className="block truncate font-medium">
-											{project.name}
-										</span>
-										<span className="text-xs text-muted-foreground">
-											{makerStatusLabel(status)}
-											{patternCount > 0
-												? ` · ${patternCount} pattern${patternCount === 1 ? '' : 's'}`
-												: ''}
-										</span>
-									</span>
-								</Link>
-							</li>
+							<Link
+								key={project.id}
+								to={`/studio/projects/${project.id}`}
+								aria-label={`Open ${project.name}`}
+								className="block rounded-xl"
+							>
+								<PhotoCard
+									title={project.name}
+									subtitle={projectStateLine(project)}
+									badge={makerStatusLabel(project.makerStatus ?? 'draft')}
+									{...media}
+								/>
+							</Link>
 						);
 					})}
-				</ul>
+				</CardGrid>
 			)}
 		</div>
 	);
+}
+
+function projectStateLine(project: Project): string {
+	const workedAt = deriveLastWorkedAt(project);
+	const patternCount = project.makePatterns?.length ?? 0;
+	const counts =
+		patternCount > 0
+			? `${patternCount} pattern${patternCount === 1 ? '' : 's'}`
+			: undefined;
+	const worked = workedAt
+		? `Worked on ${lowercaseJustNow(formatRelativeAgo(workedAt))}`
+		: undefined;
+	return [worked, counts].filter(Boolean).join(' · ') || 'Not started yet';
+}
+
+function lowercaseJustNow(ago: string): string {
+	return ago === 'Just now' ? 'just now' : ago;
 }

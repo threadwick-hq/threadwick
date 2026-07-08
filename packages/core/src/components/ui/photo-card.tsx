@@ -3,7 +3,7 @@ import { cn } from '../../lib/utils';
 
 // A photo requires alt text at the type level (machine-enforced a11y):
 // pass photoAlt='' only for a genuinely decorative photo.
-type PhotoCardMedia =
+export type PhotoCardMedia =
 	| { photoUrl: string; photoAlt: string }
 	| { photoUrl?: undefined; photoAlt?: undefined };
 
