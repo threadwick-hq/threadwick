@@ -26,7 +26,7 @@ Key facts:
 - `@threadwick/core/tokens` — `tokens` (light/dark OKLCH), `space`, `size`, `radii`, `fonts`, `shadows`, palette helpers (`oklch`, `L`).
 - `@threadwick/core/tokens.css` — `:root` (light) + `[data-theme="dark"]` + focus ring + reduced-motion guard.
 - `@threadwick/core/theme.css` — shadcn role tokens mapped onto the brand tokens.
-- `@threadwick/core/brand` — `Wordmark`.
+- `@threadwick/core/brand` — `Wordmark`; `Logo` badge + `ThreadwickLogo` / `StudioLogo` / `MarketplaceLogo`; `logoSVG()` (static SVG), `fromAwesome()`.
 - `@threadwick/core/components` — `Stack` (8-px spacing guardrail); the shadcn-style `ui/` primitives (Accordion, Alert, AlertDialog, Badge, Breadcrumb, Button, Card, ColorPicker, Dialog, DropdownMenu, Input, Label, NumberInput, Segmented, Select, Switch, Tooltip, and the `FeedbackProvider` toast/confirm layer); the `follow/`, `interior/`, `overview/` screen kits. Authoritative list: [src/components/index.ts](src/components/index.ts).
 
 ## Guardrails / commands
