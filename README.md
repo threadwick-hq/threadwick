@@ -14,12 +14,12 @@ by stitch.
 
 ## What you get
 
-- **Design** — draw stitch charts round by round in the Studio editor.
-- **Keep** — organize patterns into projects, with your yarns, notes, and links alongside.
-- **Share** — publish patterns for anyone, or sell your own; when you handle the sale
+- <img src=".github/assets/icons/pencil-ruler.svg" width="16" alt=""> **Design** — draw stitch charts round by round in the Studio editor.
+- <img src=".github/assets/icons/folder-heart.svg" width="16" alt=""> **Keep** — organize patterns into projects, with your yarns, notes, and links alongside.
+- <img src=".github/assets/icons/share-2.svg" width="16" alt=""> **Share** — publish patterns for anyone, or sell your own; when you handle the sale
   yourself, Threadwick takes nothing.
-- **Make** — follow a pattern in the built-in viewer and track your progress.
-- **Leave anytime** — export your work in open, portable formats. No lock-in.
+- <img src=".github/assets/icons/list-checks.svg" width="16" alt=""> **Make** — follow a pattern in the built-in viewer and track your progress.
+- <img src=".github/assets/icons/download.svg" width="16" alt=""> **Leave anytime** — export your work in open, portable formats. No lock-in.
 
 Designing, charting, organizing, sharing, and cloud backup are free, always. Makers never pay
 Threadwick anything.

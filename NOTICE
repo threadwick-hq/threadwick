@@ -17,3 +17,9 @@ Attribution: "Font Awesome Free by @fontawesome — https://fontawesome.com".
 
 Font Awesome Pro, when present in production builds, is licensed separately under a
 commercial Font Awesome license and is NOT redistributed in this repository.
+
+Lucide
+------
+License: ISC (https://lucide.dev/license)
+Icons redistributed as SVG files under .github/assets/icons/ (from lucide-static).
+Attribution: "Lucide — https://lucide.dev".
