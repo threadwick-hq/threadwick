@@ -25,7 +25,19 @@ export function sampleMarketplaceViewPattern(): Pattern {
 				name: 'Flower square',
 				kind: 'motif',
 				artifacts: [
-					{ type: 'chart', id: 'art-chart', data: { id: 'chart-wildflower' } },
+					{
+						type: 'chart',
+						id: 'art-chart',
+						data: {
+							id: 'chart-wildflower',
+							construction: 'granny',
+							start: null,
+							rounds: [],
+							activeRound: '',
+							stitches: [],
+							view: { scale: 1, panX: 0, panY: 0 },
+						},
+					},
 					{
 						type: 'written',
 						id: 'art-written',

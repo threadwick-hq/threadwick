@@ -11,6 +11,8 @@
 //
 // A JSON Schema mirror ships at ./pattern.schema.json as a fail-closed guardrail for agents.
 
+import type { ChartData } from './chart';
+
 export type Craft = 'crochet' | 'knit' | 'amigurumi' | 'tunisian' | 'other';
 export type SkillLevel = 'beginner' | 'easy' | 'intermediate' | 'advanced';
 
@@ -21,11 +23,14 @@ export interface ImageRef {
 	alt?: string;
 	caption?: string;
 }
-export interface ChartData {
-	id: string;
-} // produced by the Studio chart designer
+// The chart geometry (ChartData) is the unified content model — see ./chart. A schematic is a
+// scale drawing with finished measurements; its minimal real shape is an uploaded diagram plus the
+// measurements it annotates (all optional so no producer is constrained yet).
 export interface SchematicData {
 	id: string;
+	label?: string; // caption for the schematic drawing
+	image?: ImageRef; // an uploaded scale diagram (SVG/PNG); reuses the asset shape (src holds the href)
+	measurements?: SizeSpec[]; // finished measurements the schematic annotates
 }
 
 // ── The pattern (authored root = the Studio sidebar) ─────────────────────────

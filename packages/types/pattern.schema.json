@@ -147,11 +147,7 @@
 				"type": { "const": "chart" },
 				"id": { "type": "string" },
 				"kind": { "enum": ["stitch", "colorwork"] },
-				"data": {
-					"type": "object",
-					"required": ["id"],
-					"properties": { "id": { "type": "string" } }
-				}
+				"data": { "$ref": "#/definitions/ChartData" }
 			}
 		},
 		"WrittenArtifact": {
@@ -175,10 +171,168 @@
 			"properties": {
 				"type": { "const": "schematic" },
 				"id": { "type": "string" },
-				"data": {
+				"data": { "$ref": "#/definitions/SchematicData" }
+			}
+		},
+		"PatternKind": { "enum": ["granny", "round", "flat"] },
+		"StitchType": {
+			"enum": [
+				"ch",
+				"slst",
+				"sc",
+				"hdc",
+				"dc",
+				"tr",
+				"dtr",
+				"mr",
+				"dmr",
+				"chring",
+				"slipknot"
+			]
+		},
+		"PatternView": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["scale", "panX", "panY"],
+			"properties": {
+				"scale": { "type": "number" },
+				"panX": { "type": "number" },
+				"panY": { "type": "number" }
+			}
+		},
+		"ChartBase": {
+			"oneOf": [
+				{ "type": "null" },
+				{
 					"type": "object",
-					"required": ["id"],
-					"properties": { "id": { "type": "string" } }
+					"additionalProperties": false,
+					"required": ["kind", "id"],
+					"properties": {
+						"kind": { "const": "stitch" },
+						"id": { "type": "string" }
+					}
+				},
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["kind", "ids"],
+					"properties": {
+						"kind": { "const": "space" },
+						"ids": {
+							"type": "array",
+							"items": { "type": "string" },
+							"minItems": 2,
+							"maxItems": 2
+						}
+					}
+				}
+			]
+		},
+		"RepeatMark": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["id", "fromStitchId", "toStitchId"],
+			"properties": {
+				"id": { "type": "string" },
+				"fromStitchId": { "type": "string" },
+				"toStitchId": { "type": "string" },
+				"times": { "type": "number" }
+			}
+		},
+		"RoundFollowMarks": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["corners", "repeats"],
+			"properties": {
+				"corners": { "type": "array", "items": { "type": "string" } },
+				"repeats": {
+					"type": "array",
+					"items": { "$ref": "#/definitions/RepeatMark" }
+				}
+			}
+		},
+		"ChartRound": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["id", "name"],
+			"properties": {
+				"id": { "type": "string" },
+				"name": { "type": "string" },
+				"followMarks": { "$ref": "#/definitions/RoundFollowMarks" }
+			}
+		},
+		"ChartStitch": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"id",
+				"round",
+				"type",
+				"origin",
+				"base",
+				"x",
+				"y",
+				"rot",
+				"len",
+				"color",
+				"mirror"
+			],
+			"properties": {
+				"id": { "type": "string" },
+				"round": { "type": "string" },
+				"type": { "$ref": "#/definitions/StitchType" },
+				"origin": { "type": ["string", "null"] },
+				"base": { "$ref": "#/definitions/ChartBase" },
+				"x": { "type": "number" },
+				"y": { "type": "number" },
+				"rot": { "type": "number" },
+				"len": { "type": ["number", "null"] },
+				"color": { "type": ["string", "null"] },
+				"mirror": { "type": "boolean" },
+				"auto": { "type": "boolean" }
+			}
+		},
+		"ChartData": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"id",
+				"construction",
+				"start",
+				"rounds",
+				"activeRound",
+				"stitches",
+				"view"
+			],
+			"properties": {
+				"id": { "type": "string" },
+				"construction": { "$ref": "#/definitions/PatternKind" },
+				"start": {
+					"oneOf": [{ "type": "null" }, { "$ref": "#/definitions/StitchType" }]
+				},
+				"rounds": {
+					"type": "array",
+					"items": { "$ref": "#/definitions/ChartRound" }
+				},
+				"activeRound": { "type": "string" },
+				"stitches": {
+					"type": "array",
+					"items": { "$ref": "#/definitions/ChartStitch" }
+				},
+				"view": { "$ref": "#/definitions/PatternView" }
+			}
+		},
+		"SchematicData": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["id"],
+			"properties": {
+				"id": { "type": "string" },
+				"label": { "type": "string" },
+				"image": { "$ref": "#/definitions/ImageRef" },
+				"measurements": {
+					"type": "array",
+					"items": { "$ref": "#/definitions/SizeSpec" }
 				}
 			}
 		},
