@@ -2,9 +2,9 @@
 // renderer, connectivity, symbols, geometry, palette, codec, and utilities. The Studio editor
 // and the Follow read-side both build on this layer.
 //
-// The name `Pattern` is deliberately NOT exported here: the chart model is `ChartPattern`, and
-// the freed name is the Phase 7 seam — once model unification lands, this layer re-exports the
-// authoring `Pattern` from @threadwick/types under its own name.
+// The chart model is `ChartPattern` (the editor's authoring envelope over @threadwick/types
+// `ChartData`). Phase 7 model unification has landed, so this layer now re-exports the authoring
+// `Pattern` from @threadwick/types under its own name — the freed-name seam is closed.
 
 export * from './codec';
 export * from './colors';
