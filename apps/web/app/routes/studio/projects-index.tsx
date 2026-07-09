@@ -3,12 +3,12 @@ import {
 	EmptyState,
 	PhotoCard,
 	type PhotoCardMedia,
-} from '@threadwick/core/components';
+} from '@threadwick/core/ui';
+import type { Project } from '@threadwick/editor/chart';
 import {
 	deriveLastWorkedAt,
 	formatRelativeAgoSentence,
-	type Project,
-} from '@threadwick/editor';
+} from '@threadwick/editor/follow';
 import { Link } from 'react-router';
 import { projectInScope, useCraftScope } from '../../studio/craft-scope';
 import { makerStatusLabel } from '../../studio/maker-status';

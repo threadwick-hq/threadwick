@@ -1,11 +1,13 @@
 import { cn } from '@threadwick/core/lib/utils';
+import type {
+	ChartPattern,
+	FollowMode,
+	PatternProgress,
+} from '@threadwick/editor/chart';
 import {
-	type ChartPattern,
-	type FollowMode,
-	type PatternProgress,
 	resolveFollowChartContext,
 	stitchInspectInfo,
-} from '@threadwick/editor';
+} from '@threadwick/editor/follow';
 import { Icon } from '@threadwick/icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 

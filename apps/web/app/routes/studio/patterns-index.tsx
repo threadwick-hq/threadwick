@@ -3,13 +3,13 @@ import {
 	EmptyState,
 	PhotoCard,
 	type PhotoCardMedia,
-} from '@threadwick/core/components';
+} from '@threadwick/core/ui';
 import {
 	formatRelativeAgoSentence,
 	patternDraftVersion,
 	patternEditedAt,
 	patternPublishedVersion,
-} from '@threadwick/editor';
+} from '@threadwick/editor/follow';
 import type { Pattern } from '@threadwick/types';
 import { Link } from 'react-router';
 import { patternInScope, useCraftScope } from '../../studio/craft-scope';

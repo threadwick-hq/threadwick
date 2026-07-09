@@ -6,7 +6,9 @@
 	"license": "AGPL-3.0-or-later",
 	"sideEffects": false,
 	"exports": {
-		".": "./src/index.ts",
+		"./chart": "./src/chart.ts",
+		"./follow": "./src/follow.ts",
+		"./fixtures": "./src/fixtures.ts",
 		"./browser": "./src/browser.ts"
 	},
 	"scripts": {

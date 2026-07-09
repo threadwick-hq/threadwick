@@ -3,7 +3,7 @@ import {
 	DialogContent,
 	DialogDescription,
 	DialogTitle,
-} from '@threadwick/core/components';
+} from '@threadwick/core/ui';
 import { Icon } from '@threadwick/icons';
 import { useEffect, useRef } from 'react';
 

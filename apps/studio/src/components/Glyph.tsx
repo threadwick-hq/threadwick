@@ -1,6 +1,6 @@
-import { glyphSVG } from '@threadwick/editor';
-import { STITCHES } from '@threadwick/editor';
-import type { StitchType } from '@threadwick/editor';
+import { glyphSVG } from '@threadwick/editor/chart';
+import { STITCHES } from '@threadwick/editor/chart';
+import type { StitchType } from '@threadwick/editor/chart';
 
 export function Glyph({ type, size = 34, color }: { type: StitchType; size?: number; color?: string }) {
   return (

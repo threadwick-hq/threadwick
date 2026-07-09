@@ -5,7 +5,7 @@ import {
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-} from '@threadwick/core/components';
+} from '@threadwick/core/ui';
 import { Icon } from '@threadwick/icons';
 import { Link } from 'react-router';
 

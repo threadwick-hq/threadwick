@@ -1,5 +1,5 @@
 import { isMarketplaceEnabled } from '@threadwick/core/capabilities';
-import { Button, Card, CardGrid, Input } from '@threadwick/core/components';
+import { Button, Card, CardGrid, Input } from '@threadwick/core/ui';
 import { Icon } from '@threadwick/icons';
 import type { CatalogueListing } from '@threadwick/types';
 import { type FormEvent, useState } from 'react';

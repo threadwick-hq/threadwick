@@ -1,4 +1,6 @@
 import { isMarketplaceEnabled } from '@threadwick/core/capabilities';
+import { InteriorSlot } from '@threadwick/core/interior';
+import { cn } from '@threadwick/core/lib/utils';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -6,9 +8,7 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-	InteriorSlot,
-} from '@threadwick/core/components';
-import { cn } from '@threadwick/core/lib/utils';
+} from '@threadwick/core/ui';
 import { Icon, type IconName } from '@threadwick/icons';
 import { toolMatrixForCraft } from '@threadwick/types';
 import type { ReactNode } from 'react';

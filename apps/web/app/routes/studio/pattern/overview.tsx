@@ -9,7 +9,7 @@ import {
 	PatternViewRating,
 	ProgressPhotoGallery,
 	WhatsInsideList,
-} from '@threadwick/core/components';
+} from '@threadwick/core/overview';
 import {
 	formatPatternPrice,
 	patternMakerPrimaryAction,
@@ -19,7 +19,7 @@ import {
 	patternQualityChecks,
 	patternQualityIncluded,
 	patternWhatsInsideItems,
-} from '@threadwick/editor';
+} from '@threadwick/editor/follow';
 import { Icon } from '@threadwick/icons';
 import { Link, useOutletContext, useParams } from 'react-router';
 import type { PatternInteriorOutletContext } from '../../../studio/pattern-interior';

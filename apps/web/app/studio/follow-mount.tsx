@@ -8,15 +8,15 @@ import {
 	InstructionBox,
 	useFollowSplitLayout,
 	useWakeLock,
-} from '@threadwick/core/components';
+} from '@threadwick/core/follow';
+import { activeVersion } from '@threadwick/editor/chart';
 import {
-	activeVersion,
 	hasStructuredChartData,
 	isExternalRef,
 	resolveExternalFollowContext,
 	resolveFollowContext,
 	segmentsFromInstructionLine,
-} from '@threadwick/editor';
+} from '@threadwick/editor/follow';
 import { Icon } from '@threadwick/icons';
 import { Link, useParams } from 'react-router';
 import { FollowChartPane } from './follow-chart-pane';

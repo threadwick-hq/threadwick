@@ -3,17 +3,19 @@ import {
 	InteriorIdentityTile,
 	PinnedStatusContinueButton,
 	PinnedStatusTile,
+} from '@threadwick/core/interior';
+import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from '@threadwick/core/components';
+} from '@threadwick/core/ui';
+import type { Project } from '@threadwick/editor/chart';
 import {
 	aggregateProjectProgress,
 	continueMakingRef,
-	type Project,
-} from '@threadwick/editor';
+} from '@threadwick/editor/follow';
 import { Icon } from '@threadwick/icons';
 import type { MakerStatus, PatternReference } from '@threadwick/types';
 import { useCallback, useEffect, useMemo } from 'react';

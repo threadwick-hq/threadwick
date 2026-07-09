@@ -1,10 +1,10 @@
+import { sampleWorkbenchPattern } from '@threadwick/editor/fixtures';
 import {
 	createPatternDraft,
 	publishPatternVersion,
 	remixPattern,
-	sampleWorkbenchPattern,
 	setActivePatternVersion,
-} from '@threadwick/editor';
+} from '@threadwick/editor/follow';
 import type { Pattern } from '@threadwick/types';
 import { useEffect } from 'react';
 import { createLocalStore } from '../lib/create-local-store';

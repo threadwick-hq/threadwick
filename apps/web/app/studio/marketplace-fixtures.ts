@@ -4,10 +4,10 @@
 // so every fixture stays shape-valid without hand-authoring a full Pattern each time.
 
 import {
-	type PatternListing,
 	sampleMarketplaceListing,
 	sampleMarketplaceViewPattern,
-} from '@threadwick/editor';
+} from '@threadwick/editor/fixtures';
+import type { PatternListing } from '@threadwick/editor/follow';
 import type {
 	Craft,
 	Pattern,

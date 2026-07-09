@@ -1,4 +1,4 @@
-import { Button } from '@threadwick/core/components';
+import { Button } from '@threadwick/core/ui';
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import { ensureStudioStore, useStudioStore } from './studio-store';

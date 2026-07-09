@@ -1,9 +1,9 @@
-import type { PatternListing } from '@threadwick/editor';
 import {
 	sampleMarketplaceListing,
 	sampleMarketplaceViewPattern,
 	samplePaidMarketplaceListing,
-} from '@threadwick/editor';
+} from '@threadwick/editor/fixtures';
+import type { PatternListing } from '@threadwick/editor/follow';
 import type { Pattern, PatternOwnership } from '@threadwick/types';
 import { useEffect } from 'react';
 import { createLocalStore } from '../lib/create-local-store';

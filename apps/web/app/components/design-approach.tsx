@@ -4,7 +4,7 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from '@threadwick/core/components';
+} from '@threadwick/core/ui';
 import { Icon } from '@threadwick/icons';
 import { useState } from 'react';
 import type { CrochetRegion } from '../data/stitches';

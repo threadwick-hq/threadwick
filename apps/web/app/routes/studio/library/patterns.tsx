@@ -3,7 +3,7 @@ import {
 	EmptyState,
 	PhotoCard,
 	type PhotoCardMedia,
-} from '@threadwick/core/components';
+} from '@threadwick/core/ui';
 import {
 	acquisitionFromOwnership,
 	type Pattern,

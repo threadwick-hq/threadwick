@@ -1,4 +1,4 @@
-import { uid } from '@threadwick/editor';
+import { uid } from '@threadwick/editor/chart';
 import type { Pattern } from '@threadwick/types';
 import type { NavigateFunction } from 'react-router';
 import { ensureStudioStore } from './studio-store';

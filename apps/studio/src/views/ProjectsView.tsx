@@ -10,7 +10,7 @@ import {
   Label,
   confirm,
   toast,
-} from '@threadwick/core/components';
+} from '@threadwick/core/ui';
 import {
   PlusIcon, ImportIcon, MoreIcon, DownloadIcon, CopyIcon, DeleteIcon,
 } from '../icons';
@@ -20,8 +20,8 @@ import { Thumb } from '../components/Thumb';
 import { Glyph } from '../components/Glyph';
 import { VersionTag } from '../components/VersionTag';
 import { exportProjectFile, importProjectFile } from '@threadwick/editor/browser';
-import { displayVersion, isPlaceholderName } from '@threadwick/editor';
-import type { Project } from '@threadwick/editor';
+import { displayVersion, isPlaceholderName } from '@threadwick/editor/chart';
+import type { Project } from '@threadwick/editor/chart';
 
 function fmtDate(iso: string): string {
   try { return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); }

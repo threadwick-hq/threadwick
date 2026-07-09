@@ -4,15 +4,15 @@ import {
 	PatternsInMake,
 	ProgressPhotoGallery,
 	ProjectOverviewHeader,
-} from '@threadwick/core/components';
+} from '@threadwick/core/overview';
+import type { Project } from '@threadwick/editor/chart';
 import {
 	aggregateProjectProgress,
 	continueMakingRef,
-	type Project,
 	projectOverviewKeyFacts,
 	projectOverviewMaterials,
 	projectOverviewSubtitle,
-} from '@threadwick/editor';
+} from '@threadwick/editor/follow';
 import { Link, useParams } from 'react-router';
 import {
 	makerStatusDotClass,

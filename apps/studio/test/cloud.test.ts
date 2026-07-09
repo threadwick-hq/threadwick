@@ -3,7 +3,7 @@
 import { test } from 'vitest';
 import assert from 'node:assert/strict';
 
-import { uid } from '@threadwick/editor';
+import { uid } from '@threadwick/editor/chart';
 import { AUTH_CALLBACK_PATH, cloudEnabled } from '../src/cloud/config';
 import { supabase } from '../src/cloud/client';
 import vercelConfig from '../vercel.json';

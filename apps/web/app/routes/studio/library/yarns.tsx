@@ -1,6 +1,6 @@
 import { isMarketplaceEnabled } from '@threadwick/core/capabilities';
-import { Button, CardGrid, EmptyState } from '@threadwick/core/components';
 import { cn } from '@threadwick/core/lib/utils';
+import { Button, CardGrid, EmptyState } from '@threadwick/core/ui';
 import { Icon } from '@threadwick/icons';
 import {
 	fixtureRavelrySource,
