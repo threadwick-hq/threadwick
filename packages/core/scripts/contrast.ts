@@ -36,7 +36,7 @@ export function oklchToLinearSrgb([Lp, C, H]: Triple): [
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 
 export function luminance(t: Triple): number {
-	const [r, g, b] = oklchToLinearSrgb(t).map(clamp01);
+	const [r = 0, g = 0, b = 0] = oklchToLinearSrgb(t).map(clamp01);
 	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 

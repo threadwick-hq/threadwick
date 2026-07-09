@@ -55,10 +55,10 @@ Build it token-only (CSS vars / token exports), export it from `src/components`,
 reduced-motion-safe · screen-reader-checked.
 
 ## Commands
-- `npm run build:tokens` — regenerate token artifacts (auto-runs as `prebuild`)
+- `npm run build:tokens` — regenerate the committed token artifacts (run after editing `tokens.json`)
 - `npm run check` — tokens + typecheck + lint + contrast (the green bar)
 - `npm run validate [paths]` — conformance scan
-- `npm run build` — `tsup` → `dist/` (ESM + `.d.ts` + `tokens.css`)
+- No build step: core exports TypeScript source; the apps' bundlers compile it (`exports` → `./src`).
 
 ## How apps consume core
 ```ts

@@ -34,6 +34,10 @@ jobs:
         run: |
           pnpm run typecheck:scripts
           pnpm run test:scripts
+      - name: Design tokens in sync
+        run: |
+          pnpm --filter @threadwick/core run build:tokens
+          git diff --exit-code -- packages/core/src/tokens packages/core/figma packages/core/docs/foundations.md
       - name: Build + typecheck (packages, apps)
         run: pnpm turbo run build typecheck --filter=./packages/* --filter=./apps/*
       - name: Tests (packages, apps)
