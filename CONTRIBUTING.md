@@ -22,12 +22,18 @@ it automatically (via CLA Assistant) on their first pull request.
 
 ## How we work
 
-- Every piece of work — feature, fix, refactor — is one file in [`work/`](work/README.md), tracked in
-  git as `work/TW-NNN-*.md`. It is the spec, the documentation, and the audit trail; there is no
-  external issue tracker to keep in sync.
-- Claim a task by setting its `status: active`; reference it from every commit (`Refs TW-NNN`) and
-  close it from the pull request (`Closes TW-NNN`). CI enforces that a `done` task is backed by a real
-  commit and that anything a commit closes is actually `done`.
-- Work-bearing PRs are **squash-merged**. Put `Closes TW-NNN` in the squash commit message so the
-  derivation gate sees the closing reference on `main`.
+- Every piece of work — feature, fix, refactor — is one **GitHub Issue** on this repo. The issue
+  body is the spec (Context, Scope, Acceptance, Plan), edited in place as things change; comments
+  carry the conversation. There is no separate tracker to keep in sync.
+- Status is **derived from native GitHub state, never stored**: assignment means active, an open
+  linked PR means in review, the closed reason records done or abandoned. Don't add status labels
+  or status fields.
+- The `pnpm run work` CLI is the day-to-day interface — `work new` to open an issue,
+  `work claim <n>` to take one, `work plan <n>` to record the plan before implementing,
+  `work log <n>` for progress. Humans can equally use the GitHub UI and the "Threadwick Work"
+  project board.
+- Branch as `feat/<issue-number>-slug`, open a **draft PR on the first commit** with
+  `Closes #<issue-number>` in the body, and squash-merge once review and CI pass — GitHub closes
+  the issue automatically.
 - Run `pnpm check` (typecheck, lint, test) and `pnpm run work check` before pushing.
+- The full lifecycle, invariants, and environment gotchas are specified in [AGENTS.md](AGENTS.md).
