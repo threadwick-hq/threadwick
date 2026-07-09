@@ -7,46 +7,23 @@
 	"sideEffects": [
 		"**/*.css"
 	],
-	"files": [
-		"dist"
-	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/threadwick-hq/core.git"
 	},
 	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"import": "./dist/index.js"
-		},
-		"./tokens": {
-			"types": "./dist/tokens/index.d.ts",
-			"import": "./dist/tokens/index.js"
-		},
-		"./brand": {
-			"types": "./dist/brand/index.d.ts",
-			"import": "./dist/brand/index.js"
-		},
-		"./components": {
-			"types": "./dist/components/index.d.ts",
-			"import": "./dist/components/index.js"
-		},
-		"./tokens.css": "./dist/tokens.css",
-		"./theme.css": "./dist/theme.css",
-		"./lib/utils": {
-			"types": "./dist/lib/utils.d.ts",
-			"import": "./dist/lib/utils.js"
-		},
-		"./capabilities": {
-			"types": "./dist/capabilities.d.ts",
-			"import": "./dist/capabilities.js"
-		}
+		".": "./src/index.ts",
+		"./tokens": "./src/tokens/index.ts",
+		"./brand": "./src/brand/index.ts",
+		"./components": "./src/components/index.ts",
+		"./tokens.css": "./src/tokens/tokens.css",
+		"./theme.css": "./src/styles/theme.css",
+		"./lib/utils": "./src/lib/utils.ts",
+		"./capabilities": "./src/capabilities.ts"
 	},
 	"scripts": {
 		"build:tokens": "tsx scripts/build-tokens.ts && biome check --write src/tokens/palette.ts src/tokens/tokens.ts src/tokens/tokens.css figma/variables.json",
 		"gen:brand-glyphs": "tsx scripts/gen-brand-glyphs.ts",
-		"prebuild": "npm run build:tokens",
-		"build": "tsup",
 		"typecheck": "tsc --noEmit",
 		"lint": "biome check .",
 		"validate": "tsx scripts/validate.ts",
@@ -65,7 +42,6 @@
 		"@types/react": "^18.3.12",
 		"react": "^18.3.1",
 		"tailwindcss": "^4.3.1",
-		"tsup": "^8.3.5",
 		"tsx": "^4.19.2",
 		"typescript": "~5.6.3",
 		"vitest": "^3.2.6"

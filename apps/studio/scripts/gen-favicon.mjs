@@ -1,5 +1,6 @@
 // Generate public/favicon.svg from @threadwick/core (the single source of truth for
-// the logo). Run: `node scripts/gen-favicon.mjs` (also runs as a prebuild step).
+// the logo). Run: `tsx scripts/gen-favicon.mjs` (tsx, not node — it imports core's
+// TypeScript source barrels; also runs before `dev` and `build`).
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { logoSVG, logoIcons } from '@threadwick/core/brand';
