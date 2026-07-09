@@ -127,14 +127,15 @@ below are the non-obvious gotchas.
   `project` scope). In CI, `GITHUB_TOKEN` cannot read the project, so priority checks degrade
   gracefully; the built-in board automations (auto-add, closed to Done) are configured in the
   project UI, not in the repo.
-- **Build the workspace packages before running or typechecking the apps.** `dist/` is gitignored, so
-  the `@threadwick/*` packages must be built once per fresh checkout:
-  `pnpm turbo run build --filter=./packages/*`. The apps' Vite dev servers pre-bundle the built
-  `dist` barrels (see `apps/web/vite.config.ts` `optimizeDeps`), so dev will fail to resolve
-  `@threadwick/core/components` etc. without it. Turbo caches the build, so re-running is cheap.
+- **No build step for the `@threadwick/*` packages.** They export TypeScript source, so the apps'
+  Vite/React-Router bundlers compile them directly — a fresh checkout needs only `pnpm install`,
+  never a "build packages first" pass. (`packages/core/scripts/build-tokens.ts` regenerates the
+  committed token artifacts when `tokens.json` changes; CI's "Design tokens in sync" step fails if
+  they drift.)
 - **CI gates vs local `pnpm check`.** CI (`.github/workflows/ci.yml`) hard-gates on
-  `pnpm run work check` (+ `work gate --pr` on PRs), the work-CLI typecheck/tests,
-  `pnpm turbo run build typecheck` for packages *and* apps, and `pnpm biome check packages` —
+  `pnpm run work check` (+ `work gate --pr` on PRs), the work-CLI typecheck/tests, the design-tokens
+  freshness check, `pnpm turbo run build typecheck` (apps build; every package typechecks) and
+  `pnpm biome check packages apps/web` —
   all green today (biome reports warnings only; don't add errors). Local `pnpm check`
   additionally runs ESLint, which crashes on Node < 20.12
   (`util.styleText is not a function`, ESLint 10.5) — the studio `build` script chains ESLint
@@ -150,4 +151,4 @@ below are the non-obvious gotchas.
   `core.hooksPath = .claude/hooks` in the repo git config (set once; not tracked in git).
   If the hook blocks your push, fill the plan first: `pnpm run work plan <n>`.
 - **The `esbuild` "Ignored build scripts" warning from `pnpm install` is harmless** — pnpm 10 blocks
-  postinstall scripts by default, but esbuild/tsup/vite still work. No `pnpm approve-builds` needed.
+  postinstall scripts by default, but esbuild/vite still work. No `pnpm approve-builds` needed.

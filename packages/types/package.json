@@ -4,29 +4,20 @@
 	"description": "Threadwick shared types — the Pattern content model (the one object that flows through Studio, Viewer, and Marketplace).",
 	"type": "module",
 	"license": "AGPL-3.0-or-later",
-	"files": [
-		"dist",
-		"pattern.schema.json"
-	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/threadwick-hq/types.git"
 	},
 	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"import": "./dist/index.js"
-		},
+		".": "./src/index.ts",
 		"./pattern.schema.json": "./pattern.schema.json"
 	},
 	"scripts": {
-		"build": "tsup",
 		"typecheck": "tsc --noEmit",
 		"lint": "biome check .",
 		"test": "vitest run"
 	},
 	"devDependencies": {
-		"tsup": "^8.3.5",
 		"typescript": "~5.6.3",
 		"vitest": "^3.2.6"
 	}

@@ -65,8 +65,7 @@ CSS variables use the `--tw-*` prefix, e.g. `var(--tw-primary)`, `var(--tw-bg-la
 
 | Script | What |
 |---|---|
-| `npm run build:tokens` | regenerate token artifacts from `tokens.json` (auto-runs before build) |
-| `npm run build` | `tsup` → `dist/` (ESM + `.d.ts` + `tokens.css`) |
+| `npm run build:tokens` | regenerate the committed token artifacts from `tokens.json` |
 | `npm run typecheck` / `lint` | `tsc --noEmit` / `eslint .` |
 | `npm run check:contrast` | WCAG AA gate (OKLCH → sRGB, both modes) |
 | `npm run validate [paths]` | conformance scan (off-grid / non-token-colour / missing-aria) |

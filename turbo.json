@@ -5,12 +5,8 @@
 			"dependsOn": ["^build"],
 			"outputs": ["dist/**", "build/**", ".react-router/**"]
 		},
-		"typecheck": {
-			"dependsOn": ["^build"]
-		},
+		"typecheck": {},
 		"lint": {},
-		"test": {
-			"dependsOn": ["^build"]
-		}
+		"test": {}
 	}
 }
