@@ -12,7 +12,7 @@ by stitch.
 **You don't need anything on this page to use Threadwick.** The app runs in your browser at
 [**threadwick.com**](https://threadwick.com) — nothing to install.
 
-## What you get
+## <img src=".github/assets/icons/gift.svg" width="22" alt=""> What you get
 
 - <img src=".github/assets/icons/pencil-ruler.svg" width="16" alt=""> **Design** — draw stitch charts round by round in the Studio editor.
 - <img src=".github/assets/icons/folder-heart.svg" width="16" alt=""> **Keep** — organize patterns into projects, with your yarns, notes, and links alongside.
@@ -24,7 +24,7 @@ by stitch.
 Designing, charting, organizing, sharing, and cloud backup are free, always. Makers never pay
 Threadwick anything.
 
-## Run it on your own computer
+## <img src=".github/assets/icons/monitor.svg" width="22" alt=""> Run it on your own computer
 
 Threadwick is open source, so the curious can run the whole app locally. You'll need
 [Node.js](https://nodejs.org) (version 22) and [pnpm](https://pnpm.io); then copy-paste:
@@ -33,20 +33,19 @@ Threadwick is open source, so the curious can run the whole app locally. You'll 
 git clone https://github.com/threadwick-hq/threadwick.git
 cd threadwick
 pnpm install
-pnpm build
 pnpm --filter threadwick-web dev
 ```
 
 …and open <http://localhost:5173> in your browser. That's it.
 
-## Digging deeper
+## <img src=".github/assets/icons/book-open.svg" width="22" alt=""> Digging deeper
 
 Everything technical — how the project is put together, setting up a development
 environment, where the work is headed — lives in the
 [**wiki**](https://github.com/threadwick-hq/threadwick/wiki). If you'd like to get involved,
 start with [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## License
+## <img src=".github/assets/icons/scale.svg" width="22" alt=""> License
 
 Threadwick is free software under **[AGPL-3.0-or-later](LICENSE)**. Third-party icon notices
 are in [NOTICE](NOTICE).
