@@ -24,7 +24,9 @@ export const LOGO_BOX = 128;
 
 /** Centre + scale a glyph's viewBox inside the 128 square; returns the SVG `transform`. */
 function placeGlyph(viewBox = '0 0 512 512', iconScale = 0.5): string {
-	const [minX = 0, minY = 0, w = 512, h = 512] = viewBox.split(/\s+/).map(Number);
+	const [minX = 0, minY = 0, w = 512, h = 512] = viewBox
+		.split(/\s+/)
+		.map(Number);
 	const s = (LOGO_BOX * iconScale) / Math.max(w, h);
 	const tx = (LOGO_BOX - w * s) / 2 - minX * s;
 	const ty = (LOGO_BOX - h * s) / 2 - minY * s;

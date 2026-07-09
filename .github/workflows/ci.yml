@@ -37,7 +37,11 @@ jobs:
       - name: Design tokens in sync
         run: |
           pnpm --filter @threadwick/core run build:tokens
-          git diff --exit-code -- packages/core/src/tokens packages/core/figma packages/core/docs/foundations.md
+          if [ -n "$(git status --porcelain -- packages/core/src/tokens packages/core/figma packages/core/docs/foundations.md)" ]; then
+            echo "::error::Design tokens are stale — run 'pnpm --filter @threadwick/core run build:tokens' and commit the result."
+            git --no-pager diff -- packages/core/src/tokens packages/core/figma packages/core/docs/foundations.md
+            exit 1
+          fi
       - name: Build + typecheck (packages, apps)
         run: pnpm turbo run build typecheck --filter=./packages/* --filter=./apps/*
       - name: Tests (packages, apps)
