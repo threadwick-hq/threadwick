@@ -62,7 +62,7 @@ reduced-motion-safe · screen-reader-checked.
 
 ## How apps consume core
 ```ts
-import { Button, FeedbackProvider } from '@threadwick/core/components';
+import { Button, FeedbackProvider } from '@threadwick/core/ui';
 import '@threadwick/core/tokens.css'; // design tokens (CSS vars, light + dark)
 import '@threadwick/core/theme.css'; // shadcn role tokens mapped onto the brand tokens
 // document.documentElement.dataset.theme = mode;   // 'light' | 'dark'

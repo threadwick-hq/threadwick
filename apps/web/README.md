@@ -10,13 +10,11 @@ shadcn-style primitives (on Radix) themed via `tokens.css` + `theme.css`, Tailwi
 
 ## Develop
 
-This app lives in the pnpm workspace; run scripts from the repo root, and build the workspace
-packages once per fresh checkout (`dist/` is gitignored — dev fails to resolve
-`@threadwick/core/components` etc. without it):
+This app lives in the pnpm workspace; run scripts from the repo root. The `@threadwick/*` packages
+export TypeScript source (no build step), so a fresh checkout needs only `pnpm install`:
 
 ```bash
 pnpm install                                  # once, at the repo root
-pnpm turbo run build --filter='./packages/*'  # once — builds the @threadwick/* deps
 pnpm --filter threadwick-web dev              # RR7 dev server (http://localhost:5173; pass --port 3000 if the legacy studio holds 5173)
 pnpm --filter threadwick-web typecheck        # react-router typegen + tsc --noEmit
 pnpm --filter threadwick-web test             # vitest
@@ -24,9 +22,10 @@ pnpm --filter threadwick-web build            # react-router build -> build/ (cl
 pnpm --filter threadwick-web start            # serve the production build (react-router-serve)
 ```
 
-Gotcha: [`vite.config.ts`](vite.config.ts) dedupes React and pre-bundles the `@threadwick/*` dist
-barrels (`optimizeDeps.include`) so Vite's dev optimizer doesn't discover them lazily mid-session
-and reload with a second React copy. Add any newly consumed workspace barrel to that list.
+Gotcha: [`vite.config.ts`](vite.config.ts) dedupes React/React-DOM to a single copy so a dev
+re-optimize can't load a second React and break hooks. (The old `optimizeDeps.include` workaround
+for the broad `@threadwick/*` barrels is gone — those barrels were split into narrow layer
+subpaths, so the dev optimizer no longer re-bundles them mid-session.)
 
 ## Routes
 

@@ -27,7 +27,8 @@ Key facts:
 - `@threadwick/core/tokens.css` — `:root` (light) + `[data-theme="dark"]` + focus ring + reduced-motion guard.
 - `@threadwick/core/theme.css` — shadcn role tokens mapped onto the brand tokens.
 - `@threadwick/core/brand` — `Wordmark`; `Logo` badge + `ThreadwickLogo` / `StudioLogo` / `MarketplaceLogo`; `logoSVG()` (static SVG), `fromAwesome()`.
-- `@threadwick/core/components` — `Stack` (8-px spacing guardrail); the shadcn-style `ui/` primitives (Accordion, Alert, AlertDialog, Badge, Breadcrumb, Button, Card, ColorPicker, Dialog, DropdownMenu, Input, Label, NumberInput, Segmented, Select, Switch, Tooltip, and the `FeedbackProvider` toast/confirm layer); the `follow/`, `interior/`, `overview/` screen kits. Authoritative list: [src/components/index.ts](src/components/index.ts).
+- `@threadwick/core/ui` — `Stack` + the shadcn-style primitives (Accordion, Alert, AlertDialog, Badge, Breadcrumb, Button, Card, CardGrid, ColorPicker, Dialog, DropdownMenu, EmptyState, Input, Label, NumberInput, PhotoCard, Popover, Segmented, Select, Switch, Tooltip, and the `FeedbackProvider` toast/confirm layer).
+- `@threadwick/core/follow` · `/interior` · `/overview` — the studio screen kits; `@threadwick/core/marketplace-gate` — the `MarketplaceGate` wrapper.
 
 ## Guardrails / commands
 - `npm run check` — build:tokens + typecheck + lint + check:contrast.
