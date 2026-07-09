@@ -1,52 +1,52 @@
-# Threadwick
+<p align="center">
+	<picture>
+		<source media="(prefers-color-scheme: dark)" srcset=".github/assets/banner-dark.svg">
+		<img src=".github/assets/banner-light.svg" alt="threadwick — fair tools for fiber artists &amp; makers" width="440">
+	</picture>
+</p>
 
-A free home for fiber artists to design, keep, and share their patterns — and for makers to follow
-them.
+Threadwick is a free home for fiber artists and makers: design crochet charts, keep your
+patterns in one place, share them with the world — and follow other people's patterns stitch
+by stitch.
 
-Monorepo managed with **pnpm** workspaces + **Turborepo**, being assembled per
-[MIGRATION.md](MIGRATION.md). One **React Router 7** app with streaming SSR; UI on **shadcn/ui +
-Tailwind v4**; lint + format with **Biome**. Open source under **AGPL-3.0-or-later**.
+**You don't need anything on this page to use Threadwick.** The app runs in your browser at
+[**threadwick.com**](https://threadwick.com) — nothing to install.
 
-## Layout
+## What you get
 
-```
-packages/
-  config/   shared tsconfig + biome + tailwind base
-  types/    the Pattern content model (+ pattern.schema.json)
-  core/     OKLCH design tokens + Tailwind preset + shadcn components + brand
-  icons/    semantic <Icon name> interface (Font Awesome adapters)        — README
-  editor/   framework-agnostic chart-editor core (. = SSR-safe, /browser = client)  — README
-  i18n/     localization: enriched EN source + Claude pipeline + ICU runtime — README
-  org/      typed canon
-apps/
-  web/      RR7 streaming-SSR app: marketing (live) + /studio + marketplace (Phase 6+)
-  studio/   the legacy Studio, mid-migration; its chart core now lives in @threadwick/editor
-```
+- <img src=".github/assets/icons/pencil-ruler.svg" width="16" alt=""> **Design** — draw stitch charts round by round in the Studio editor.
+- <img src=".github/assets/icons/folder-heart.svg" width="16" alt=""> **Keep** — organize patterns into projects, with your yarns, notes, and links alongside.
+- <img src=".github/assets/icons/share-2.svg" width="16" alt=""> **Share** — publish patterns for anyone, or sell your own; when you handle the sale
+  yourself, Threadwick takes nothing.
+- <img src=".github/assets/icons/list-checks.svg" width="16" alt=""> **Make** — follow a pattern in the built-in viewer and track your progress.
+- <img src=".github/assets/icons/download.svg" width="16" alt=""> **Leave anytime** — export your work in open, portable formats. No lock-in.
 
-## Status & resuming work
+Designing, charting, organizing, sharing, and cloud backup are free, always. Makers never pay
+Threadwick anything.
 
-All work is tracked as GitHub Issues (the issue body is the spec; status is derived from native
-GitHub state) — see [work/README.md](work/README.md) and [AGENTS.md](AGENTS.md). To pick up where
-the last contributor left off:
+## Run it on your own computer
+
+Threadwick is open source, so the curious can run the whole app locally. You'll need
+[Node.js](https://nodejs.org) (version 22) and [pnpm](https://pnpm.io); then copy-paste:
 
 ```sh
+git clone https://github.com/threadwick-hq/threadwick.git
+cd threadwick
 pnpm install
-pnpm run work next        # the next claimable issue
-pnpm run work claim <n>   # claim (assign yourself) before implementing
-pnpm check                # typecheck + lint + test
+pnpm build
+pnpm --filter threadwick-web dev
 ```
 
-The [issues list](https://github.com/threadwick-hq/threadwick/issues) and the "Threadwick Work"
-project board are the at-a-glance views; [MIGRATION.md](MIGRATION.md) is the
-phase plan and the decision record. Phases 0–5 (monorepo, packages, design system, marketing site)
-are done; the localization layer shipped; **Phase 6** (Studio app surface) is underway — sub-phase
-6a (extracting the editor into `@threadwick/editor`) and the 6c chrome migration (AntD → shadcn,
-with AntD removed entirely in #63) are complete, and the app-surface build-out continues.
+…and open <http://localhost:5173> in your browser. That's it.
 
-## Contributing
+## Digging deeper
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Contributor License Agreement](CLA.md).
+Everything technical — how the project is put together, setting up a development
+environment, where the work is headed — lives in the
+[**wiki**](https://github.com/threadwick-hq/threadwick/wiki). If you'd like to get involved,
+start with [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-**AGPL-3.0-or-later** — see [LICENSE](LICENSE). Third-party icon notices are in [NOTICE](NOTICE).
+Threadwick is free software under **[AGPL-3.0-or-later](LICENSE)**. Third-party icon notices
+are in [NOTICE](NOTICE).
