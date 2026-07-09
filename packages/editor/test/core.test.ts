@@ -1,4 +1,5 @@
-// DOM-free tests for the @threadwick/editor core, run with vitest. Exercises the public barrel.
+// DOM-free tests for the @threadwick/editor core, run with vitest. Exercises the chart + follow
+// modules (via the internal aggregator) plus the sample fixture.
 // The store-dependent cases (version lifecycle, undo/redo, ...) move here with the store in TW-011.
 
 import assert from 'node:assert/strict';
@@ -25,7 +26,6 @@ import {
 	projectFromFile,
 	projectToFile,
 	STITCHES,
-	sampleProject,
 	spacesForRound,
 	stitchWithinRect,
 	successorInRound,
@@ -33,6 +33,7 @@ import {
 	toPolar,
 	topOfStitch,
 } from '../src';
+import { sampleProject } from '../src/fixtures';
 
 const near = (a: number, b: number, eps = 1e-6) => Math.abs(a - b) < eps;
 

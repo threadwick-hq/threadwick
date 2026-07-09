@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'vitest';
+import { sampleProject } from '../src/fixtures';
 import {
 	decomposePattern,
 	decomposeRound,
 	hasFollowMarks,
 	roundStitchOrder,
-	sampleProject,
 	stitchClusters,
 	totalUnits,
 } from '../src/index';
