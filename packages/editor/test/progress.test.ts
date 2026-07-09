@@ -109,7 +109,7 @@ describe('normalizeProject makePatterns parsing', () => {
 						{
 							id: 'pat-a',
 							name: 'Square',
-							type: 'granny',
+							construction: 'granny',
 							rounds: [],
 							stitches: [],
 						},

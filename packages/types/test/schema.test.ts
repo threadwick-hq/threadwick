@@ -51,4 +51,31 @@ describe('pattern.schema.json', () => {
 			expect.arrayContaining(['versioning', 'lineage']),
 		);
 	});
+
+	it('points chart/schematic artifact data at the filled ChartData/SchematicData definitions', () => {
+		// Phase 7: ChartData/SchematicData are the unified content model; the artifact `data`
+		// is fail-closed via $ref (not the old inline {id}-only stub).
+		expect(patternSchema.definitions.ChartArtifact.properties.data).toEqual({
+			$ref: '#/definitions/ChartData',
+		});
+		expect(patternSchema.definitions.SchematicArtifact.properties.data).toEqual(
+			{
+				$ref: '#/definitions/SchematicData',
+			},
+		);
+		expect(patternSchema.definitions.ChartData.additionalProperties).toBe(
+			false,
+		);
+		expect([...patternSchema.definitions.ChartData.required].sort()).toEqual(
+			[
+				'activeRound',
+				'construction',
+				'id',
+				'rounds',
+				'start',
+				'stitches',
+				'view',
+			].sort(),
+		);
+	});
 });

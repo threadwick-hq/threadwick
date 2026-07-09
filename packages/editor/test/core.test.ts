@@ -215,7 +215,7 @@ test('newProject / newPattern shape', () => {
 		'yarns',
 	]);
 	const pat = newPattern('Sq');
-	assert.equal(pat.type, 'granny');
+	assert.equal(pat.construction, 'granny');
 	assert.equal(pat.rounds.length, 2); // Start row + Round 1 from the outset
 	assert.equal(pat.rounds[0]?.name, 'Start');
 	assert.equal(pat.activeRound, pat.rounds[0]?.id); // opens on the Start row
@@ -227,7 +227,7 @@ test('normalizeProject tolerates junk + drops orphan stitches', () => {
 			{
 				patterns: [
 					{
-						type: 'granny',
+						construction: 'granny',
 						rounds: [{ id: 'r1', name: 'R1' }],
 						stitches: [
 							{ type: 'dc', round: 'r1', x: 1, y: 2 },
@@ -278,7 +278,7 @@ test('normalizeProject repairs a start that shared a working row', () => {
 			{
 				patterns: [
 					{
-						type: 'granny',
+						construction: 'granny',
 						rounds: [{ id: 'r1', name: 'Round 1' }],
 						activeRound: 'r1',
 						stitches: [

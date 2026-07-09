@@ -1,99 +1,57 @@
 // Shared domain types for threadwick studio.
 
 import type {
+	Base,
+	ChartData,
+	ChartStitch,
 	FollowMode,
 	MakerStatus,
+	Pattern,
+	PatternKind,
 	PatternProgress,
 	PatternReference,
+	PatternView,
 	ProgressCursor,
 	ProjectPhoto,
+	RepeatMark,
+	Round,
+	RoundFollowMarks,
+	StitchType,
 	UnitAddress,
 	UsedTool,
 	UsedYarn,
 } from '@threadwick/types';
 
+// The chart-geometry vocabulary now lives in @threadwick/types (the single canonical owner —
+// Phase 7 "one model, not a fork"). Re-exported here under the editor's historical names so every
+// consumer compiles unchanged; the editor's `Stitch` IS the geometry `ChartStitch`, and the freed
+// `Pattern` name now points at the authoring model (see ./chart's seam comment).
 export type {
+	Base,
+	ChartData,
+	ChartStitch as Stitch,
 	FollowMode,
 	MakerStatus,
+	Pattern,
+	PatternKind,
 	PatternProgress,
 	PatternReference,
+	PatternView,
 	ProgressCursor,
 	ProjectPhoto,
+	RepeatMark,
+	Round,
+	RoundFollowMarks,
+	StitchType,
 	UnitAddress,
 	UsedTool,
 	UsedYarn,
 };
 
-export type StitchType =
-	| 'ch'
-	| 'slst'
-	| 'sc'
-	| 'hdc'
-	| 'dc'
-	| 'tr'
-	| 'dtr' // working stitches
-	| 'mr'
-	| 'dmr'
-	| 'chring'
-	| 'slipknot'; // starts
-
-export type Base =
-	| { kind: 'stitch'; id: string }
-	| { kind: 'space'; ids: [string, string] }
-	| null;
-
-export interface Stitch {
-	id: string;
-	round: string;
-	type: StitchType;
-	origin: string | null; // the stitch it comes out of
-	base: Base; // the stitch head / space it is worked into
-	x: number; // base anchor (bottom of the marker)
-	y: number;
-	rot: number;
-	len: number | null; // post length; null = the type's default
-	color: string | null;
-	mirror: boolean;
-	auto?: boolean; // chains: auto-align between neighbours (default true)
-}
-
-/** Explicit repeat region for follow decomposition (TW-027). */
-export interface RepeatMark {
-	id: string;
-	fromStitchId: string;
-	toStitchId: string;
-	/** Times the template is worked; default 1. */
-	times?: number;
-}
-
-/** Authoring marks that drive per-row / pattern / granular decomposition (TW-027). */
-export interface RoundFollowMarks {
-	/** Stitch ids flagged as corner positions (chain order). */
-	corners: string[];
-	repeats: RepeatMark[];
-}
-
-export interface Round {
-	id: string;
+// The chart the editor authors: the shared geometry (ChartData) plus the authoring envelope
+// (name + timestamps). ChartData.construction was the editor's ChartPattern.type before Phase 7.
+export interface ChartPattern extends ChartData {
 	name: string;
-	followMarks?: RoundFollowMarks;
-}
-export interface PatternView {
-	scale: number;
-	panX: number;
-	panY: number;
-}
-export type PatternKind = 'granny' | 'round' | 'flat';
-
-export interface ChartPattern {
-	id: string;
-	type: PatternKind;
-	name: string;
-	start: StitchType | null;
-	rounds: Round[];
-	activeRound: string;
-	stitches: Stitch[];
-	view: PatternView;
 	createdAt: string;
 	updatedAt: string;
 }

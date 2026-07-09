@@ -26,7 +26,7 @@ import type {
 import { deepClone, nowISO, uid } from './util';
 
 export const FILE_FORMAT = 'threadwick-studio';
-export const FILE_VERSION = 4; // v4: maker-plane makePatterns + follow progress (TW-028)
+export const FILE_VERSION = 5; // v5: unified content model — chart geometry is @threadwick/types ChartData; ChartPattern.type renamed to construction (Phase 7)
 
 export interface PatternTypeInfo {
 	id: PatternKind;
@@ -73,7 +73,7 @@ export function newPattern(
 	const r1 = newRound('Round 1');
 	return {
 		id: uid('pat'),
-		type: PATTERN_TYPES[type] ? type : 'granny',
+		construction: PATTERN_TYPES[type] ? type : 'granny',
 		name: name || 'Untitled pattern',
 		start: null,
 		rounds: [startRow, r1], // the Start row (row 0) exists from the start
@@ -203,7 +203,9 @@ function normalizeStitch(s: any): Stitch | null {
 export function normalizePattern(p: any = {}): ChartPattern {
 	const pat = newPattern(
 		p.name,
-		PATTERN_TYPES[p.type as PatternKind] ? p.type : 'granny',
+		// Read the current key only — no `?? p.type` fallback. Pre-release policy rejects retired
+		// shapes (the FILE_VERSION gate bails a v4 envelope wholesale before it reaches here).
+		PATTERN_TYPES[p.construction as PatternKind] ? p.construction : 'granny',
 	);
 	if (p.id) pat.id = p.id;
 	if (Array.isArray(p.rounds) && p.rounds.length) {

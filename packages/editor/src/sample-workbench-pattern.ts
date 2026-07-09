@@ -26,7 +26,15 @@ export function sampleWorkbenchPattern(): Pattern {
 					{
 						type: 'chart',
 						id: 'art-flower-chart',
-						data: { id: 'chart-flower' },
+						data: {
+							id: 'chart-flower',
+							construction: 'granny',
+							start: null,
+							rounds: [],
+							activeRound: '',
+							stitches: [],
+							view: { scale: 1, panX: 0, panY: 0 },
+						},
 					},
 					{
 						type: 'written',
@@ -43,7 +51,15 @@ export function sampleWorkbenchPattern(): Pattern {
 					{
 						type: 'chart',
 						id: 'art-leaves-chart',
-						data: { id: 'chart-leaves' },
+						data: {
+							id: 'chart-leaves',
+							construction: 'granny',
+							start: null,
+							rounds: [],
+							activeRound: '',
+							stitches: [],
+							view: { scale: 1, panX: 0, panY: 0 },
+						},
 					},
 					{
 						type: 'written',

@@ -189,7 +189,7 @@ export function ProjectView() {
                         <CardTitle className="text-base font-semibold leading-snug">
                           <span className={isPlaceholderName(pat.name) ? 'name-placeholder' : undefined}>{pat.name}</span>
                         </CardTitle>
-                        <CardDescription>{`${(PATTERN_TYPES[pat.type] || {}).name || pat.type} · ${pat.stitches.length} stitches`}</CardDescription>
+                        <CardDescription>{`${(PATTERN_TYPES[pat.construction] || {}).name || pat.construction} · ${pat.stitches.length} stitches`}</CardDescription>
                       </div>
                       {isDraft && (
                         <DropdownMenu>

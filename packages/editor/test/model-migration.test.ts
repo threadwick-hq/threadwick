@@ -40,24 +40,25 @@ function round(overrides: Partial<Round> & Pick<Round, 'id' | 'name'>): Round {
 
 // ---- FILE_VERSION ------------------------------------------------------------
 test('FILE_VERSION pins the current migration target', () => {
-	// v4: maker-plane makePatterns + follow progress (TW-028). A bump here is a
-	// deliberate migration-surface change — this test exists so it can't happen silently.
-	assert.equal(FILE_VERSION, 4);
+	// v5: unified content model — chart geometry is now @threadwick/types ChartData and
+	// ChartPattern.type was renamed to `construction` (Phase 7). A bump here is a deliberate
+	// migration-surface change — this test exists so it can't happen silently.
+	assert.equal(FILE_VERSION, 5);
 });
 
 // ---- normalizePattern ---------------------------------------------------------
 test('normalizePattern fills a bare object with fresh pattern defaults', () => {
 	const pat = normalizePattern({});
-	assert.equal(pat.type, 'granny');
+	assert.equal(pat.construction, 'granny');
 	assert.equal(pat.name, 'Untitled pattern');
 	assert.equal(pat.rounds.length, 2); // Start row + Round 1
 	assert.equal(pat.rounds[0]?.name, 'Start');
 	assert.equal(pat.stitches.length, 0);
 });
 
-test('normalizePattern falls back to granny for an unrecognized pattern type', () => {
-	const pat = normalizePattern({ type: 'triangle' });
-	assert.equal(pat.type, 'granny');
+test('normalizePattern falls back to granny for an unrecognized construction kind', () => {
+	const pat = normalizePattern({ construction: 'triangle' });
+	assert.equal(pat.construction, 'granny');
 });
 
 test('normalizePattern keeps an unrecognized stitch type verbatim as long as its round exists', () => {
@@ -143,7 +144,7 @@ test('ensureStartRow moves a start row that is alone but not first to the front'
 	const r2 = round({ id: 'r2', name: 'Somewhere else' });
 	const pat: ChartPattern = {
 		id: 'p1',
-		type: 'granny',
+		construction: 'granny',
 		name: 'P',
 		start: null,
 		rounds: [r1, r2],
@@ -165,7 +166,7 @@ test('ensureStartRow moves a start row that is alone but not first to the front'
 test('ensureStartRow gives a start stitch its own dedicated row when it shares one', () => {
 	const pat: ChartPattern = {
 		id: 'p1',
-		type: 'granny',
+		construction: 'granny',
 		name: 'P',
 		start: null,
 		rounds: [round({ id: 'r1', name: 'Round 1' })],
@@ -192,7 +193,7 @@ test('ensureStartRow gives a start stitch its own dedicated row when it shares o
 test('ensureStartRow synthesizes Start + Round 1 from nothing and resets a dangling activeRound', () => {
 	const pat: ChartPattern = {
 		id: 'p1',
-		type: 'granny',
+		construction: 'granny',
 		name: 'P',
 		start: null,
 		rounds: [],
@@ -253,7 +254,7 @@ test('normalizeProject ignores the retired patternIds and top-level patterns fie
 			{
 				label: 'v1',
 				status: 'draft',
-				patterns: [{ id: 'pat1', type: 'granny', name: 'Sq' }],
+				patterns: [{ id: 'pat1', construction: 'granny', name: 'Sq' }],
 			},
 		],
 		patternIds: ['pat1'],
@@ -271,7 +272,7 @@ test('normalizeProject resolves a missing makePatterns label from the live patte
 			{
 				label: 'v1',
 				status: 'draft',
-				patterns: [{ id: 'pat1', type: 'granny', name: 'Sq' }],
+				patterns: [{ id: 'pat1', construction: 'granny', name: 'Sq' }],
 			},
 		],
 		makePatterns: [
@@ -426,7 +427,7 @@ test('full export -> import round-trip is a deep-equal identity for an already-n
 				patterns: [
 					{
 						id: 'p1',
-						type: 'granny',
+						construction: 'round', // non-default kind — proves the v5 `construction` field round-trips
 						name: 'Pattern',
 						rounds: [{ id: 'r1', name: 'R1' }],
 						stitches: [{ id: 's1', type: 'dc', round: 'r1', x: 1, y: 2 }],
@@ -441,6 +442,8 @@ test('full export -> import round-trip is a deep-equal identity for an already-n
 	// round-trip through JSON, like a real file save/load would
 	const reloaded = projectFromFile(JSON.parse(JSON.stringify(file)));
 	assert.ok(reloaded);
+	// The v5 wire field survives the full export -> import path (guards the type -> construction rename).
+	assert.equal(reloaded?.versions[0]?.patterns[0]?.construction, 'round');
 	assert.deepEqual(
 		JSON.parse(JSON.stringify(reloaded)),
 		JSON.parse(JSON.stringify(legacy)),
