@@ -33,7 +33,6 @@ Threadwick is open source, so the curious can run the whole app locally. You'll 
 git clone https://github.com/threadwick-hq/threadwick.git
 cd threadwick
 pnpm install
-pnpm build
 pnpm --filter threadwick-web dev
 ```
 
