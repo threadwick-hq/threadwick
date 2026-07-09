@@ -16,21 +16,24 @@ entries:
 
 | Import | Contains | Safe in SSR? |
 |---|---|---|
-| `@threadwick/editor` | the **pure core**: `model`, `render`, `connectivity`, `symbols`, `geometry`, `util`, `colors`, `sample`, and the read primitives (`chainOrder`, `spacesForRound`, `chartToSVG`/`stitchToSVG`, `summarizeRound`) | **yes** — no DOM, no `localStorage`, no React, nothing executes at import |
+| `@threadwick/editor/chart` | the **pure core**: `model`, `render`, `connectivity`, `symbols`, `geometry`, `util`, `colors`, `codec`, and read primitives (`chainOrder`, `spacesForRound`, `chartToSVG`/`stitchToSVG`) | **yes** — no DOM, no `localStorage`, no React, nothing executes at import |
+| `@threadwick/editor/follow` | the Follow-view read-side (`summarizeRound`, follow UI/chart, decomposition, progress, pattern/project overview, versioning, view-mode, recents) | **yes** |
+| `@threadwick/editor/fixtures` | `sample*` demo data | **yes** |
 | `@threadwick/editor/browser` | the **client runtime**: the `localStorage`-backed `store`, the imperative `editorCanvas` controller (`initCanvas`), and `files` (import/export, SVG/PNG, print-PDF) | client only |
 
 ```ts
 // SSR / Follow view — read-only rendering:
-import { chartToSVG, summarizeRound, activeVersion } from '@threadwick/editor';
+import { chartToSVG, activeVersion } from '@threadwick/editor/chart';
+import { summarizeRound } from '@threadwick/editor/follow';
 
 // /studio editor — the editing runtime (client-only route):
 import { store, initCanvas, exportProjectFile } from '@threadwick/editor/browser';
 ```
 
 The split is what lets `apps/web` mount `/studio` client-only without dragging DOM/`localStorage`
-into the streaming-SSR marketing bundle. Importing the `.` entry in bare Node loads with no error
-and exposes no `store`/`initCanvas` — that property is the contract; don't let a core module pull
-in browser code.
+into the streaming-SSR marketing bundle. The `chart`/`follow`/`fixtures` subpaths expose no
+`store`/`initCanvas` — that separation is the contract; don't let a core module pull in browser
+code. (There is no root `.` entry; consumers import a layer subpath.)
 
 ## Versioning model (invariants — hold these)
 

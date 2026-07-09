@@ -4,7 +4,7 @@
 // Only `useCatalogueListings` touches React/the store — everything else is pure
 // and node-testable.
 
-import type { PatternListing } from '@threadwick/editor';
+import type { PatternListing } from '@threadwick/editor/follow';
 import {
 	CATEGORIES,
 	type CatalogueFacetOptions,

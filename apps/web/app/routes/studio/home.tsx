@@ -4,8 +4,8 @@ import {
 	EmptyState,
 	PhotoCard,
 	type PhotoCardMedia,
-} from '@threadwick/core/components';
-import type { RecentItem } from '@threadwick/editor';
+} from '@threadwick/core/ui';
+import type { RecentItem } from '@threadwick/editor/follow';
 import { Icon, type IconName } from '@threadwick/icons';
 import type { CatalogueListing, ImageRef, Pattern } from '@threadwick/types';
 import { Link } from 'react-router';

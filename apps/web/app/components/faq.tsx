@@ -3,7 +3,7 @@ import {
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-} from '@threadwick/core/components';
+} from '@threadwick/core/ui';
 import { SectionHeading } from './section-heading';
 
 type Faq = { q: string; a: string };

@@ -1,4 +1,4 @@
-import { deriveRecents, type RecentsModel } from '@threadwick/editor';
+import { deriveRecents, type RecentsModel } from '@threadwick/editor/follow';
 import { patternInScope, projectInScope, useCraftScope } from './craft-scope';
 import { usePatternLibrary } from './pattern-store';
 import { useStudioStore } from './studio-store';

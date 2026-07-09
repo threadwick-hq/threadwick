@@ -1,4 +1,4 @@
-import { Card } from '@threadwick/core/components';
+import { Card } from '@threadwick/core/ui';
 import { Icon, type IconName } from '@threadwick/icons';
 import { SectionHeading } from './section-heading';
 

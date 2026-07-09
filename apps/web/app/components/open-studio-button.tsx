@@ -1,4 +1,4 @@
-import { Button, type ButtonProps } from '@threadwick/core/components';
+import { Button, type ButtonProps } from '@threadwick/core/ui';
 import { Icon } from '@threadwick/icons';
 
 /** The primary call to action → the Studio editor (internal `/studio` route). Reused across the page. */

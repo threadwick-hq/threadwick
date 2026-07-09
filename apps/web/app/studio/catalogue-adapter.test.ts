@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
-import type { PatternListing } from '@threadwick/editor';
 import {
 	sampleMarketplaceListing,
 	sampleMarketplaceViewPattern,
-} from '@threadwick/editor';
+} from '@threadwick/editor/fixtures';
+import type { PatternListing } from '@threadwick/editor/follow';
 import type { CatalogueListing, Pattern } from '@threadwick/types';
 import { describe, test } from 'vitest';
 import {

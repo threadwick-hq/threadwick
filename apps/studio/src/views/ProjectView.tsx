@@ -12,7 +12,7 @@ import {
   Label,
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
   confirm,
-} from '@threadwick/core/components';
+} from '@threadwick/core/ui';
 import {
   PlusIcon, DownloadIcon, PdfIcon, DeleteIcon,
   CopyIcon, MoreIcon, EditIcon, YarnIcon, LinkIcon, NotesIcon, VariationIcon,
@@ -23,8 +23,8 @@ import { Thumb } from '../components/Thumb';
 import { VersionTag } from '../components/VersionTag';
 import { statusLabel } from '../components/versionStatus';
 import { exportProjectFile, printProject } from '@threadwick/editor/browser';
-import { PATTERN_TYPES, activeVersion, isPlaceholderName } from '@threadwick/editor';
-import type { ProjectVersion, ChartPattern, ResourceKind, Yarn, LinkRes, NoteRes, VariationRes } from '@threadwick/editor';
+import { PATTERN_TYPES, activeVersion, isPlaceholderName } from '@threadwick/editor/chart';
+import type { ProjectVersion, ChartPattern, ResourceKind, Yarn, LinkRes, NoteRes, VariationRes } from '@threadwick/editor/chart';
 
 const RES_META: Record<ResourceKind, { title: string; add: string; empty: string; Icon: ComponentType }> = {
   yarns: { title: 'Yarns', add: 'Yarn', empty: 'Track the yarns you used — brand, weight, colour.', Icon: YarnIcon },

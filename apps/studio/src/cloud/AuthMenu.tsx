@@ -7,7 +7,7 @@ import {
   Input,
   Label,
   toast,
-} from '@threadwick/core/components';
+} from '@threadwick/core/ui';
 import {
   SignInIcon, SignOutIcon, AccountIcon, PasskeyIcon, GoogleIcon, MailIcon,
 } from '../icons';

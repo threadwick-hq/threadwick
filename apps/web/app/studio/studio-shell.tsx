@@ -1,5 +1,5 @@
 import { Wordmark } from '@threadwick/core/brand';
-import { InteriorSlot } from '@threadwick/core/components';
+import { InteriorSlot } from '@threadwick/core/interior';
 import type { ReactNode } from 'react';
 import { useLocation } from 'react-router';
 import { useInteriorChrome } from './interior-chrome';

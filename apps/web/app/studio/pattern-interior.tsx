@@ -1,13 +1,15 @@
 import {
-	Badge,
-	Button,
 	InteriorIdentityTile,
 	PinnedVersionTile,
+} from '@threadwick/core/interior';
+import {
+	Badge,
+	Button,
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from '@threadwick/core/components';
-import type { PatternListing } from '@threadwick/editor';
+} from '@threadwick/core/ui';
+import type { PatternListing } from '@threadwick/editor/follow';
 import {
 	activePatternVersion,
 	componentArtifactLinks,
@@ -18,7 +20,7 @@ import {
 	patternPublishFloorMissing,
 	patternVersionStatusLabel,
 	patternVisibilityLabel,
-} from '@threadwick/editor';
+} from '@threadwick/editor/follow';
 import { Icon } from '@threadwick/icons';
 import type { Pattern, PatternOwnership } from '@threadwick/types';
 import { useCallback, useMemo } from 'react';

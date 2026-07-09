@@ -1,9 +1,5 @@
-import {
-	Button,
-	PhotoCard,
-	type PhotoCardMedia,
-} from '@threadwick/core/components';
-import { formatPatternPrice } from '@threadwick/editor';
+import { Button, PhotoCard, type PhotoCardMedia } from '@threadwick/core/ui';
+import { formatPatternPrice } from '@threadwick/editor/follow';
 import { Icon } from '@threadwick/icons';
 import type { CatalogueListing } from '@threadwick/types';
 import { Link } from 'react-router';

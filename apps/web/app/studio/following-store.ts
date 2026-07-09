@@ -2,7 +2,7 @@
 // "Following" browse filter needs a list of handles rather than pattern ids, so
 // it gets its own keyed store instead of piggybacking on bookmarksStore.
 
-import { sampleMarketplaceListing } from '@threadwick/editor';
+import { sampleMarketplaceListing } from '@threadwick/editor/fixtures';
 import { createLocalStore } from '../lib/create-local-store';
 
 export type FollowingState = { handles: string[] };

@@ -19,7 +19,7 @@ Initially you can link it via an npm workspace / path dependency — no need to 
 ## Usage
 
 ```tsx
-import { Button, FeedbackProvider } from '@threadwick/core/components';
+import { Button, FeedbackProvider } from '@threadwick/core/ui';
 import '@threadwick/core/tokens.css'; // ships --tw-* vars + :focus-visible ring + reduced-motion guard
 import '@threadwick/core/theme.css'; // shadcn role tokens mapped onto the brand tokens
 
@@ -45,7 +45,9 @@ export function App({ mode }: { mode: 'light' | 'dark' }) {
 | `@threadwick/core/tokens.css` | `:root` (light) + `[data-theme="dark"]` custom properties + a11y rules |
 | `@threadwick/core/theme.css` | shadcn role tokens (`--background`, `--primary`, …) mapped onto the brand tokens |
 | `@threadwick/core/brand` | `Wordmark`; `Logo` badge + `ThreadwickLogo` / `StudioLogo` / `MarketplaceLogo`; `logoSVG()` (static SVG), `fromAwesome()` |
-| `@threadwick/core/components` | `Stack` (8-px spacing guardrail); the shadcn-style `ui/` primitives (Accordion, Alert, AlertDialog, Badge, Breadcrumb, Button, Card, ColorPicker, Dialog, DropdownMenu, Input, Label, NumberInput, Segmented, Select, Switch, Tooltip, `FeedbackProvider` toast/confirm); the `follow/` · `interior/` · `overview/` screen kits — authoritative list: [`src/components/index.ts`](src/components/index.ts) |
+| `@threadwick/core/ui` | `Stack` (8-px spacing guardrail) + the shadcn-style primitives (Accordion, Alert, AlertDialog, Badge, Breadcrumb, Button, Card, CardGrid, ColorPicker, Dialog, DropdownMenu, EmptyState, Input, Label, NumberInput, PhotoCard, Popover, Segmented, Select, Switch, Tooltip, `FeedbackProvider` toast/confirm) |
+| `@threadwick/core/follow` · `/interior` · `/overview` | the studio screen kits (Follow shell + pills, interior tiles, overview headers/tiles) |
+| `@threadwick/core/marketplace-gate` | `MarketplaceGate` — capability wrapper |
 
 Sibling package: **`@threadwick/types`** (Pattern model + schema).
 

@@ -1,4 +1,4 @@
-import type { Project } from '@threadwick/editor';
+import type { Project } from '@threadwick/editor/chart';
 import type { Craft, Pattern } from '@threadwick/types';
 import { createLocalStore } from '../lib/create-local-store';
 

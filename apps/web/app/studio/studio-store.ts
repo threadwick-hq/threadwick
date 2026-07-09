@@ -43,7 +43,7 @@ export function useStudioStore(): StudioStore | null {
 
 async function loadStudioStore() {
 	const [core, browser] = await Promise.all([
-		import('@threadwick/editor'),
+		import('@threadwick/editor/fixtures'),
 		import('@threadwick/editor/browser'),
 	]);
 	const { store } = browser;

@@ -15,7 +15,7 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from '@threadwick/core/components';
+} from '@threadwick/core/ui';
 import { Icon } from '@threadwick/icons';
 import type { YarnWeight } from '@threadwick/types';
 import { useNavigate, useSearchParams } from 'react-router';

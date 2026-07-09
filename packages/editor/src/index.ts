@@ -1,32 +1,8 @@
-// @threadwick/editor — the framework-agnostic chart-editor core.
-// Public barrel: the DOM-free model, renderer, connectivity, symbols, geometry, palette,
-// sample, and the read primitives (chainOrder, spacesForRound, chartToSVG, stitchToSVG,
-// summarizeRound) the Studio editor and the Follow view consume.
-//
-// The name `Pattern` is deliberately NOT exported here: the chart model is `ChartPattern`,
-// and the freed name is the Phase 7 seam — once model unification lands, this barrel
-// re-exports the authoring `Pattern` from @threadwick/types under its own name.
+// Internal aggregator — re-exports the public layer subpaths for the package's OWN modules and
+// tests (store/files/editor-canvas and test/*). This file is NOT part of the public API:
+// package.json `exports` has no "." entry, so external consumers import the layer subpaths
+// directly — @threadwick/editor/chart, /follow, /fixtures, and /browser.
 
-export * from './codec';
-export * from './colors';
-export * from './connectivity';
-export * from './decomposition';
-export * from './external-follow';
-export * from './follow-chart';
-export * from './follow-ui';
-export * from './geometry';
-export * from './instructions';
-export * from './model';
-export * from './pattern-overview';
-export * from './pattern-versioning';
-export * from './pattern-view-mode';
-export * from './progress';
-export * from './project-overview';
-export * from './recents';
-export * from './render';
-export * from './sample';
-export * from './sample-marketplace-pattern';
-export * from './sample-workbench-pattern';
-export * from './symbols';
-export * from './types';
-export * from './util';
+export * from './chart';
+export * from './fixtures';
+export * from './follow';

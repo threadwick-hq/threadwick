@@ -1,7 +1,7 @@
 // A small status pill for a project version (Draft / Published / Outdated),
 // shared by the project list and the project view.
-import { Badge } from '@threadwick/core/components';
-import type { VersionStatus } from '@threadwick/editor';
+import { Badge } from '@threadwick/core/ui';
+import type { VersionStatus } from '@threadwick/editor/chart';
 import { STATUS_META } from './versionStatus';
 
 export function VersionTag({ status, className }: { status: VersionStatus; className?: string }) {

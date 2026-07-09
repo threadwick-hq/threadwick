@@ -1,10 +1,10 @@
 import { createRoot } from 'react-dom/client';
-import { FeedbackProvider } from '@threadwick/core/components';
+import { FeedbackProvider } from '@threadwick/core/ui';
 import { App } from './App';
 import { store } from '@threadwick/editor/browser';
 import { cloudEnabled } from './cloud/config';
 import './cloud/oauthError'; // capture any OAuth callback error before supabase-js strips the URL
-import { sampleProject } from '@threadwick/editor';
+import { sampleProject } from '@threadwick/editor/fixtures';
 import '@fontsource/space-grotesk/latin-400.css';
 import '@fontsource/space-grotesk/latin-700.css';
 import '@fontsource/inter/latin-400.css';

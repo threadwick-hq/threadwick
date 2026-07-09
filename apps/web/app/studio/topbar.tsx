@@ -1,4 +1,5 @@
 import { Wordmark } from '@threadwick/core/brand';
+import { cn } from '@threadwick/core/lib/utils';
 import {
 	Badge,
 	Button,
@@ -11,8 +12,7 @@ import {
 	PopoverTrigger,
 	Segmented,
 	SegmentedItem,
-} from '@threadwick/core/components';
-import { cn } from '@threadwick/core/lib/utils';
+} from '@threadwick/core/ui';
 import { Icon } from '@threadwick/icons';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';

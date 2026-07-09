@@ -55,7 +55,7 @@ Full source: [docs/BRAND.md](docs/BRAND.md).
 
 - Editor CSS grids: use modifier classes (`.editor.has-banner`), don't remove grid children.
 - Feedback (toasts + confirms) is the core `FeedbackProvider` layer (`toast.*` / `confirm()` from
-  `@threadwick/core/components`) — never a per-view dialog state machine.
+  `@threadwick/core/ui`) — never a per-view dialog state machine.
 
 ## Dev commands
 
